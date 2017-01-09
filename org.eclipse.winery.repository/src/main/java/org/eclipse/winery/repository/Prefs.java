@@ -12,20 +12,6 @@
  *******************************************************************************/
 package org.eclipse.winery.repository;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.security.AccessControlException;
-import java.util.Locale;
-import java.util.Objects;
-import java.util.Properties;
-
-import javax.servlet.ServletContext;
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
-
 import org.eclipse.winery.common.TOSCADocumentBuilderFactory;
 import org.eclipse.winery.repository.backend.IRepository;
 import org.eclipse.winery.repository.backend.filebased.FilebasedRepository;
@@ -33,6 +19,15 @@ import org.eclipse.winery.repository.backend.filebased.GitBasedRepository;
 import org.eclipse.winery.repository.runtimeintegration.OpenTOSCAContainerConnection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.servlet.ServletContext;
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
+import java.io.*;
+import java.security.AccessControlException;
+import java.util.Locale;
+import java.util.Objects;
+import java.util.Properties;
 
 public class Prefs implements ServletContextListener {
 	
@@ -87,7 +82,7 @@ public class Prefs implements ServletContextListener {
 	 * @throws IOException
 	 * @warning Do not call! (except from Unit testing code)
 	 */
-	protected Prefs(boolean initializeRepository) throws IOException {
+	public Prefs(boolean initializeRepository) throws IOException {
 		this();
 		
 		// emulate behavior of doInitialization(Context)

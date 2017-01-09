@@ -11,64 +11,42 @@
  *******************************************************************************/
 package org.eclipse.winery.common;
 
-import java.lang.reflect.Method;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Properties;
-import java.util.UUID;
-
-import javax.xml.XMLConstants;
-import javax.xml.namespace.QName;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.winery.common.constants.Namespaces;
 import org.eclipse.winery.common.constants.QNames;
 import org.eclipse.winery.common.propertydefinitionkv.PropertyDefinitionKV;
 import org.eclipse.winery.common.propertydefinitionkv.PropertyDefinitionKVList;
 import org.eclipse.winery.common.propertydefinitionkv.WinerysPropertiesDefinition;
-import org.eclipse.winery.model.tosca.TBoundaryDefinitions;
-import org.eclipse.winery.model.tosca.TCapability;
-import org.eclipse.winery.model.tosca.TCapabilityDefinition;
-import org.eclipse.winery.model.tosca.TEntityTemplate;
-import org.eclipse.winery.model.tosca.TEntityType;
-import org.eclipse.winery.model.tosca.TExtensibleElements;
-import org.eclipse.winery.model.tosca.TNodeTemplate;
+import org.eclipse.winery.model.tosca.*;
 import org.eclipse.winery.model.tosca.TNodeTemplate.Capabilities;
 import org.eclipse.winery.model.tosca.TNodeTemplate.Requirements;
-import org.eclipse.winery.model.tosca.TNodeType;
-import org.eclipse.winery.model.tosca.TPlan;
-import org.eclipse.winery.model.tosca.TPlans;
-import org.eclipse.winery.model.tosca.TRelationshipTemplate;
 import org.eclipse.winery.model.tosca.TRelationshipTemplate.SourceElement;
 import org.eclipse.winery.model.tosca.TRelationshipTemplate.TargetElement;
-import org.eclipse.winery.model.tosca.TRelationshipType;
-import org.eclipse.winery.model.tosca.TRequirement;
-import org.eclipse.winery.model.tosca.TRequirementDefinition;
-import org.eclipse.winery.model.tosca.TServiceTemplate;
-import org.eclipse.winery.model.tosca.TTopologyTemplate;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Comment;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.Text;
+import org.w3c.dom.*;
+
+import javax.xml.XMLConstants;
+import javax.xml.namespace.QName;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import java.lang.reflect.Method;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class ModelUtilities {
-	
+
 	private static final org.slf4j.Logger logger = LoggerFactory.getLogger(ModelUtilities.class);
-	
-	
+
+	public static final QName QNAME_LOCATION = new QName(Namespaces.TOSCA_WINERY_EXTENSIONS_NAMESPACE, "location");
+
 	/**
 	 * This is a special method for Winery. Winery allows to define a property
 	 * definition by specifying name/type values. Instead of parsing the
 	 * extensible elements returned TDefinitions, this method is a convenience
 	 * method to access this information
 	 * 
-	 * @param t the entitytype to read the properties definition from
+	 * @param et the entitytype to read the properties definition from
 	 * @return a WinerysPropertiesDefinition object, which includes a map of
 	 *         name/type-pairs denoting the associated property definitions. A
 	 *         default element name and namespace is added if it is not defined
@@ -641,7 +619,7 @@ public class ModelUtilities {
 	/**
 	 * This method instantiates a {@link TRelationshipTemplate} for a given {@link TRelationshipType}.
 	 *
-	 * @param nodeType
+	 * @param relationshipType
 	 *            the {@link TRelationshipType} used for the {@link TRelationshipTemplate} instantiation.
 	 * @param sourceNodeTemplate
 	 *            the source {@link TNodeTemplate} of the connection
@@ -667,4 +645,49 @@ public class ModelUtilities {
 
 		return relationshipTemplate;
 	}
+
+	public static Optional<String> getTarget(TNodeTemplate nodeTemplate) {
+		Objects.requireNonNull(nodeTemplate);
+		Map<QName, String> otherAttributes = nodeTemplate.getOtherAttributes();
+		String location = otherAttributes.get(QNAME_LOCATION);
+		return Optional.of(location);
+	}
+
+	public static void setTarget(TNodeTemplate nodeTemplate, String target) {
+		Objects.requireNonNull(nodeTemplate);
+		Objects.requireNonNull(target);
+		Map<QName, String> otherAttributes = nodeTemplate.getOtherAttributes();
+		otherAttributes.put(QNAME_LOCATION, target);
+	}
+
+	/**
+	 * @return incoming relation ship templates <em>pointing to node templates</em>
+	 */
+	public static List<TRelationshipTemplate> getIncomingRelationshipTemplates(TTopologyTemplate topologyTemplate, TNodeTemplate nodeTemplate) {
+		Objects.requireNonNull(topologyTemplate);
+		Objects.requireNonNull(nodeTemplate);
+
+		return topologyTemplate.getNodeTemplateOrRelationshipTemplate()
+				.stream()
+				.filter(x -> x instanceof TRelationshipTemplate)
+				.map(TRelationshipTemplate.class::cast)
+				.filter(rt -> rt.getTargetElement().getRef().equals(nodeTemplate))
+				.collect(Collectors.toList());
+	}
+
+	/**
+	 * @return outgoing relation ship templates <em>pointing to node templates</em>
+	 */
+	public static List<TRelationshipTemplate> getOutgoingRelationshipTemplates(TTopologyTemplate topologyTemplate, TNodeTemplate nodeTemplate) {
+		Objects.requireNonNull(topologyTemplate);
+		Objects.requireNonNull(nodeTemplate);
+
+		return topologyTemplate.getNodeTemplateOrRelationshipTemplate()
+				.stream()
+				.filter(x -> x instanceof TRelationshipTemplate)
+				.map(TRelationshipTemplate.class::cast)
+				.filter(rt -> rt.getSourceElement().getRef().equals(nodeTemplate))
+				.collect(Collectors.toList());
+	}
+
 }
