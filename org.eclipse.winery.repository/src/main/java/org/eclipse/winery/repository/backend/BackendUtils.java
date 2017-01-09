@@ -12,39 +12,7 @@
  *******************************************************************************/
 package org.eclipse.winery.repository.backend;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.net.URI;
-import java.nio.file.attribute.FileTime;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.SortedSet;
-
-import javax.naming.NameParser;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.ResponseBuilder;
-import javax.ws.rs.core.Response.Status;
-import javax.xml.XMLConstants;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.namespace.QName;
-
+import com.sun.jersey.core.header.ContentDisposition;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
@@ -105,7 +73,38 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.ls.LSInput;
 
-import com.sun.jersey.core.header.ContentDisposition;
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
+import javax.ws.rs.core.Response.Status;
+import javax.xml.XMLConstants;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.util.JAXBSource;
+import javax.xml.namespace.QName;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.net.URI;
+import java.nio.file.attribute.FileTime;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.SortedSet;
 
 /**
  * Contains generic utility functions for the Backend
@@ -696,6 +695,20 @@ public class BackendUtils {
 		defs.setId(id);
 		
 		return defs;
+	}
+
+	/**
+	 * Copy based on http://stackoverflow.com/a/3899882
+	 */
+	public static <T extends TExtensibleElements> T clone(T element) {
+		try {
+			JAXBContext sourceJAXBContext = JAXBSupport.context.newInstance(element.getClass());
+			JAXBContext targetJAXBContext = JAXBSupport.context.newInstance(element.getClass());
+			return (T) targetJAXBContext.createUnmarshaller().unmarshal(new JAXBSource(sourceJAXBContext, element));
+		} catch (JAXBException e) {
+			logger.error("Cannot clone object", e);
+			return null;
+		}
 	}
 	
 	/**
