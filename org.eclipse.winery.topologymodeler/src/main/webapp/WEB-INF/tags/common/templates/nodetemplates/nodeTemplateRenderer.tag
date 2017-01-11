@@ -54,7 +54,7 @@
 <%@tag import="org.eclipse.winery.model.tosca.TRequirement"%>
 <%@tag import="org.apache.commons.lang3.StringUtils"%>
 
-<%@taglib prefix="nt"    tagdir="/WEB-INF/tags/common/templates/nodetemplates" %>
+<%@taglib prefix="nt" tagdir="/WEB-INF/tags/common/templates/nodetemplates" %>
 <%@taglib prefix="ntrq"  tagdir="/WEB-INF/tags/common/templates/nodetemplates/reqscaps" %>
 <%@taglib prefix="pol"   tagdir="/WEB-INF/tags/common/policies" %>
 <%@taglib prefix="props" tagdir="/WEB-INF/tags/common/templates" %>
@@ -135,6 +135,15 @@
 		<%
 			}
 		%>
+		</div>
+
+		<div class="targetLocationContainer">
+			<div class="header">
+				Location
+			</div>
+			<div class="content">
+				<a class="thetargetlocation" href="#" data-type="text" data-title="Enter the target location">TEST</a>
+			</div>
 		</div>
 
 		<%-- Properties --%>

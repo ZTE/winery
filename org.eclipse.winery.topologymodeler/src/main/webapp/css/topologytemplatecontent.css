@@ -114,6 +114,18 @@ a.KVPropertyValue {
 	text-overflow: ellipsis;
 }
 
+div.NodeTemplateShape > div.targetLocationContainer {
+	border: 1px solid #aeaeae;
+	background: #ffffff;
+	margin: 7px;
+	width: 198px;
+	border-radius: 7px;
+	padding: 5px;
+	float: left;
+	overflow-x: hidden;
+	/*display: none;*/
+}
+
 div.NodeTemplateShape > div.deploymentArtifactsContainer {
 	border: 1px solid #aeaeae;
 	background: #ffffff;
