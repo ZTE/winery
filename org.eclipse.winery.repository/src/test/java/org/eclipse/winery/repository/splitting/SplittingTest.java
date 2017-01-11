@@ -97,7 +97,7 @@ public class SplittingTest {
 				.findAny()
 				.get();
 
-		Optional<String> location = ModelUtilities.getTarget(nt1);
+		Optional<String> location = ModelUtilities.getTargetLabel(nt1);
 		assertEquals(Optional.of("l1"), location);
 	}
 
