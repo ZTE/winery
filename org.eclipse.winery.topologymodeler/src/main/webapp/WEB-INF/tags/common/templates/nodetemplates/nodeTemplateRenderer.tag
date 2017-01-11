@@ -139,10 +139,10 @@
 
 		<div class="targetLocationContainer">
 			<div class="header">
-				Location
+				Target Location
 			</div>
 			<div class="content">
-				<a class="thetargetlocation" href="#" data-type="text" data-title="Enter the target location">TEST</a>
+				<a class="thetargetlocation" href="#" data-type="text" data-title="Enter the target location"><%=ModelUtilities.getTargetLabel(nodeTemplate).orElse("")%></a>
 			</div>
 		</div>
 

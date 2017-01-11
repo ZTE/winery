@@ -439,11 +439,12 @@ Collection<QNameWithName> artifactTemplateList = client.getListOfAllInstances(Ar
 
 		<button data-toggle="button" class="btn btn-default" onclick="togglePrintView(!$(this).hasClass('active'));">Print View</button>
 
+		<button class="btn btn-default" onclick="winery.events.fire(winery.events.name.command.SPLIT);" id="splitBtn" data-loading-text="Splitting...">Split</button>
+
 		<div class="btn-group">
 			<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Other <span class="caret"></span></button>
 
 			<ul class="dropdown-menu" role="menu">
-				<li><a href="#" onclick="winery.events.fire(winery.events.name.command.SPLIT);" id="splitBtn" data-loading-text="Splitting...">Split</a></li>
 				<li><a href="#" onclick="completeTopology();">Complete Topology</a></li>
 				<li><a id="exportCSARbtn" href="<%=topologyTemplateURL%>../?csar" target="_blank">Export CSAR</a></li>
 				<li><a href="#" onclick="showAbout();">about</a></li>
@@ -1336,6 +1337,11 @@ Collection<QNameWithName> artifactTemplateList = client.getListOfAllInstances(Ar
 // Initialize skeletton editor
 // A clone also clones the editing functionality
 $(".skelettonPropertyEditorForRelationshipTemplate").find(".KVPropertyValue").editable();
+</script>
+
+<script>
+	// initialize location editing
+	$(".thetargetlocation").editable();
 </script>
 
 <script>

@@ -126,6 +126,9 @@ div.NodeTemplateShape > div.targetLocationContainer {
 	/*display: none;*/
 }
 
+div.NodeTemplateShape > div.targetLocationContainer > div.content > .thetargetlocation {
+}
+
 div.NodeTemplateShape > div.deploymentArtifactsContainer {
 	border: 1px solid #aeaeae;
 	background: #ffffff;
