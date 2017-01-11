@@ -12,8 +12,18 @@
 
 package org.eclipse.winery.repository.splitting;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import org.eclipse.winery.common.ModelUtilities;
 import org.eclipse.winery.common.ids.definitions.ServiceTemplateId;
+import org.eclipse.winery.model.tosca.TCapability;
 import org.eclipse.winery.model.tosca.TNodeTemplate;
 import org.eclipse.winery.model.tosca.TRelationshipTemplate;
 import org.eclipse.winery.model.tosca.TTopologyTemplate;
@@ -22,11 +32,18 @@ import org.eclipse.winery.repository.backend.Repository;
 import org.eclipse.winery.repository.resources.AbstractComponentsResource;
 import org.eclipse.winery.repository.resources.servicetemplates.ServiceTemplateResource;
 
-import java.io.IOException;
-import java.util.*;
-import java.util.stream.Collectors;
-
 public class Splitting {
+
+	private final TCapability HOSTED_ON_CAPABILITY;
+
+	public Splitting() {
+		HOSTED_ON_CAPABILITY = new TCapability();
+		//HOSTED_ON_CAPABILITY.setType();
+	}
+
+	public Object test() {
+		return ProviderRepository.INSTANCE.getAllNodeTemplatesForLocationAndOfferingCapability("IAASVSphere", HOSTED_ON_CAPABILITY);
+	}
 
 	/**
 	 * Splits the topology template of the given service template.
@@ -52,7 +69,7 @@ public class Splitting {
 	 *
 	 * The method checks if a topology template is valid. The topology is valid if all successor nodes which are
 	 * connected by hostedOn relationships have no other target assigned
-	 * 
+	 *
 	 * @param topologyTemplate the topology template which should be checked
 	 * @return true if the topology template is valid
 	 */
@@ -63,7 +80,7 @@ public class Splitting {
 		for (TNodeTemplate node : transitiveAndDirectSuccessors.keySet()) {
 			if (!transitiveAndDirectSuccessors.get(node).isEmpty()){
 				for (TNodeTemplate successor : transitiveAndDirectSuccessors.get(node) ){
-								
+
 					if (ModelUtilities.getTargetLabel(successor).get() == null){
 						if (!ModelUtilities.getTargetLabel(node).equals(ModelUtilities.getTargetLabel(successor))) {
 							System.out.println(node.getName() + "Target: " + ModelUtilities.getTargetLabel(node));
@@ -71,20 +88,20 @@ public class Splitting {
 							return false;
 						}
 					}
-					
+
 				}
-					
+
 			}
-			
+
 		}
 		return true;
-		
+
 		/*return transitiveAndDirectSuccessors.entrySet()
 				.stream()
 				.anyMatch(x -> x.getValue().stream()
-						.anyMatch(y -> !ModelUtilities.getTargetLabel(y).equals(null) 
+						.anyMatch(y -> !ModelUtilities.getTargetLabel(y).equals(null)
 								&& !ModelUtilities.getTargetLabel(y).equals(ModelUtilities.getTargetLabel(x.getKey()))));*/
-		
+
 		//TODO iterrieren über Hasmap und dann für jede Node prüfen (key) die Menge an Nachfolgern prüfen (value) ob da eine Node dabei ist, die ein anderes Target hat
 	}
 
@@ -92,15 +109,15 @@ public class Splitting {
 	 * The method splits a topology template according to the attached target labels. The target labels attached to
 	 * nodes determine at which target the nodes should be deployed.
 	 * The result is a topology template containing for each target the required nodes.
-	 * 
+	 *
 	 * @param topologyTemplate the topology template which should be split
 	 * @return split topologyTemplate
 	 */
 	public TTopologyTemplate split(TTopologyTemplate topologyTemplate) {
 		TTopologyTemplate topologyTemplateCopy = BackendUtils.clone(topologyTemplate);
-	
+
 		HashSet<TNodeTemplate> nodeTemplatesWhichPredecessorsHasNoPredecessors = new HashSet<>(getNodeTemplatesWhichPredecessorsHasNoPredecessors(topologyTemplateCopy));
-		
+
 		while (!nodeTemplatesWhichPredecessorsHasNoPredecessors.isEmpty()){
 			for (TNodeTemplate node: nodeTemplatesWhichPredecessorsHasNoPredecessors){
 				List<TNodeTemplate> predecessors = getPredecessorsOfNodeTemplate(topologyTemplateCopy, node);
@@ -111,10 +128,10 @@ public class Splitting {
 				if (precedessorsTargetLabel.size() == 1){
 					ModelUtilities.setTargetLabel(node, precedessorsTargetLabel.iterator().next());
 				} else {
-					
+
 					List<TRelationshipTemplate> incomingRelationships = ModelUtilities.getIncomingRelationshipTemplates(topologyTemplateCopy, node);
 					List<TRelationshipTemplate> outgoingRelationships = ModelUtilities.getOutgoingRelationshipTemplates(topologyTemplateCopy, node);
-					
+
 					for (String targetLabel: precedessorsTargetLabel) {
 						TNodeTemplate newNode = BackendUtils.clone(node);
 						newNode.setId(node.getId() + "-" + targetLabel);
@@ -122,31 +139,31 @@ public class Splitting {
 						topologyTemplate.getNodeTemplateOrRelationshipTemplate().add(newNode);
 						topologyTemplateCopy.getNodeTemplateOrRelationshipTemplate().add(newNode);
 						ModelUtilities.setTargetLabel(newNode, targetLabel);
-											
+
 						for (TRelationshipTemplate outgoingRelationship : outgoingRelationships) {
 							TRelationshipTemplate newOutgoingRelationship = BackendUtils.clone(outgoingRelationship);
 							newOutgoingRelationship.getSourceElement().setRef(newNode);
 							newOutgoingRelationship.setId(outgoingRelationship.getId() + "-" + targetLabel);
 							newOutgoingRelationship.setName(outgoingRelationship.getName() + "-" + targetLabel);
-							
+
 							topologyTemplate.getNodeTemplateOrRelationshipTemplate().add(newOutgoingRelationship);
 							topologyTemplateCopy.getNodeTemplateOrRelationshipTemplate().add(newOutgoingRelationship);
 						}
 
 						for (TRelationshipTemplate incomingRelationship : incomingRelationships) {
-							
+
 							Object ref = incomingRelationship.getSourceElement().getRef();
-							
-							if (ref instanceof TNodeTemplate 
+
+							if (ref instanceof TNodeTemplate
 									&& ((ModelUtilities.getTargetLabel((TNodeTemplate) ref).equals(ModelUtilities.getTargetLabel(newNode))
 									&& incomingRelationship.getType().getLocalPart().toLowerCase().contains("hostedon"))
 									|| !predecessors.contains((TNodeTemplate) ref))) {
-								
+
 								TRelationshipTemplate newIncomingRelationship = BackendUtils.clone(incomingRelationship);
 								newIncomingRelationship.getTargetElement().setRef(newNode);
 								newIncomingRelationship.setId(incomingRelationship.getId() + "-" + targetLabel);
 								newIncomingRelationship.setName(incomingRelationship.getName() + "-" + targetLabel);
-								
+
 								topologyTemplate.getNodeTemplateOrRelationshipTemplate().add(newIncomingRelationship);
 								topologyTemplateCopy.getNodeTemplateOrRelationshipTemplate().add(newIncomingRelationship);
 							}
@@ -160,7 +177,7 @@ public class Splitting {
 					topologyTemplateCopy.getNodeTemplateOrRelationshipTemplate().removeAll(outgoingRelationships);
 					topologyTemplateCopy.getNodeTemplateOrRelationshipTemplate().removeAll(incomingRelationships);
 				}
-				
+
 				topologyTemplateCopy.getNodeTemplateOrRelationshipTemplate().removeAll(predecessors);
 				List<TRelationshipTemplate> removingRelationships = ModelUtilities.getAllRelationshipTemplates(topologyTemplateCopy)
 						.stream()
@@ -169,14 +186,14 @@ public class Splitting {
 				topologyTemplateCopy.getNodeTemplateOrRelationshipTemplate().removeAll(removingRelationships);
 			}
 			nodeTemplatesWhichPredecessorsHasNoPredecessors.addAll(getNodeTemplatesWhichPredecessorsHasNoPredecessors(topologyTemplateCopy));
-			
+
 		}
 
 		return topologyTemplate;
 	}
 
 	/**
-	 * 
+	 *
 	 * @param topologyTemplate
 	 * @return
 	 */
@@ -189,7 +206,7 @@ public class Splitting {
 	//Hier muss noch gefiltert werden über die hostedOn beziehungen - es sollen nur die Vorgänger zurückgegeben werden, die eine hostedOn Beziehung zu der Node haben
 
 	/**
-	 * 
+	 *
 	 * @param topologyTemplate
 	 * @param nodeTemplate
 	 * @return
@@ -205,7 +222,7 @@ public class Splitting {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param topologyTemplate
 	 * @return
 	 */
@@ -227,7 +244,7 @@ public class Splitting {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param topologyTemplate
 	 * @param nodeTemplate
 	 * @return list of successors of the node template. A successor is a node Templates which is the target of a hostedOn Relationship from the node
@@ -235,7 +252,7 @@ public class Splitting {
 	protected List<TNodeTemplate> getSuccessorsOfNodeTemplate(TTopologyTemplate topologyTemplate, TNodeTemplate nodeTemplate) {
 		List<TNodeTemplate> successorNodeTemplates = new ArrayList<>();
 		for (TRelationshipTemplate relationshipTemplate: ModelUtilities.getOutgoingRelationshipTemplates(topologyTemplate, nodeTemplate)){
-			if (relationshipTemplate.getSourceElement().getRef() instanceof TNodeTemplate 
+			if (relationshipTemplate.getSourceElement().getRef() instanceof TNodeTemplate
 					&& relationshipTemplate.getType().getLocalPart().toLowerCase().contains("hostedon")){
 				successorNodeTemplates.add((TNodeTemplate) relationshipTemplate.getTargetElement().getRef());
 			}
@@ -246,11 +263,11 @@ public class Splitting {
 	private Map<TNodeTemplate, Set<TNodeTemplate>> initDirectSuccessors = new HashMap<>();
 	private Map<TNodeTemplate, Boolean> visitedNodeTemplates = new HashMap<>();
 	private Map<TNodeTemplate, Set<TNodeTemplate>> transitiveAndDirectSuccessors = new HashMap<>();
-	
+
 	protected Map<TNodeTemplate, Set<TNodeTemplate>> computeTransitiveClosure (TTopologyTemplate topologyTemplate) {
 		List<TNodeTemplate> nodeTemplates = new ArrayList<>(ModelUtilities.getAllNodeTemplates(topologyTemplate));
-		
-		
+
+
 		for (TNodeTemplate node : nodeTemplates) {
 			initDirectSuccessors.put(node, new HashSet<>(getSuccessorsOfNodeTemplate(topologyTemplate, node)));
 			visitedNodeTemplates.put(node, false);
@@ -261,13 +278,13 @@ public class Splitting {
 				computeNodeForTransitiveClosure(node);
 			}
 		}
-		
-		
+
+
 		return transitiveAndDirectSuccessors;
 	}
 
 	/**
-	 * 
+	 *
 	 * @param nodeTemplate
 	 * @return
 	 */

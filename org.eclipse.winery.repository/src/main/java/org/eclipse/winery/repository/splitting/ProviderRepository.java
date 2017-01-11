@@ -14,15 +14,36 @@ package org.eclipse.winery.repository.splitting;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import javax.xml.namespace.QName;
+
+import org.eclipse.winery.model.tosca.TCapability;
 import org.eclipse.winery.model.tosca.TNodeTemplate;
+import org.eclipse.winery.repository.backend.query.Query;
 
 public class ProviderRepository {
 
 	public static final ProviderRepository INSTANCE = new ProviderRepository();
 
-	public List<TNodeTemplate> getCompatibleNodeTemplates(String targetLocation) {
+	/**
+	 * @return All node templates available for the given targetLocation
+	 */
+	public List<TNodeTemplate> getAllNodeTemplatesForLocation(String targetLocation) {
 		return Collections.emptyList();
+	}
+
+	/**
+	 * @return All node templates available for the given targetLocation
+	 */
+	public List<TNodeTemplate> getAllNodeTemplatesForLocationAndOfferingCapability(String targetLocation, TCapability capability) {
+		List<TNodeTemplate> allNodeTemplatesForLocation = this.getAllNodeTemplatesForLocation(targetLocation);
+		List<QName> allNodeTypesOfferingCapability = Query.INSTANCE.getAllNodeTypesOfferingCapability(capability)
+				.stream()
+				.map(t -> new QName(t.getTargetNamespace(), t.getName()) )
+				.collect(Collectors.toList());
+		List<TNodeTemplate> result = allNodeTemplatesForLocation.stream().filter(nt -> allNodeTypesOfferingCapability.contains(nt.getType())).collect(Collectors.toList());
+		return result;
 	}
 
 }
