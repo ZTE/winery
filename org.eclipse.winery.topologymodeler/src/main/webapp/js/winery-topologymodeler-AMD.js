@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2015 University of Stuttgart.
+ * Copyright (c) 2012-2017 University of Stuttgart.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * and the Apache License 2.0 which both accompany this distribution,
@@ -25,6 +25,7 @@ define(
 
 		var module = {
 			save: save,
+			split: split,
 			setTopologyTemplateURL: function(url) {
 				topologyTemplateURL = url;
 			},
@@ -72,6 +73,26 @@ define(
 				error: function(jqXHR, textStatus, errorThrown) {
 					$("#saveBtn").button('reset');
 					vShowAJAXError("Could not save", jqXHR, errorThrown);
+				}
+			});
+		}
+
+		/**
+		 * "doSplit"
+		 */
+		function split() {
+			$("#splitBtn").button('loading');
+
+			$.ajax({
+				url: topologyTemplateURL,
+				type: "POST",
+				success: function(data, textStatus, jqXHR) {
+					$("#splitBtn").button('reset');
+					vShowSuccess("successfully split.");
+				},
+				error: function(jqXHR, textStatus, errorThrown) {
+					$("#splitBtn").button('reset');
+					vShowAJAXError("Could not split", jqXHR, errorThrown);
 				}
 			});
 		}

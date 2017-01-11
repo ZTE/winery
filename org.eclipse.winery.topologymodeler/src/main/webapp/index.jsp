@@ -1,6 +1,6 @@
 <%--
 /*******************************************************************************
- * Copyright (c) 2012-2013 University of Stuttgart.
+ * Copyright (c) 2012-2017 University of Stuttgart.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * and the Apache License 2.0 which both accompany this distribution,
@@ -443,6 +443,7 @@ Collection<QNameWithName> artifactTemplateList = client.getListOfAllInstances(Ar
 			<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Other <span class="caret"></span></button>
 
 			<ul class="dropdown-menu" role="menu">
+				<li><a href="#" onclick="winery.events.fire(winery.events.name.command.SPLIT);" id="splitBtn" data-loading-text="Splitting...">Split</a></li>
 				<li><a href="#" onclick="completeTopology();">Complete Topology</a></li>
 				<li><a id="exportCSARbtn" href="<%=topologyTemplateURL%>../?csar" target="_blank">Export CSAR</a></li>
 				<li><a href="#" onclick="showAbout();">about</a></li>
@@ -637,10 +638,11 @@ Collection<QNameWithName> artifactTemplateList = client.getListOfAllInstances(Ar
 
 </script>
 <script>
-require(["winery-topologymodeler-AMD"], function(wt) {
-	winery.events.register(winery.events.name.command.SAVE, wt.save);
-	wt.setTopologyTemplateURL("<%=topologyTemplateURL%>");
-});
+	require(["winery-topologymodeler-AMD"], function(wt) {
+		winery.events.register(winery.events.name.command.SAVE, wt.save);
+		winery.events.register(winery.events.name.command.SPLIT, wt.split);
+		wt.setTopologyTemplateURL("<%=topologyTemplateURL%>");
+	});
 </script>
 <script>
 
