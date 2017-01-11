@@ -647,7 +647,9 @@ public class ModelUtilities {
 	}
 
 	public static Optional<String> getTarget(TNodeTemplate nodeTemplate) {
-		Objects.requireNonNull(nodeTemplate);
+		if (nodeTemplate == null) {
+			return Optional.empty();
+		}
 		Map<QName, String> otherAttributes = nodeTemplate.getOtherAttributes();
 		String location = otherAttributes.get(QNAME_LOCATION);
 		return Optional.ofNullable(location);
