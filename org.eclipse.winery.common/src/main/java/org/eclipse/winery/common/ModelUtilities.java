@@ -646,7 +646,7 @@ public class ModelUtilities {
 		return relationshipTemplate;
 	}
 
-	public static Optional<String> getTarget(TNodeTemplate nodeTemplate) {
+	public static Optional<String> getTargetLabel(TNodeTemplate nodeTemplate) {
 		if (nodeTemplate == null) {
 			return Optional.empty();
 		}
@@ -655,11 +655,11 @@ public class ModelUtilities {
 		return Optional.ofNullable(location);
 	}
 
-	public static void setTarget(TNodeTemplate nodeTemplate, String target) {
+	public static void setTargetLabel(TNodeTemplate nodeTemplate, String targetLabel) {
 		Objects.requireNonNull(nodeTemplate);
-		Objects.requireNonNull(target);
+		Objects.requireNonNull(targetLabel);
 		Map<QName, String> otherAttributes = nodeTemplate.getOtherAttributes();
-		otherAttributes.put(QNAME_LOCATION, target);
+		otherAttributes.put(QNAME_LOCATION, targetLabel);
 	}
 
 	/**
@@ -669,10 +669,8 @@ public class ModelUtilities {
 		Objects.requireNonNull(topologyTemplate);
 		Objects.requireNonNull(nodeTemplate);
 
-		return topologyTemplate.getNodeTemplateOrRelationshipTemplate()
+		return getAllRelationshipTemplates(topologyTemplate)
 				.stream()
-				.filter(x -> x instanceof TRelationshipTemplate)
-				.map(TRelationshipTemplate.class::cast)
 				.filter(rt -> rt.getTargetElement().getRef().equals(nodeTemplate))
 				.collect(Collectors.toList());
 	}
@@ -684,11 +682,39 @@ public class ModelUtilities {
 		Objects.requireNonNull(topologyTemplate);
 		Objects.requireNonNull(nodeTemplate);
 
+		return getAllRelationshipTemplates(topologyTemplate)
+				.stream()
+				.filter(rt -> rt.getSourceElement().getRef().equals(nodeTemplate))
+				.collect(Collectors.toList());
+	}
+
+	/**
+	 *
+	 * @param topologyTemplate
+	 * @return all nodes templates of the topologyTemplate
+	 */
+	public static List<TNodeTemplate> getAllNodeTemplates (TTopologyTemplate topologyTemplate){
+		Objects.requireNonNull(topologyTemplate);
+
+		return topologyTemplate.getNodeTemplateOrRelationshipTemplate()
+				.stream()
+				.filter(x -> x instanceof TNodeTemplate)
+				.map(TNodeTemplate.class::cast)
+				.collect(Collectors.toList());
+	}
+
+	/**
+	 *
+	 * @param topologyTemplate
+	 * @return all relationship templates of the topologyTemplate
+	 */
+	public static List<TRelationshipTemplate> getAllRelationshipTemplates (TTopologyTemplate topologyTemplate){
+		Objects.requireNonNull(topologyTemplate);
+
 		return topologyTemplate.getNodeTemplateOrRelationshipTemplate()
 				.stream()
 				.filter(x -> x instanceof TRelationshipTemplate)
 				.map(TRelationshipTemplate.class::cast)
-				.filter(rt -> rt.getSourceElement().getRef().equals(nodeTemplate))
 				.collect(Collectors.toList());
 	}
 

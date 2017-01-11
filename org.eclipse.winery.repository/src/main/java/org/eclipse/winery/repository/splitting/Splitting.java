@@ -12,20 +12,19 @@
 
 package org.eclipse.winery.repository.splitting;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.eclipse.winery.common.ModelUtilities;
 import org.eclipse.winery.common.ids.definitions.ServiceTemplateId;
 import org.eclipse.winery.model.tosca.TNodeTemplate;
 import org.eclipse.winery.model.tosca.TRelationshipTemplate;
 import org.eclipse.winery.model.tosca.TTopologyTemplate;
+import org.eclipse.winery.repository.backend.BackendUtils;
 import org.eclipse.winery.repository.backend.Repository;
 import org.eclipse.winery.repository.resources.AbstractComponentsResource;
 import org.eclipse.winery.repository.resources.servicetemplates.ServiceTemplateResource;
+
+import java.io.IOException;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class Splitting {
 
@@ -49,11 +48,44 @@ public class Splitting {
 		return newServiceTemplateId;
 	}
 
-	/**
-	 * stub - will be replaced by split2
+    /*
+	 *
+	 * The method checks if a topology template is valid. The topology is valid if all successor nodes which are
+	 * connected by hostedOn relationships have no other target assigned
+	 * 
+	 * @param topologyTemplate the topology template which should be checked
+	 * @return true if the topology template is valid
 	 */
-	public TTopologyTemplate split(TTopologyTemplate topologyTemplate) {
-		return topologyTemplate;
+	public boolean checkValidTopology (TTopologyTemplate topologyTemplate){
+		Map<TNodeTemplate, Set<TNodeTemplate>> transitiveAndDirectSuccessors = new HashMap<>();
+		transitiveAndDirectSuccessors = computeTransitiveClosure(topologyTemplate);
+
+		for (TNodeTemplate node : transitiveAndDirectSuccessors.keySet()) {
+			if (!transitiveAndDirectSuccessors.get(node).isEmpty()){
+				for (TNodeTemplate successor : transitiveAndDirectSuccessors.get(node) ){
+								
+					if (ModelUtilities.getTargetLabel(successor).get() == null){
+						if (!ModelUtilities.getTargetLabel(node).equals(ModelUtilities.getTargetLabel(successor))) {
+							System.out.println(node.getName() + "Target: " + ModelUtilities.getTargetLabel(node));
+							System.out.println(successor.getName() + "Target: " + ModelUtilities.getTargetLabel(successor));
+							return false;
+						}
+					}
+					
+				}
+					
+			}
+			
+		}
+		return true;
+		
+		/*return transitiveAndDirectSuccessors.entrySet()
+				.stream()
+				.anyMatch(x -> x.getValue().stream()
+						.anyMatch(y -> !ModelUtilities.getTargetLabel(y).equals(null) 
+								&& !ModelUtilities.getTargetLabel(y).equals(ModelUtilities.getTargetLabel(x.getKey()))));*/
+		
+		//TODO iterrieren über Hasmap und dann für jede Node prüfen (key) die Menge an Nachfolgern prüfen (value) ob da eine Node dabei ist, die ein anderes Target hat
 	}
 
 	/**
@@ -64,58 +96,60 @@ public class Splitting {
 	 * @param topologyTemplate the topology template which should be split
 	 * @return split topologyTemplate
 	 */
-	public TTopologyTemplate split2(TTopologyTemplate topologyTemplate) {
-		//How to clone an object?
-		TTopologyTemplate topologyTemplateCopy = new TTopologyTemplate();
-		//IST DAS DIE EINZIGE MÖGLICHKEIT ZU KOPIEREN?
-		topologyTemplateCopy.getNodeTemplateOrRelationshipTemplate().addAll(topologyTemplate.getNodeTemplateOrRelationshipTemplate());
+	public TTopologyTemplate split(TTopologyTemplate topologyTemplate) {
+		TTopologyTemplate topologyTemplateCopy = BackendUtils.clone(topologyTemplate);
+	
 		HashSet<TNodeTemplate> nodeTemplatesWhichPredecessorsHasNoPredecessors = new HashSet<>(getNodeTemplatesWhichPredecessorsHasNoPredecessors(topologyTemplateCopy));
 		
 		while (!nodeTemplatesWhichPredecessorsHasNoPredecessors.isEmpty()){
 			for (TNodeTemplate node: nodeTemplatesWhichPredecessorsHasNoPredecessors){
 				List<TNodeTemplate> predecessors = getPredecessorsOfNodeTemplate(topologyTemplateCopy, node);
-				HashSet<String> precedessorsLocations = new HashSet();
+				Set<String> precedessorsTargetLabel = new HashSet();
 				for (TNodeTemplate predecessor: predecessors){
-					//Problerm mit Optional Rückgabewert - muss ich dann ne if empty abfrage vorher machen bevor ich adden kann?
-					// FIXME: compile error: precedessorsLocations.add(ModelUtilities.getTarget(predecessor));
+					precedessorsTargetLabel.add(ModelUtilities.getTargetLabel(predecessor).get());
 				}
-				if (precedessorsLocations.size() == 1){
-					ModelUtilities.setTarget(node, precedessorsLocations.iterator().next());
+				if (precedessorsTargetLabel.size() == 1){
+					ModelUtilities.setTargetLabel(node, precedessorsTargetLabel.iterator().next());
 				} else {
 					
 					List<TRelationshipTemplate> incomingRelationships = ModelUtilities.getIncomingRelationshipTemplates(topologyTemplateCopy, node);
 					List<TRelationshipTemplate> outgoingRelationships = ModelUtilities.getOutgoingRelationshipTemplates(topologyTemplateCopy, node);
 					
-					for (String target: precedessorsLocations) {
-						//How to clone an object?
-						TNodeTemplate newNode = new TNodeTemplate();
-						newNode.setId(node.getId());
+					for (String targetLabel: precedessorsTargetLabel) {
+						TNodeTemplate newNode = BackendUtils.clone(node);
+						newNode.setId(node.getId() + "-" + targetLabel);
+						newNode.setName(node.getName() + "-" + targetLabel);
 						topologyTemplate.getNodeTemplateOrRelationshipTemplate().add(newNode);
 						topologyTemplateCopy.getNodeTemplateOrRelationshipTemplate().add(newNode);
-						ModelUtilities.setTarget(newNode, target);
-
-						//Kann ich irgendwie über den Relationship Type abfragen ob es eine hostedOn oder eine ConnectsTo beziehung ist?
-						//Brauch ich um die richtigen eingehendenKanten zu finden, um nur die umzusetzten auf newNode
-						
+						ModelUtilities.setTargetLabel(newNode, targetLabel);
+											
 						for (TRelationshipTemplate outgoingRelationship : outgoingRelationships) {
-							TRelationshipTemplate newOutgoingRelationship = new TRelationshipTemplate();
-							newOutgoingRelationship.setTargetElement(outgoingRelationship.getTargetElement());
+							TRelationshipTemplate newOutgoingRelationship = BackendUtils.clone(outgoingRelationship);
 							newOutgoingRelationship.getSourceElement().setRef(newNode);
+							newOutgoingRelationship.setId(outgoingRelationship.getId() + "-" + targetLabel);
+							newOutgoingRelationship.setName(outgoingRelationship.getName() + "-" + targetLabel);
+							
 							topologyTemplate.getNodeTemplateOrRelationshipTemplate().add(newOutgoingRelationship);
 							topologyTemplateCopy.getNodeTemplateOrRelationshipTemplate().add(newOutgoingRelationship);
-							//Wie kann ich eine neue Id dafür generieren? Die muss ja eindeutig sein
 						}
 
 						for (TRelationshipTemplate incomingRelationship : incomingRelationships) {
-							if (ModelUtilities.getTarget((TNodeTemplate) incomingRelationship.getSourceElement().getRef()).equals(ModelUtilities.getTarget(newNode))) {
-								TRelationshipTemplate newIncomingRelationship = new TRelationshipTemplate();
-								newIncomingRelationship.setSourceElement(incomingRelationship.getSourceElement());
+							
+							Object ref = incomingRelationship.getSourceElement().getRef();
+							
+							if (ref instanceof TNodeTemplate 
+									&& ((ModelUtilities.getTargetLabel((TNodeTemplate) ref).equals(ModelUtilities.getTargetLabel(newNode))
+									&& incomingRelationship.getType().getLocalPart().toLowerCase().contains("hostedon"))
+									|| !predecessors.contains((TNodeTemplate) ref))) {
+								
+								TRelationshipTemplate newIncomingRelationship = BackendUtils.clone(incomingRelationship);
 								newIncomingRelationship.getTargetElement().setRef(newNode);
+								newIncomingRelationship.setId(incomingRelationship.getId() + "-" + targetLabel);
+								newIncomingRelationship.setName(incomingRelationship.getName() + "-" + targetLabel);
+								
 								topologyTemplate.getNodeTemplateOrRelationshipTemplate().add(newIncomingRelationship);
 								topologyTemplateCopy.getNodeTemplateOrRelationshipTemplate().add(newIncomingRelationship);
 							}
-							//if (ist eine connectsto Beziehung) {...}
-
 						}
 					}
 
@@ -128,11 +162,10 @@ public class Splitting {
 				}
 				
 				topologyTemplateCopy.getNodeTemplateOrRelationshipTemplate().removeAll(predecessors);
-				List<TRelationshipTemplate> removingRelationships = (List<TRelationshipTemplate>) topologyTemplateCopy.getNodeTemplateOrRelationshipTemplate()
+				List<TRelationshipTemplate> removingRelationships = ModelUtilities.getAllRelationshipTemplates(topologyTemplateCopy)
 						.stream()
-						.filter(x -> x instanceof TRelationshipTemplate)
-						.map (TRelationshipTemplate.class::cast)
-						.filter(rt -> predecessors.contains((TNodeTemplate) rt.getSourceElement().getRef()));
+						.filter(rt -> predecessors.contains(rt.getSourceElement().getRef()))
+						.collect(Collectors.toList());
 				topologyTemplateCopy.getNodeTemplateOrRelationshipTemplate().removeAll(removingRelationships);
 			}
 			nodeTemplatesWhichPredecessorsHasNoPredecessors.addAll(getNodeTemplatesWhichPredecessorsHasNoPredecessors(topologyTemplateCopy));
@@ -142,15 +175,25 @@ public class Splitting {
 		return topologyTemplate;
 	}
 
+	/**
+	 * 
+	 * @param topologyTemplate
+	 * @return
+	 */
 	protected List<TNodeTemplate> getNodeTemplatesWithoutIncomingEdges(TTopologyTemplate topologyTemplate) {
-		return topologyTemplate.getNodeTemplateOrRelationshipTemplate()
+		return ModelUtilities.getAllNodeTemplates(topologyTemplate)
                     .stream()
-                    .filter(x -> x instanceof TNodeTemplate)
-                    .map(TNodeTemplate.class::cast)
                     .filter(nt -> ModelUtilities.getIncomingRelationshipTemplates(topologyTemplate, nt).isEmpty())
                     .collect(Collectors.toList());
 	}
-	
+	//Hier muss noch gefiltert werden über die hostedOn beziehungen - es sollen nur die Vorgänger zurückgegeben werden, die eine hostedOn Beziehung zu der Node haben
+
+	/**
+	 * 
+	 * @param topologyTemplate
+	 * @param nodeTemplate
+	 * @return
+	 */
 	protected List<TNodeTemplate> getPredecessorsOfNodeTemplate(TTopologyTemplate topologyTemplate, TNodeTemplate nodeTemplate) {
 		List<TNodeTemplate> predecessorNodeTemplates = new ArrayList<>();
 		for (TRelationshipTemplate relationshipTemplate: ModelUtilities.getIncomingRelationshipTemplates(topologyTemplate, nodeTemplate)){
@@ -161,12 +204,13 @@ public class Splitting {
 		return predecessorNodeTemplates;
 	}
 
+	/**
+	 * 
+	 * @param topologyTemplate
+	 * @return
+	 */
 	protected List<TNodeTemplate> getNodeTemplatesWhichPredecessorsHasNoPredecessors(TTopologyTemplate topologyTemplate) {
-		List<TNodeTemplate> nodeTemplates = topologyTemplate.getNodeTemplateOrRelationshipTemplate()
-				.stream()
-				.filter(x -> x instanceof TNodeTemplate)
-				.map(TNodeTemplate.class::cast)
-				.collect(Collectors.toList());
+		List<TNodeTemplate> nodeTemplates = ModelUtilities.getAllNodeTemplates(topologyTemplate);
 
 		List<TNodeTemplate> predecessors = new ArrayList<>();
 		for (TNodeTemplate nodeTemplate: nodeTemplates){
@@ -182,4 +226,63 @@ public class Splitting {
 				.collect(Collectors.toList());
 	}
 
+	/**
+	 * 
+	 * @param topologyTemplate
+	 * @param nodeTemplate
+	 * @return list of successors of the node template. A successor is a node Templates which is the target of a hostedOn Relationship from the node
+	 */
+	protected List<TNodeTemplate> getSuccessorsOfNodeTemplate(TTopologyTemplate topologyTemplate, TNodeTemplate nodeTemplate) {
+		List<TNodeTemplate> successorNodeTemplates = new ArrayList<>();
+		for (TRelationshipTemplate relationshipTemplate: ModelUtilities.getOutgoingRelationshipTemplates(topologyTemplate, nodeTemplate)){
+			if (relationshipTemplate.getSourceElement().getRef() instanceof TNodeTemplate 
+					&& relationshipTemplate.getType().getLocalPart().toLowerCase().contains("hostedon")){
+				successorNodeTemplates.add((TNodeTemplate) relationshipTemplate.getTargetElement().getRef());
+			}
+		}
+		return successorNodeTemplates;
+	}
+
+	private Map<TNodeTemplate, Set<TNodeTemplate>> initDirectSuccessors = new HashMap<>();
+	private Map<TNodeTemplate, Boolean> visitedNodeTemplates = new HashMap<>();
+	private Map<TNodeTemplate, Set<TNodeTemplate>> transitiveAndDirectSuccessors = new HashMap<>();
+	
+	protected Map<TNodeTemplate, Set<TNodeTemplate>> computeTransitiveClosure (TTopologyTemplate topologyTemplate) {
+		List<TNodeTemplate> nodeTemplates = new ArrayList<>(ModelUtilities.getAllNodeTemplates(topologyTemplate));
+		
+		
+		for (TNodeTemplate node : nodeTemplates) {
+			initDirectSuccessors.put(node, new HashSet<>(getSuccessorsOfNodeTemplate(topologyTemplate, node)));
+			visitedNodeTemplates.put(node, false);
+			transitiveAndDirectSuccessors.put(node, new HashSet<>());
+		}
+		for (TNodeTemplate node: nodeTemplates){
+			if (!visitedNodeTemplates.get(node)){
+				computeNodeForTransitiveClosure(node);
+			}
+		}
+		
+		
+		return transitiveAndDirectSuccessors;
+	}
+
+	/**
+	 * 
+	 * @param nodeTemplate
+	 * @return
+	 */
+	private void computeNodeForTransitiveClosure (TNodeTemplate nodeTemplate){
+		visitedNodeTemplates.put(nodeTemplate, true);
+		Set<TNodeTemplate> successorsToCheck;
+		successorsToCheck = initDirectSuccessors.get(nodeTemplate);
+		successorsToCheck.removeAll(transitiveAndDirectSuccessors.get(nodeTemplate));
+
+		for (TNodeTemplate successorToCheck : successorsToCheck ){
+			if (!visitedNodeTemplates.get(successorToCheck)){
+				computeNodeForTransitiveClosure(successorToCheck);
+			}
+			transitiveAndDirectSuccessors.get(nodeTemplate).add(successorToCheck);
+			transitiveAndDirectSuccessors.get(nodeTemplate).addAll(transitiveAndDirectSuccessors.get(successorToCheck));
+		}
+	}
 }
