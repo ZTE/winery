@@ -197,6 +197,24 @@ public class Splitting {
 		return topologyTemplate;
 	}
 
+	public TTopologyTemplate matching (TTopologyTemplate topologyTemplate){
+		List<TNodeTemplate> matching = new ArrayList<>();
+		matching.clear();
+		List<TNodeTemplate> nodesWithoutHostedOnSuccessors = topologyTemplate.getNodeTemplateOrRelationshipTemplate()
+				.stream()
+				.filter(x -> x instanceof TNodeTemplate)
+				.map(TNodeTemplate.class::cast)
+				.filter(y -> !getNodeTemplatesWithoutIncomingHostedOnRelationships(topologyTemplate).contains(y))
+				.filter(z -> getNodeTemplatesWithoutOutgoingHostedOnRelationships(topologyTemplate).contains(z))
+				.collect(Collectors.toList());
+
+		while (!nodesWithoutHostedOnSuccessors.isEmpty()){
+			//TODO
+		}
+
+		return topologyTemplate;
+	}
+
 	/**
 	 *
 	 * @param topologyTemplate
@@ -209,6 +227,19 @@ public class Splitting {
 				.filter(nt -> getHostedOnPredecessorsOfNodeTemplate(topologyTemplate, nt).isEmpty())
 				.collect(Collectors.toList());
 			}
+
+	/**
+	 *
+	 * @param topologyTemplate
+	 * @return
+	 */
+	protected List<TNodeTemplate> getNodeTemplatesWithoutOutgoingHostedOnRelationships(TTopologyTemplate topologyTemplate) {
+
+		return ModelUtilities.getAllNodeTemplates(topologyTemplate)
+				.stream()
+				.filter(nt -> getHostedOnSuccessorsOfNodeTemplate(topologyTemplate, nt).isEmpty())
+				.collect(Collectors.toList());
+	}
 
 	/**
 	 *
