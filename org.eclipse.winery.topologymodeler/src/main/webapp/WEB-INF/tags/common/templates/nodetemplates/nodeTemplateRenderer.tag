@@ -142,7 +142,7 @@
 				Location
 			</div>
 			<div class="content">
-				<a class="thetargetlocation" href="#" data-type="text" data-title="Enter the target location">TEST</a>
+				<a class="thetargetlocation" href="#" data-type="text" data-title="Enter the target location"><%=ModelUtilities.getTarget(nodeTemplate).orElse("")%></a>
 			</div>
 		</div>
 

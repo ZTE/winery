@@ -1339,6 +1339,11 @@ $(".skelettonPropertyEditorForRelationshipTemplate").find(".KVPropertyValue").ed
 </script>
 
 <script>
+	// initialize location editing
+	$(".thetargetlocation").editable();
+</script>
+
+<script>
 var tmpRelationshipTemplateProperties = {};
 
 function onDoneRegisterConnectionTypesAndConnectNodeTemplates() {
