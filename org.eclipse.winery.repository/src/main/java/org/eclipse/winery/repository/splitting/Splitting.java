@@ -1,28 +1,59 @@
+/*******************************************************************************
+ * Copyright (c) 2017 University of Stuttgart.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * and the Apache License 2.0 which both accompany this distribution,
+ * and are available at http://www.eclipse.org/legal/epl-v10.html
+ * and http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Contributors:
+ *    Karoline Saatkamp, Oliver Kopp - initial API and implementation and/or initial documentation
+ *******************************************************************************/
+
 package org.eclipse.winery.repository.splitting;
 
-import org.eclipse.winery.common.ModelUtilities;
-import org.eclipse.winery.model.tosca.TNodeTemplate;
-import org.eclipse.winery.model.tosca.TRelationshipTemplate;
-import org.eclipse.winery.model.tosca.TTopologyTemplate;
-
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.eclipse.winery.common.ModelUtilities;
+import org.eclipse.winery.common.ids.definitions.ServiceTemplateId;
+import org.eclipse.winery.model.tosca.TNodeTemplate;
+import org.eclipse.winery.model.tosca.TRelationshipTemplate;
+import org.eclipse.winery.model.tosca.TTopologyTemplate;
+import org.eclipse.winery.repository.backend.Repository;
+import org.eclipse.winery.repository.resources.AbstractComponentsResource;
+import org.eclipse.winery.repository.resources.servicetemplates.ServiceTemplateResource;
+
 public class Splitting {
 
 	/**
-	 * @param topologyTemplate the topology template to split. Will be modified during the run
+	 * Splits the topology template of the given service template.
+	 * Creates a new service template with "-split" suffix as id.
+	 * Any existing "-split" service tempate will be deleted.
 	 */
-	public void split(TTopologyTemplate topologyTemplate) {
-		List<TNodeTemplate> nodeTemplatesWithoutIncomingEdges = getNodeTemplatesWithoutIncomingEdges(topologyTemplate);
+	public ServiceTemplateId splitTopologyOfServiceTemplate(ServiceTemplateId id) throws IOException {
+		ServiceTemplateResource serviceTempateResource = (ServiceTemplateResource) AbstractComponentsResource.getComponentInstaceResource(id);
 
-		List<TNodeTemplate> dfsQueue = new ArrayList<>(nodeTemplatesWithoutIncomingEdges);
-		List<TNodeTemplate> visitedNodeTemplates = new ArrayList<>();
-		while (!dfsQueue.isEmpty()) {
-			//TODO
-		}
+		// create wrapper service template
+		ServiceTemplateId newServiceTemplateId = new ServiceTemplateId(id.getNamespace().getDecoded(), id.getXmlId().getDecoded() + "-split", false);
+		Repository.INSTANCE.forceDelete(newServiceTemplateId);
+		Repository.INSTANCE.flagAsExisting(newServiceTemplateId);
+		ServiceTemplateResource newServiceTempateResource = (ServiceTemplateResource) AbstractComponentsResource.getComponentInstaceResource(newServiceTemplateId);
+
+		TTopologyTemplate newTopologyTemplate = serviceTempateResource.getServiceTemplate().getTopologyTemplate();
+		newServiceTempateResource.getServiceTemplate().setTopologyTemplate(newTopologyTemplate);
+		newServiceTempateResource.persist();
+		return newServiceTemplateId;
+	}
+
+	/**
+	 * stub - will be replaced by split2
+	 */
+	public TTopologyTemplate split(TTopologyTemplate topologyTemplate) {
+		return topologyTemplate;
 	}
 
 	/**
@@ -33,7 +64,6 @@ public class Splitting {
 	 * @param topologyTemplate the topology template which should be split
 	 * @return split topologyTemplate
 	 */
-
 	public TTopologyTemplate split2(TTopologyTemplate topologyTemplate) {
 		//How to clone an object?
 		TTopologyTemplate topologyTemplateCopy = new TTopologyTemplate();
@@ -47,7 +77,7 @@ public class Splitting {
 				HashSet<String> precedessorsLocations = new HashSet();
 				for (TNodeTemplate predecessor: predecessors){
 					//Problerm mit Optional Rückgabewert - muss ich dann ne if empty abfrage vorher machen bevor ich adden kann?
-					precedessorsLocations.add(ModelUtilities.getTarget(predecessor));
+					// FIXME: compile error: precedessorsLocations.add(ModelUtilities.getTarget(predecessor));
 				}
 				if (precedessorsLocations.size() == 1){
 					ModelUtilities.setTarget(node, precedessorsLocations.iterator().next());
