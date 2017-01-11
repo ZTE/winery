@@ -2,7 +2,6 @@ package org.eclipse.winery.repository.splitting;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -47,43 +46,10 @@ public class SplittingTest {
 		topologyTemplate2 = res.getServiceTemplate().getTopologyTemplate();
 	}
 
+		
 	@Test
-	public void getNodeTemplatesWithoutIncomingEdges() throws Exception {
-		TTopologyTemplate topologyTemplate = new TTopologyTemplate();
-
-		TNodeTemplate nt1 = new TNodeTemplate();
-		TNodeTemplate nt2 = new TNodeTemplate();
-		TNodeTemplate nt3 = new TNodeTemplate();
-
-		TRelationshipTemplate rt = new TRelationshipTemplate();
-		TRelationshipTemplate.TargetElement targetElement = new TRelationshipTemplate.TargetElement();
-		targetElement.setRef(nt2);
-		rt.setTargetElement(targetElement);
-		TRelationshipTemplate.SourceElement sourceElement = new TRelationshipTemplate.SourceElement();
-		sourceElement.setRef(nt1);
-		rt.setSourceElement(sourceElement);
-
-		TRelationshipTemplate rt2 = new TRelationshipTemplate();
-		TRelationshipTemplate.TargetElement targetElement1 = new TRelationshipTemplate.TargetElement();
-		targetElement1.setRef(nt1);
-		rt2.setTargetElement(targetElement1);
-		TRelationshipTemplate.SourceElement sourceElement1 = new TRelationshipTemplate.SourceElement();
-		sourceElement1.setRef(nt3);
-		rt2.setSourceElement(sourceElement1);
-
-		List<TEntityTemplate> entityTemplates = topologyTemplate.getNodeTemplateOrRelationshipTemplate();
-		entityTemplates.add(nt1);
-		entityTemplates.add(nt2);
-		entityTemplates.add(nt3);
-		entityTemplates.add(rt);
-
-		List<TNodeTemplate> nodeTemplatesWithoutIncomingEdges = splitting.getNodeTemplatesWithoutIncomingEdges(topologyTemplate);
-		assertEquals(Collections.singletonList(nt3), nodeTemplatesWithoutIncomingEdges);
-	}
-	
-	@Test
-	public void st1HasTwoNodeTemplatesWithoutIncomingReltationshipTemplate() throws Exception {
-		List<String> expectedIds = Arrays.asList("NT1", "NT1_3");
+	public void st1HasTwoNodeTemplatesWithoutIncomingHostedOnRelationshipTemplate() throws Exception {
+		List<String> expectedIds = Arrays.asList("NT1", "NT1_2");
 		List<TNodeTemplate> expectedNodeTemplates = topologyTemplate.getNodeTemplateOrRelationshipTemplate().stream()
 				.filter(x -> x instanceof TNodeTemplate)
 				.map(TNodeTemplate.class::cast)
@@ -91,7 +57,7 @@ public class SplittingTest {
 				.collect(Collectors.toList());
 
 
-		List<TNodeTemplate> nodeTemplatesWithoutIncomingEdges = splitting.getNodeTemplatesWithoutIncomingEdges(topologyTemplate);
+		List<TNodeTemplate> nodeTemplatesWithoutIncomingEdges = splitting.getNodeTemplatesWithoutIncomingHostedOnRelationships(topologyTemplate);
 		assertEquals(expectedNodeTemplates, nodeTemplatesWithoutIncomingEdges);
 	}
 
@@ -167,7 +133,7 @@ public class SplittingTest {
 		List<TNodeTemplate> expectedNodes = new ArrayList<>();
 		expectedNodes.add(nt2);
 		
-		assertEquals(expectedNodes, splitting.getSuccessorsOfNodeTemplate(topologyTemplate2, nt1));		
+		assertEquals(expectedNodes, splitting.getHostedOnSuccessorsOfNodeTemplate(topologyTemplate2, nt1));		
 		
 	}
 
@@ -222,7 +188,7 @@ public class SplittingTest {
 				.stream()
 				.filter(x -> x instanceof TNodeTemplate)
 				.map(TNodeTemplate.class::cast)
-				.filter(nt -> nt.getId().equals("NT1_3"))
+				.filter(nt -> nt.getId().equals("NT1_4"))
 				.findAny()
 				.get();
 		ModelUtilities.setTargetLabel(nt2, "2");
@@ -272,6 +238,39 @@ public class SplittingTest {
 		ModelUtilities.setTargetLabel(nt3, "2");
 
 		assertEquals(true, splitting.checkValidTopology(topologyTemplate));
+
+	}
+
+	@Test
+	public void testcheckValidationTopologyForAInValidTopologyWithFirstNodesHasEmptyTargetLabel() throws Exception {
+		TNodeTemplate nt1 = topologyTemplate.getNodeTemplateOrRelationshipTemplate()
+				.stream()
+				.filter(x -> x instanceof TNodeTemplate)
+				.map(TNodeTemplate.class::cast)
+				.filter(nt -> nt.getId().equals("NT1"))
+				.findAny()
+				.get();
+		
+
+		TNodeTemplate nt2 = topologyTemplate.getNodeTemplateOrRelationshipTemplate()
+				.stream()
+				.filter(x -> x instanceof TNodeTemplate)
+				.map(TNodeTemplate.class::cast)
+				.filter(nt -> nt.getId().equals("NT1_3"))
+				.findAny()
+				.get();
+
+
+		TNodeTemplate nt3 = topologyTemplate.getNodeTemplateOrRelationshipTemplate()
+				.stream()
+				.filter(x -> x instanceof TNodeTemplate)
+				.map(TNodeTemplate.class::cast)
+				.filter(nt -> nt.getId().equals("NT1_2"))
+				.findAny()
+				.get();
+		ModelUtilities.setTargetLabel(nt3, "2");
+
+		assertEquals(false, splitting.checkValidTopology(topologyTemplate));
 
 	}
 

@@ -31,7 +31,6 @@ import org.eclipse.winery.repository.backend.BackendUtils;
 import org.eclipse.winery.repository.backend.Repository;
 import org.eclipse.winery.repository.resources.AbstractComponentsResource;
 import org.eclipse.winery.repository.resources.servicetemplates.ServiceTemplateResource;
-
 public class Splitting {
 
 	private final TCapability HOSTED_ON_CAPABILITY;
@@ -77,32 +76,27 @@ public class Splitting {
 		Map<TNodeTemplate, Set<TNodeTemplate>> transitiveAndDirectSuccessors = new HashMap<>();
 		transitiveAndDirectSuccessors = computeTransitiveClosure(topologyTemplate);
 
+		for (TNodeTemplate node : getNodeTemplatesWithoutIncomingHostedOnRelationships(topologyTemplate)){
+			if (!ModelUtilities.getTargetLabel(node).isPresent()){
+				return false;
+			}
+		}
+
 		for (TNodeTemplate node : transitiveAndDirectSuccessors.keySet()) {
 			if (!transitiveAndDirectSuccessors.get(node).isEmpty()){
 				for (TNodeTemplate successor : transitiveAndDirectSuccessors.get(node) ){
 
-					if (ModelUtilities.getTargetLabel(successor).get() == null){
-						if (!ModelUtilities.getTargetLabel(node).equals(ModelUtilities.getTargetLabel(successor))) {
-							System.out.println(node.getName() + "Target: " + ModelUtilities.getTargetLabel(node));
-							System.out.println(successor.getName() + "Target: " + ModelUtilities.getTargetLabel(successor));
+					if (ModelUtilities.getTargetLabel(successor).isPresent()
+						&&!ModelUtilities.getTargetLabel(node).equals(ModelUtilities.getTargetLabel(successor))) {
+
 							return false;
 						}
-					}
+
 
 				}
-
 			}
-
 		}
 		return true;
-
-		/*return transitiveAndDirectSuccessors.entrySet()
-				.stream()
-				.anyMatch(x -> x.getValue().stream()
-						.anyMatch(y -> !ModelUtilities.getTargetLabel(y).equals(null)
-								&& !ModelUtilities.getTargetLabel(y).equals(ModelUtilities.getTargetLabel(x.getKey()))));*/
-
-		//TODO iterrieren über Hasmap und dann für jede Node prüfen (key) die Menge an Nachfolgern prüfen (value) ob da eine Node dabei ist, die ein anderes Target hat
 	}
 
 	/**
@@ -197,13 +191,13 @@ public class Splitting {
 	 * @param topologyTemplate
 	 * @return
 	 */
-	protected List<TNodeTemplate> getNodeTemplatesWithoutIncomingEdges(TTopologyTemplate topologyTemplate) {
+	protected List<TNodeTemplate> getNodeTemplatesWithoutIncomingHostedOnRelationships(TTopologyTemplate topologyTemplate) {
+
 		return ModelUtilities.getAllNodeTemplates(topologyTemplate)
-                    .stream()
-                    .filter(nt -> ModelUtilities.getIncomingRelationshipTemplates(topologyTemplate, nt).isEmpty())
-                    .collect(Collectors.toList());
-	}
-	//Hier muss noch gefiltert werden über die hostedOn beziehungen - es sollen nur die Vorgänger zurückgegeben werden, die eine hostedOn Beziehung zu der Node haben
+				.stream()
+				.filter(nt -> getHostedOnPredecessorsOfNodeTemplate(topologyTemplate, nt).isEmpty())
+				.collect(Collectors.toList());
+			}
 
 	/**
 	 *
@@ -214,9 +208,9 @@ public class Splitting {
 	protected List<TNodeTemplate> getPredecessorsOfNodeTemplate(TTopologyTemplate topologyTemplate, TNodeTemplate nodeTemplate) {
 		List<TNodeTemplate> predecessorNodeTemplates = new ArrayList<>();
 		for (TRelationshipTemplate relationshipTemplate: ModelUtilities.getIncomingRelationshipTemplates(topologyTemplate, nodeTemplate)){
-				if (relationshipTemplate.getSourceElement().getRef() instanceof TNodeTemplate){
-					predecessorNodeTemplates.add((TNodeTemplate) relationshipTemplate.getSourceElement().getRef());
-				}
+			if (relationshipTemplate.getSourceElement().getRef() instanceof TNodeTemplate){
+				predecessorNodeTemplates.add((TNodeTemplate) relationshipTemplate.getSourceElement().getRef());
+			}
 		}
 		return predecessorNodeTemplates;
 	}
@@ -249,15 +243,32 @@ public class Splitting {
 	 * @param nodeTemplate
 	 * @return list of successors of the node template. A successor is a node Templates which is the target of a hostedOn Relationship from the node
 	 */
-	protected List<TNodeTemplate> getSuccessorsOfNodeTemplate(TTopologyTemplate topologyTemplate, TNodeTemplate nodeTemplate) {
+	protected List<TNodeTemplate> getHostedOnSuccessorsOfNodeTemplate(TTopologyTemplate topologyTemplate, TNodeTemplate nodeTemplate) {
 		List<TNodeTemplate> successorNodeTemplates = new ArrayList<>();
 		for (TRelationshipTemplate relationshipTemplate: ModelUtilities.getOutgoingRelationshipTemplates(topologyTemplate, nodeTemplate)){
-			if (relationshipTemplate.getSourceElement().getRef() instanceof TNodeTemplate
+			if (relationshipTemplate.getTargetElement().getRef() instanceof TNodeTemplate
 					&& relationshipTemplate.getType().getLocalPart().toLowerCase().contains("hostedon")){
 				successorNodeTemplates.add((TNodeTemplate) relationshipTemplate.getTargetElement().getRef());
 			}
 		}
 		return successorNodeTemplates;
+	}
+
+	/**
+	 *
+	 * @param topologyTemplate
+	 * @param nodeTemplate
+	 * @return list of predecessors of the node template which has a hostedOn Relationship Template to the nodeTemplate
+	 */
+	protected List<TNodeTemplate> getHostedOnPredecessorsOfNodeTemplate(TTopologyTemplate topologyTemplate, TNodeTemplate nodeTemplate) {
+		List<TNodeTemplate> predecessorNodeTemplates = new ArrayList<>();
+		for (TRelationshipTemplate relationshipTemplate: ModelUtilities.getIncomingRelationshipTemplates(topologyTemplate, nodeTemplate)){
+			if (relationshipTemplate.getSourceElement().getRef() instanceof TNodeTemplate
+					&& relationshipTemplate.getType().getLocalPart().toLowerCase().contains("hostedon")){
+				predecessorNodeTemplates.add((TNodeTemplate) relationshipTemplate.getSourceElement().getRef());
+			}
+		}
+		return predecessorNodeTemplates;
 	}
 
 	private Map<TNodeTemplate, Set<TNodeTemplate>> initDirectSuccessors = new HashMap<>();
@@ -269,7 +280,7 @@ public class Splitting {
 
 
 		for (TNodeTemplate node : nodeTemplates) {
-			initDirectSuccessors.put(node, new HashSet<>(getSuccessorsOfNodeTemplate(topologyTemplate, node)));
+			initDirectSuccessors.put(node, new HashSet<>(getHostedOnSuccessorsOfNodeTemplate(topologyTemplate, node)));
 			visitedNodeTemplates.put(node, false);
 			transitiveAndDirectSuccessors.put(node, new HashSet<>());
 		}

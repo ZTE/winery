@@ -651,10 +651,10 @@ public class ModelUtilities {
 			return Optional.empty();
 		}
 		Map<QName, String> otherAttributes = nodeTemplate.getOtherAttributes();
-		String location = otherAttributes.get(QNAME_LOCATION);
-		return Optional.ofNullable(location);
+		String targetLabel = otherAttributes.get(QNAME_LOCATION);
+		return Optional.ofNullable(targetLabel);
 	}
-
+	
 	public static void setTargetLabel(TNodeTemplate nodeTemplate, String targetLabel) {
 		Objects.requireNonNull(nodeTemplate);
 		Objects.requireNonNull(targetLabel);
