@@ -650,7 +650,7 @@ public class ModelUtilities {
 		Objects.requireNonNull(nodeTemplate);
 		Map<QName, String> otherAttributes = nodeTemplate.getOtherAttributes();
 		String location = otherAttributes.get(QNAME_LOCATION);
-		return Optional.of(location);
+		return Optional.ofNullable(location);
 	}
 
 	public static void setTarget(TNodeTemplate nodeTemplate, String target) {
