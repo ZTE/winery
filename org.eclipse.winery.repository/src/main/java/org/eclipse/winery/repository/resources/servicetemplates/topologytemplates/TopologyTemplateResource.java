@@ -11,12 +11,14 @@
  *******************************************************************************/
 package org.eclipse.winery.repository.resources.servicetemplates.topologytemplates;
 
+import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -40,16 +42,17 @@ import org.eclipse.winery.repository.client.IWineryRepositoryClient;
 import org.eclipse.winery.repository.client.WineryRepositoryClientFactory;
 import org.eclipse.winery.repository.json.TopologyTemplateModule;
 import org.eclipse.winery.repository.resources.servicetemplates.ServiceTemplateResource;
-import org.restdoc.annotations.RestDoc;
-import org.restdoc.annotations.RestDocParam;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.eclipse.winery.repository.splitting.Splitting;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.WebResource.Builder;
 import com.sun.jersey.api.view.Viewable;
+import org.restdoc.annotations.RestDoc;
+import org.restdoc.annotations.RestDocParam;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class TopologyTemplateResource {
 	
@@ -282,5 +285,19 @@ public class TopologyTemplateResource {
 	public Response getComponentInstanceXML() {
 		return Utils.getXML(TTopologyTemplate.class, this.topologyTemplate);
 	}
-	
+
+	@POST
+	@Produces(MediaType.TEXT_PLAIN)
+	public Response split(@Context UriInfo uriInfo) {
+		Splitting splitting = new Splitting();
+		ServiceTemplateId splitServiceTemplateId;
+		try {
+			splitServiceTemplateId = splitting.splitTopologyOfServiceTemplate((ServiceTemplateId) this.serviceTemplateRes.getId());
+		} catch (IOException e) {
+			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Could not store plan. " + e.getMessage()).build();
+		}
+		URI url = uriInfo.getBaseUri().resolve(Utils.getAbsoluteURL(splitServiceTemplateId));
+		return Response.created(url).build();
+	}
+
 }

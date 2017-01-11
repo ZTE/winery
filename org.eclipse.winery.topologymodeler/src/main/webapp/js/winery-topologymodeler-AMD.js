@@ -88,7 +88,8 @@ define(
 				type: "POST",
 				success: function(data, textStatus, jqXHR) {
 					$("#splitBtn").button('reset');
-					vShowSuccess("successfully split.");
+					var location = jqXHR.getResponseHeader('Location');
+					vShowSuccess("Successfully split. <a target=\"_blank\" href=\"" + location + "\">Open split service template</a>");
 				},
 				error: function(jqXHR, textStatus, errorThrown) {
 					$("#splitBtn").button('reset');
