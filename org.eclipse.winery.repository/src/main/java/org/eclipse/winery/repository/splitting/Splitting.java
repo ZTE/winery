@@ -108,26 +108,28 @@ public class Splitting {
 	 * @return split topologyTemplate
 	 */
 	public TTopologyTemplate split(TTopologyTemplate topologyTemplate) {
-		TTopologyTemplate topologyTemplateCopy = BackendUtils.clone(topologyTemplate);
+		TTopologyTemplate topologyTemplateCopy = BackendUtils.cloneTopologyTemplate(topologyTemplate);
 
 		HashSet<TNodeTemplate> nodeTemplatesWhichPredecessorsHasNoPredecessors = new HashSet<>(getNodeTemplatesWhichPredecessorsHasNoPredecessors(topologyTemplateCopy));
 
 		while (!nodeTemplatesWhichPredecessorsHasNoPredecessors.isEmpty()){
+
 			for (TNodeTemplate node: nodeTemplatesWhichPredecessorsHasNoPredecessors){
-				List<TNodeTemplate> predecessors = getPredecessorsOfNodeTemplate(topologyTemplateCopy, node);
-				Set<String> precedessorsTargetLabel = new HashSet();
+				List<TNodeTemplate> predecessors = getHostedOnPredecessorsOfNodeTemplate(topologyTemplateCopy, node);
+
+				Set<String> predecessorsTargetLabel = new HashSet();
 				for (TNodeTemplate predecessor: predecessors){
-					precedessorsTargetLabel.add(ModelUtilities.getTargetLabel(predecessor).get());
+					predecessorsTargetLabel.add(ModelUtilities.getTargetLabel(predecessor).get());
 				}
-				if (precedessorsTargetLabel.size() == 1){
-					ModelUtilities.setTargetLabel(node, precedessorsTargetLabel.iterator().next());
+				if (predecessorsTargetLabel.size() == 1){
+					ModelUtilities.setTargetLabel(node, ModelUtilities.getTargetLabel(predecessors.get(0)).get());
 				} else {
 
 					List<TRelationshipTemplate> incomingRelationships = ModelUtilities.getIncomingRelationshipTemplates(topologyTemplateCopy, node);
 					List<TRelationshipTemplate> outgoingRelationships = ModelUtilities.getOutgoingRelationshipTemplates(topologyTemplateCopy, node);
 
-					for (String targetLabel: precedessorsTargetLabel) {
-						TNodeTemplate newNode = BackendUtils.clone(node);
+					for (String targetLabel: predecessorsTargetLabel) {
+						TNodeTemplate newNode = BackendUtils.cloneNodeTemplate(node);
 						newNode.setId(node.getId() + "-" + targetLabel);
 						newNode.setName(node.getName() + "-" + targetLabel);
 						topologyTemplate.getNodeTemplateOrRelationshipTemplate().add(newNode);
@@ -135,8 +137,10 @@ public class Splitting {
 						ModelUtilities.setTargetLabel(newNode, targetLabel);
 
 						for (TRelationshipTemplate outgoingRelationship : outgoingRelationships) {
-							TRelationshipTemplate newOutgoingRelationship = BackendUtils.clone(outgoingRelationship);
-							newOutgoingRelationship.getSourceElement().setRef(newNode);
+							TRelationshipTemplate newOutgoingRelationship = BackendUtils.cloneRelationshipTemplate(outgoingRelationship);
+							TRelationshipTemplate.SourceElement sourceElementNew = new TRelationshipTemplate.SourceElement();
+							sourceElementNew.setRef(newNode);
+							newOutgoingRelationship.setSourceElement(sourceElementNew);
 							newOutgoingRelationship.setId(outgoingRelationship.getId() + "-" + targetLabel);
 							newOutgoingRelationship.setName(outgoingRelationship.getName() + "-" + targetLabel);
 
@@ -153,16 +157,21 @@ public class Splitting {
 									&& incomingRelationship.getType().getLocalPart().toLowerCase().contains("hostedon"))
 									|| !predecessors.contains((TNodeTemplate) ref))) {
 
-								TRelationshipTemplate newIncomingRelationship = BackendUtils.clone(incomingRelationship);
-								newIncomingRelationship.getTargetElement().setRef(newNode);
+								TRelationshipTemplate newIncomingRelationship = BackendUtils.cloneRelationshipTemplate(incomingRelationship);
+								TRelationshipTemplate.TargetElement targetElementNew = new TRelationshipTemplate.TargetElement();
+								targetElementNew.setRef(newNode);
+								newIncomingRelationship.setTargetElement(targetElementNew);
 								newIncomingRelationship.setId(incomingRelationship.getId() + "-" + targetLabel);
 								newIncomingRelationship.setName(incomingRelationship.getName() + "-" + targetLabel);
 
 								topologyTemplate.getNodeTemplateOrRelationshipTemplate().add(newIncomingRelationship);
 								topologyTemplateCopy.getNodeTemplateOrRelationshipTemplate().add(newIncomingRelationship);
+
 							}
+
 						}
 					}
+
 
 					topologyTemplate.getNodeTemplateOrRelationshipTemplate().remove(node);
 					topologyTemplate.getNodeTemplateOrRelationshipTemplate().removeAll(outgoingRelationships);
@@ -175,12 +184,14 @@ public class Splitting {
 				topologyTemplateCopy.getNodeTemplateOrRelationshipTemplate().removeAll(predecessors);
 				List<TRelationshipTemplate> removingRelationships = ModelUtilities.getAllRelationshipTemplates(topologyTemplateCopy)
 						.stream()
-						.filter(rt -> predecessors.contains(rt.getSourceElement().getRef()))
+						.filter (rt -> rt.getSourceElement().getRef() instanceof TNodeTemplate)
+						.filter(rt -> predecessors.contains((TNodeTemplate) rt.getSourceElement().getRef()))
 						.collect(Collectors.toList());
+
 				topologyTemplateCopy.getNodeTemplateOrRelationshipTemplate().removeAll(removingRelationships);
 			}
+			nodeTemplatesWhichPredecessorsHasNoPredecessors.clear();
 			nodeTemplatesWhichPredecessorsHasNoPredecessors.addAll(getNodeTemplatesWhichPredecessorsHasNoPredecessors(topologyTemplateCopy));
-
 		}
 
 		return topologyTemplate;
@@ -223,18 +234,18 @@ public class Splitting {
 	protected List<TNodeTemplate> getNodeTemplatesWhichPredecessorsHasNoPredecessors(TTopologyTemplate topologyTemplate) {
 		List<TNodeTemplate> nodeTemplates = ModelUtilities.getAllNodeTemplates(topologyTemplate);
 
-		List<TNodeTemplate> predecessors = new ArrayList<>();
+		List<TNodeTemplate> candidates = new ArrayList<>();
 		for (TNodeTemplate nodeTemplate: nodeTemplates){
-			if (getPredecessorsOfNodeTemplate(topologyTemplate, nodeTemplate) != null){
-				for (TNodeTemplate predecessor: getPredecessorsOfNodeTemplate(topologyTemplate, nodeTemplate)){
-					predecessors.add(predecessor);
+			List<TNodeTemplate> allPredecessors = getHostedOnPredecessorsOfNodeTemplate(topologyTemplate, nodeTemplate);
+			if (!allPredecessors.isEmpty()){
+				for (TNodeTemplate predecessor: allPredecessors){
+					if(getHostedOnPredecessorsOfNodeTemplate(topologyTemplate, predecessor).isEmpty()){
+						candidates.add(nodeTemplate);
+					}
 				}
 			}
 		}
-		return predecessors
-				.stream()
-				.filter(x -> getPredecessorsOfNodeTemplate(topologyTemplate, x).isEmpty())
-				.collect(Collectors.toList());
+		return candidates;
 	}
 
 	/**
