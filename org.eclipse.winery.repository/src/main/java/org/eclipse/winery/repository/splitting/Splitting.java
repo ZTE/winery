@@ -209,7 +209,10 @@ public class Splitting {
 				.collect(Collectors.toList());
 
 		while (!nodesWithoutHostedOnSuccessors.isEmpty()){
-			//TODO
+			for (TNodeTemplate replacementCandidate : nodesWithoutHostedOnSuccessors){
+				//TODO
+			}
+
 		}
 
 		return topologyTemplate;

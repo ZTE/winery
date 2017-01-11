@@ -46,7 +46,7 @@ public class SplittingTest {
 		topologyTemplate2 = res.getServiceTemplate().getTopologyTemplate();
 	}
 
-		
+
 	@Test
 	public void st1HasTwoNodeTemplatesWithoutIncomingHostedOnRelationshipTemplate() throws Exception {
 		List<String> expectedIds = Arrays.asList("NT1", "NT1_2");
@@ -93,7 +93,7 @@ public class SplittingTest {
 		TRelationshipTemplate.SourceElement sourceElement = new TRelationshipTemplate.SourceElement();
 		sourceElement.setRef(nt1);
 		rt.setSourceElement(sourceElement);
-		
+
 		TRelationshipTemplate rt2 = new TRelationshipTemplate();
 		TRelationshipTemplate.TargetElement targetElement1 = new TRelationshipTemplate.TargetElement();
 		targetElement1.setRef(nt1);
@@ -129,12 +129,12 @@ public class SplittingTest {
 				.filter(nt -> nt.getId().equals("NT1_3"))
 				.findAny()
 				.get();
-		
+
 		List<TNodeTemplate> expectedNodes = new ArrayList<>();
 		expectedNodes.add(nt2);
-		
-		assertEquals(expectedNodes, splitting.getHostedOnSuccessorsOfNodeTemplate(topologyTemplate2, nt1));		
-		
+
+		assertEquals(expectedNodes, splitting.getHostedOnSuccessorsOfNodeTemplate(topologyTemplate2, nt1));
+
 	}
 
 	@Test
@@ -250,7 +250,7 @@ public class SplittingTest {
 				.filter(nt -> nt.getId().equals("NT1"))
 				.findAny()
 				.get();
-		
+
 
 		TNodeTemplate nt2 = topologyTemplate.getNodeTemplateOrRelationshipTemplate()
 				.stream()
@@ -271,6 +271,41 @@ public class SplittingTest {
 		ModelUtilities.setTargetLabel(nt3, "2");
 
 		assertEquals(false, splitting.checkValidTopology(topologyTemplate));
+
+	}
+
+	@Test
+	public void testgetPredecessorsWhichPredecessorsHasNoPredecessors(){
+		TNodeTemplate nt1 = topologyTemplate.getNodeTemplateOrRelationshipTemplate()
+				.stream()
+				.filter(x -> x instanceof TNodeTemplate)
+				.map(TNodeTemplate.class::cast)
+				.filter(nt -> nt.getId().equals("NT1_3"))
+				.findAny()
+				.get();
+
+		TNodeTemplate nt2 = topologyTemplate.getNodeTemplateOrRelationshipTemplate()
+				.stream()
+				.filter(x -> x instanceof TNodeTemplate)
+				.map(TNodeTemplate.class::cast)
+				.filter(nt -> nt.getId().equals("NT1"))
+				.findAny()
+				.get();
+
+		assertEquals(nt1.getId(), splitting.getNodeTemplatesWhichPredecessorsHasNoPredecessors(topologyTemplate).get(0).getId());
+	}
+
+	@Test
+	public void splitSmallTopology() throws Exception {
+		List<String> expectedIds = Arrays.asList("NT1", "NT1_2", "NT1_3-A", "NT1_3-B", "NT1_4-A", "NT1_4-B", "NT1_5-A", "NT1_5-B", "con37", "con45", "con_91-A-A", "con_57-B-B");
+		List<TEntityTemplate> NodeTemplates = splitting.split(topologyTemplate).getNodeTemplateOrRelationshipTemplate();
+
+		List<String> Ids = new ArrayList<>();
+		for (TEntityTemplate nodeTemplate : NodeTemplates){
+			Ids.add(nodeTemplate.getId());
+		}
+
+		assertEquals(expectedIds, Ids);
 
 	}
 
