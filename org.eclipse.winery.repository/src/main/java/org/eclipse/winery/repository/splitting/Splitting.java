@@ -58,7 +58,7 @@ public class Splitting {
 		Repository.INSTANCE.flagAsExisting(newServiceTemplateId);
 		ServiceTemplateResource newServiceTempateResource = (ServiceTemplateResource) AbstractComponentsResource.getComponentInstaceResource(newServiceTemplateId);
 
-		TTopologyTemplate newTopologyTemplate = serviceTempateResource.getServiceTemplate().getTopologyTemplate();
+		TTopologyTemplate newTopologyTemplate = split(serviceTempateResource.getServiceTemplate().getTopologyTemplate());
 		newServiceTempateResource.getServiceTemplate().setTopologyTemplate(newTopologyTemplate);
 		newServiceTempateResource.persist();
 		return newServiceTemplateId;
