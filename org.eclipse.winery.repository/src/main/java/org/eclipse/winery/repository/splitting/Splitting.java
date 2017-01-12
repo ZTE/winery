@@ -184,8 +184,8 @@ public class Splitting {
 				topologyTemplateCopy.getNodeTemplateOrRelationshipTemplate().removeAll(predecessors);
 				List<TRelationshipTemplate> removingRelationships = ModelUtilities.getAllRelationshipTemplates(topologyTemplateCopy)
 						.stream()
-						.filter (rt -> rt.getSourceElement().getRef() instanceof TNodeTemplate)
-						.filter(rt -> predecessors.contains((TNodeTemplate) rt.getSourceElement().getRef()))
+						.filter (rt -> rt.getSourceElement().getRef() instanceof TNodeTemplate || rt.getTargetElement().getRef() instanceof TNodeTemplate)
+						.filter(rt -> predecessors.contains((TNodeTemplate) rt.getSourceElement().getRef()) || predecessors.contains((TNodeTemplate) rt.getTargetElement().getRef()))
 						.collect(Collectors.toList());
 
 				topologyTemplateCopy.getNodeTemplateOrRelationshipTemplate().removeAll(removingRelationships);
@@ -197,25 +197,48 @@ public class Splitting {
 		return topologyTemplate;
 	}
 
-	public TTopologyTemplate matching (TTopologyTemplate topologyTemplate){
+	public List<TNodeTemplate> matching (TTopologyTemplate topologyTemplate){
 		List<TNodeTemplate> matching = new ArrayList<>();
 		matching.clear();
-		List<TNodeTemplate> nodesWithoutHostedOnSuccessors = topologyTemplate.getNodeTemplateOrRelationshipTemplate()
+		List<TNodeTemplate> replacementNodeTemplateCandidates = getReplacementNodeTemplateCandidatesForMatching(topologyTemplate);
+
+		while (!replacementNodeTemplateCandidates.isEmpty()){
+			for (TNodeTemplate replacementCandidate : replacementNodeTemplateCandidates){
+				List<TNodeTemplate> predecessorsOfReplacementCandidate = getHostedOnPredecessorsOfNodeTemplate(topologyTemplate, replacementCandidate);
+
+			}
+			topologyTemplate.getNodeTemplateOrRelationshipTemplate().removeAll(replacementNodeTemplateCandidates);
+			List<TRelationshipTemplate> removingRelationships = ModelUtilities.getAllRelationshipTemplates(topologyTemplate)
+					.stream()
+					.filter (rt -> rt.getSourceElement().getRef() instanceof TNodeTemplate
+							|| rt.getTargetElement().getRef() instanceof TNodeTemplate)
+					.filter(rt -> replacementNodeTemplateCandidates.contains((TNodeTemplate) rt.getSourceElement().getRef())
+							|| replacementNodeTemplateCandidates.contains((TNodeTemplate) rt.getTargetElement().getRef()))
+					.collect(Collectors.toList());
+
+			topologyTemplate.getNodeTemplateOrRelationshipTemplate().removeAll(removingRelationships);
+			replacementNodeTemplateCandidates.clear();
+			replacementNodeTemplateCandidates.addAll(getReplacementNodeTemplateCandidatesForMatching(topologyTemplate));
+
+		}
+
+		return replacementNodeTemplateCandidates;
+	}
+
+	/**
+	 *
+	 * @param topologyTemplate
+	 * @return
+	 */
+	protected List<TNodeTemplate> getReplacementNodeTemplateCandidatesForMatching(TTopologyTemplate topologyTemplate) {
+
+		return topologyTemplate.getNodeTemplateOrRelationshipTemplate()
 				.stream()
 				.filter(x -> x instanceof TNodeTemplate)
 				.map(TNodeTemplate.class::cast)
 				.filter(y -> !getNodeTemplatesWithoutIncomingHostedOnRelationships(topologyTemplate).contains(y))
 				.filter(z -> getNodeTemplatesWithoutOutgoingHostedOnRelationships(topologyTemplate).contains(z))
 				.collect(Collectors.toList());
-
-		while (!nodesWithoutHostedOnSuccessors.isEmpty()){
-			for (TNodeTemplate replacementCandidate : nodesWithoutHostedOnSuccessors){
-				//TODO
-			}
-
-		}
-
-		return topologyTemplate;
 	}
 
 	/**
@@ -229,7 +252,7 @@ public class Splitting {
 				.stream()
 				.filter(nt -> getHostedOnPredecessorsOfNodeTemplate(topologyTemplate, nt).isEmpty())
 				.collect(Collectors.toList());
-			}
+	}
 
 	/**
 	 *
