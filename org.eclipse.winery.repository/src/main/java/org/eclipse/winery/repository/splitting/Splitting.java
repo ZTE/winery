@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -25,12 +26,14 @@ import org.eclipse.winery.common.ModelUtilities;
 import org.eclipse.winery.common.ids.definitions.ServiceTemplateId;
 import org.eclipse.winery.model.tosca.TCapability;
 import org.eclipse.winery.model.tosca.TNodeTemplate;
+import org.eclipse.winery.model.tosca.TNodeType;
 import org.eclipse.winery.model.tosca.TRelationshipTemplate;
 import org.eclipse.winery.model.tosca.TTopologyTemplate;
 import org.eclipse.winery.repository.backend.BackendUtils;
 import org.eclipse.winery.repository.backend.Repository;
 import org.eclipse.winery.repository.resources.AbstractComponentsResource;
 import org.eclipse.winery.repository.resources.servicetemplates.ServiceTemplateResource;
+
 public class Splitting {
 
 	private final TCapability HOSTED_ON_CAPABILITY;
@@ -202,9 +205,55 @@ public class Splitting {
 		matching.clear();
 		List<TNodeTemplate> replacementNodeTemplateCandidates = getReplacementNodeTemplateCandidatesForMatching(topologyTemplate);
 
+		//Hardcoded NodeTemplates to to replace the old NodeTemplates
+		//Start Testdata
+		TNodeTemplate testnt1 = new TNodeTemplate();
+		TNodeTemplate testnt2 = new TNodeTemplate();
+		TNodeTemplate testnt3 = new TNodeTemplate();
+		testnt1.setId("TestNT1");
+		TNodeType nodeType = new TNodeType();
+		nodeType.setName("NT1");
+		nodeType.setTargetNamespace("http://www.example.org");
+		testnt2.setId("TestNT2");
+		testnt3.setId("TestNT3");
+		List<TNodeTemplate> targetLabelA = new ArrayList<>();
+		targetLabelA.add(testnt1);
+		targetLabelA.add(testnt2);
+		List<TNodeTemplate> targetLabelB = new ArrayList<>();
+		targetLabelB.add(testnt3);
+		//EndTestData
+
 		while (!replacementNodeTemplateCandidates.isEmpty()){
 			for (TNodeTemplate replacementCandidate : replacementNodeTemplateCandidates){
 				List<TNodeTemplate> predecessorsOfReplacementCandidate = getHostedOnPredecessorsOfNodeTemplate(topologyTemplate, replacementCandidate);
+				String targetLocation = ModelUtilities.getTargetLabel(replacementCandidate).orElse(null);
+
+				for (TNodeTemplate predecessor : predecessorsOfReplacementCandidate){
+					TNodeTemplate matchingNodeTemplate = getCompatibleNodeTemplateForMatching(matching, predecessor).orElse(null);
+					//Es wird nur ein Kompatibles NodeTemplate zurückgegeben
+					if (getCompatibleNodeTemplateForMatching(matching, predecessor) != null){
+
+						//Only the incoming Relationships from the currently considered predecessor should be switched
+						ModelUtilities.getIncomingRelationshipTemplates(topologyTemplate, replacementCandidate)
+								.stream()
+								.filter(rt -> rt.getSourceElement().getRef().equals(predecessor))
+								.forEach(rt -> rt.getTargetElement().setRef(matchingNodeTemplate));
+
+						List<TRelationshipTemplate> outgoingRelationshipsOfReplacementCandidate =
+								ModelUtilities.getOutgoingRelationshipTemplates(topologyTemplate, replacementCandidate);
+						for (TRelationshipTemplate outgoingRelationship : outgoingRelationshipsOfReplacementCandidate){
+							TRelationshipTemplate newOutgoingRelationship = BackendUtils.cloneRelationshipTemplate(outgoingRelationship);
+							TRelationshipTemplate.SourceElement sourceElementNew = new TRelationshipTemplate.SourceElement();
+							sourceElementNew.setRef(matchingNodeTemplate);
+							newOutgoingRelationship.setSourceElement(sourceElementNew);
+						}
+					} else {
+						//TODO reicht es nicht eigentlich wenn mir die Methode ein compatibles Node Template zurückgibt
+						//List<TNodeTemplates> compatibleNodes ProviderRepository.getAllNodeTemplatesForLocationAndOfferingCapability(targetLocation, ??)
+
+					}
+
+				}
 
 			}
 			topologyTemplate.getNodeTemplateOrRelationshipTemplate().removeAll(replacementNodeTemplateCandidates);
@@ -223,6 +272,23 @@ public class Splitting {
 		}
 
 		return replacementNodeTemplateCandidates;
+	}
+	//TODO Requirement and Capability Matching -wie setzen wir das um?
+
+	public Optional<TNodeTemplate> getCompatibleNodeTemplateForMatching(List <TNodeTemplate> matchingNodeTemplates, TNodeTemplate currentPredecessor) {
+		if (currentPredecessor == null || matchingNodeTemplates.isEmpty()) {
+			return Optional.empty();
+		}
+		String targetLabel = ModelUtilities.getTargetLabel(currentPredecessor).orElse(null);
+		for (TNodeTemplate matchingNodeTemplate : matchingNodeTemplates){
+			// && matching.getNodesHostedBythisNode().contains(predecessor.getType())
+			if (ModelUtilities.getTargetLabel(matchingNodeTemplate).equals(targetLabel)){
+
+
+				return Optional.ofNullable(matchingNodeTemplate);
+			}
+		}
+		return Optional.empty();
 	}
 
 	/**
