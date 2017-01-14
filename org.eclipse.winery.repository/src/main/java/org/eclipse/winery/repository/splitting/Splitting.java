@@ -42,7 +42,7 @@ public class Splitting {
 	private final TCapability HOSTED_ON_CAPABILITY;
 
 	public Splitting() {
-		HOSTED_ON_CAPABILITY = new TCapability();
+		//HOSTED_ON_CAPABILITY = new TCapability();
 		//HOSTED_ON_CAPABILITY.setType();
 	}
 
