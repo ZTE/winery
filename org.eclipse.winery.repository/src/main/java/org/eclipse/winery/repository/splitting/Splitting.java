@@ -22,33 +22,28 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.xml.namespace.QName;
-
 import org.eclipse.winery.common.ModelUtilities;
-import org.eclipse.winery.common.ids.definitions.RequirementTypeId;
 import org.eclipse.winery.common.ids.definitions.ServiceTemplateId;
-import org.eclipse.winery.model.tosca.TCapability;
 import org.eclipse.winery.model.tosca.TNodeTemplate;
 import org.eclipse.winery.model.tosca.TRelationshipTemplate;
 import org.eclipse.winery.model.tosca.TTopologyTemplate;
 import org.eclipse.winery.repository.backend.BackendUtils;
 import org.eclipse.winery.repository.backend.Repository;
 import org.eclipse.winery.repository.resources.AbstractComponentsResource;
-import org.eclipse.winery.repository.resources.entitytypes.requirementtypes.RequirementTypeResource;
 import org.eclipse.winery.repository.resources.servicetemplates.ServiceTemplateResource;
 
 public class Splitting {
 
-	private final TCapability HOSTED_ON_CAPABILITY;
+	//private final TCapability HOSTED_ON_CAPABILITY;
 
 	public Splitting() {
 		//HOSTED_ON_CAPABILITY = new TCapability();
 		//HOSTED_ON_CAPABILITY.setType();
 	}
 
-	public Object test() {
+	/*public Object test() {
 		return ProviderRepository.INSTANCE.getAllNodeTemplatesForLocationAndOfferingCapability("IAASVSphere", HOSTED_ON_CAPABILITY);
-	}
+	}*/
 
 	/**
 	 * Splits the topology template of the given service template.
