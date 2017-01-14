@@ -22,16 +22,19 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.xml.namespace.QName;
+
 import org.eclipse.winery.common.ModelUtilities;
+import org.eclipse.winery.common.ids.definitions.RequirementTypeId;
 import org.eclipse.winery.common.ids.definitions.ServiceTemplateId;
 import org.eclipse.winery.model.tosca.TCapability;
 import org.eclipse.winery.model.tosca.TNodeTemplate;
-import org.eclipse.winery.model.tosca.TNodeType;
 import org.eclipse.winery.model.tosca.TRelationshipTemplate;
 import org.eclipse.winery.model.tosca.TTopologyTemplate;
 import org.eclipse.winery.repository.backend.BackendUtils;
 import org.eclipse.winery.repository.backend.Repository;
 import org.eclipse.winery.repository.resources.AbstractComponentsResource;
+import org.eclipse.winery.repository.resources.entitytypes.requirementtypes.RequirementTypeResource;
 import org.eclipse.winery.repository.resources.servicetemplates.ServiceTemplateResource;
 
 public class Splitting {
@@ -205,24 +208,6 @@ public class Splitting {
 		matching.clear();
 		List<TNodeTemplate> replacementNodeTemplateCandidates = getReplacementNodeTemplateCandidatesForMatching(topologyTemplate);
 
-		//Hardcoded NodeTemplates to to replace the old NodeTemplates
-		//Start Testdata
-		TNodeTemplate testnt1 = new TNodeTemplate();
-		TNodeTemplate testnt2 = new TNodeTemplate();
-		TNodeTemplate testnt3 = new TNodeTemplate();
-		testnt1.setId("TestNT1");
-		TNodeType nodeType = new TNodeType();
-		nodeType.setName("NT1");
-		nodeType.setTargetNamespace("http://www.example.org");
-		testnt2.setId("TestNT2");
-		testnt3.setId("TestNT3");
-		List<TNodeTemplate> targetLabelA = new ArrayList<>();
-		targetLabelA.add(testnt1);
-		targetLabelA.add(testnt2);
-		List<TNodeTemplate> targetLabelB = new ArrayList<>();
-		targetLabelB.add(testnt3);
-		//EndTestData
-
 		while (!replacementNodeTemplateCandidates.isEmpty()){
 			for (TNodeTemplate replacementCandidate : replacementNodeTemplateCandidates){
 				List<TNodeTemplate> predecessorsOfReplacementCandidate = getHostedOnPredecessorsOfNodeTemplate(topologyTemplate, replacementCandidate);
@@ -275,13 +260,21 @@ public class Splitting {
 	}
 	//TODO Requirement and Capability Matching -wie setzen wir das um?
 
-	public Optional<TNodeTemplate> getCompatibleNodeTemplateForMatching(List <TNodeTemplate> matchingNodeTemplates, TNodeTemplate currentPredecessor) {
+	/**
+	 *
+	 * @param matchingNodeTemplates
+	 * @param currentPredecessor
+	 * @return
+	 */
+	protected Optional<TNodeTemplate> getCompatibleNodeTemplateForMatching(List <TNodeTemplate> matchingNodeTemplates, TNodeTemplate currentPredecessor) {
 		if (currentPredecessor == null || matchingNodeTemplates.isEmpty()) {
 			return Optional.empty();
 		}
+
+
+
 		String targetLabel = ModelUtilities.getTargetLabel(currentPredecessor).orElse(null);
 		for (TNodeTemplate matchingNodeTemplate : matchingNodeTemplates){
-			// && matching.getNodesHostedBythisNode().contains(predecessor.getType())
 			if (ModelUtilities.getTargetLabel(matchingNodeTemplate).equals(targetLabel)){
 
 

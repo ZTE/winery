@@ -18,9 +18,13 @@ import java.util.stream.Collectors;
 
 import javax.xml.namespace.QName;
 
+import org.eclipse.winery.common.ids.definitions.RequirementTypeId;
 import org.eclipse.winery.model.tosca.TCapability;
 import org.eclipse.winery.model.tosca.TNodeTemplate;
+import org.eclipse.winery.model.tosca.TRequirement;
 import org.eclipse.winery.repository.backend.query.Query;
+import org.eclipse.winery.repository.resources.AbstractComponentsResource;
+import org.eclipse.winery.repository.resources.entitytypes.requirementtypes.RequirementTypeResource;
 
 public class ProviderRepository {
 
@@ -36,9 +40,15 @@ public class ProviderRepository {
 	/**
 	 * @return All node templates available for the given targetLocation
 	 */
-	public List<TNodeTemplate> getAllNodeTemplatesForLocationAndOfferingCapability(String targetLocation, TCapability capability) {
+	public List<TNodeTemplate> getAllNodeTemplatesForLocationAndOfferingCapability(String targetLocation, List <TRequirement> requirements) {
+
+		QName reqTypeQName = matchingNodeTemplates.get(0).getRequirements().getRequirement().get(0).getType();
+		RequirementTypeId reqTypeId = new RequirementTypeId(reqTypeQName);
+		RequirementTypeResource reqTypeResource = (RequirementTypeResource) AbstractComponentsResource.getComponentInstaceResource(reqTypeId);
+		reqTypeResource.getRequirementType().getRequiredCapabilityType();
+
 		List<TNodeTemplate> allNodeTemplatesForLocation = this.getAllNodeTemplatesForLocation(targetLocation);
-		List<QName> allNodeTypesOfferingCapability = Query.INSTANCE.getAllNodeTypesOfferingCapability(capability)
+		List<QName> allNodeTypesOfferingCapability = Query.INSTANCE.getAllNodeTypesOfferingCapability(requirements)
 				.stream()
 				.map(t -> new QName(t.getTargetNamespace(), t.getName()) )
 				.collect(Collectors.toList());
