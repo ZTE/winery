@@ -12,6 +12,18 @@
 package org.eclipse.winery.common;
 
 import org.apache.commons.lang3.StringUtils;
+import java.lang.reflect.Method;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Properties;
+import java.util.UUID;
+
+import javax.xml.XMLConstants;
+import javax.xml.namespace.QName;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.eclipse.winery.common.constants.Namespaces;
 import org.eclipse.winery.common.constants.QNames;
 import org.eclipse.winery.common.propertydefinitionkv.PropertyDefinitionKV;
@@ -22,6 +34,13 @@ import org.eclipse.winery.model.tosca.TNodeTemplate.Capabilities;
 import org.eclipse.winery.model.tosca.TNodeTemplate.Requirements;
 import org.eclipse.winery.model.tosca.TRelationshipTemplate.SourceElement;
 import org.eclipse.winery.model.tosca.TRelationshipTemplate.TargetElement;
+import org.eclipse.winery.model.tosca.TRelationshipType;
+import org.eclipse.winery.model.tosca.TRequirement;
+import org.eclipse.winery.model.tosca.TRequirementDefinition;
+import org.eclipse.winery.model.tosca.TServiceTemplate;
+import org.eclipse.winery.model.tosca.TTopologyTemplate;
+
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.*;
 
@@ -45,7 +64,7 @@ public class ModelUtilities {
 	 * definition by specifying name/type values. Instead of parsing the
 	 * extensible elements returned TDefinitions, this method is a convenience
 	 * method to access this information
-	 * 
+	 *
 	 * @param et the entitytype to read the properties definition from
 	 * @return a WinerysPropertiesDefinition object, which includes a map of
 	 *         name/type-pairs denoting the associated property definitions. A
@@ -61,14 +80,14 @@ public class ModelUtilities {
 				res = (WinerysPropertiesDefinition) o;
 			}
 		}
-		
+
 		if (res != null) {
 			// we put defaults if elementname and namespace have not been set
-			
+
 			if (res.getElementName() == null) {
 				res.setElementName("Properties");
 			}
-			
+
 			if (res.getNamespace() == null) {
 				// we use the targetnamespace of the original element
 				String ns = et.getTargetNamespace();
@@ -79,17 +98,17 @@ public class ModelUtilities {
 				res.setNamespace(ns);
 			}
 		}
-		
+
 		return res;
 	}
-	
+
 	/**
 	 * This is a special method for Winery. Winery allows to define a property
 	 * by specifying name/value values. Instead of parsing the XML contained in
 	 * TNodeType, this method is a convenience method to access this information
-	 * 
+	 *
 	 * The return type "Properties" is used because of the key/value properties.
-	 * 
+	 *
 	 * @param template the node template to get the associated properties
 	 */
 	public static Properties getPropertiesKV(TEntityTemplate template) {
@@ -114,11 +133,11 @@ public class ModelUtilities {
 		}
 		return properties;
 	}
-	
+
 	/**
 	 * This is a special method for Winery. Winery allows to define a property
 	 * by specifying name/value values. We convert the given Properties to XML.
-	 * 
+	 *
 	 * @param wpd the Winery's properties definition of the type of the given
 	 *            template (i.e., wpd =
 	 *            getWinerysPropertiesDefinition(template.getType()))
@@ -134,10 +153,10 @@ public class ModelUtilities {
 			throw new IllegalStateException("Could not instantiate document builder", e);
 		}
 		Document doc = db.newDocument();
-		
+
 		Element root = doc.createElementNS(wpd.getNamespace(), wpd.getElementName());
 		doc.appendChild(root);
-		
+
 		// we produce the serialization in the same order the XSD would be generated (because of the usage of xsd:sequence)
 		for (PropertyDefinitionKV prop : wpd.getPropertyDefinitionKVList()) {
 			// we always write the element tag as the XSD forces that
@@ -149,19 +168,19 @@ public class ModelUtilities {
 				element.appendChild(text);
 			}
 		}
-		
+
 		org.eclipse.winery.model.tosca.TEntityTemplate.Properties tprops = new org.eclipse.winery.model.tosca.TEntityTemplate.Properties();
 		tprops.setAny(doc.getDocumentElement());
 		template.setProperties(tprops);
 	}
-	
+
 	/**
 	 * Generates a XSD when Winery's K/V properties are used. This method is put
 	 * here instead of WinerysPropertiesDefinitionResource to avoid generating
 	 * the subresource
-	 * 
+	 *
 	 * public because of the usage by TOSCAEXportUtil
-	 * 
+	 *
 	 * @return empty Document, if Winery's Properties Definition is not fully
 	 *         filled (e.g., no wrapping element defined)
 	 */
@@ -181,7 +200,7 @@ public class ModelUtilities {
 			throw new IllegalStateException("Could not instantiate document builder", e);
 		}
 		Document doc = docBuilder.newDocument();
-		
+
 		if (!ModelUtilities.allRequiredFieldsNonNull(wpd)) {
 			// wpd not fully filled -> valid XSD cannot be provided
 			// fallback: add comment and return "empty" document
@@ -189,14 +208,14 @@ public class ModelUtilities {
 			doc.appendChild(comment);
 			return doc;
 		}
-		
+
 		// create XSD schema container
 		Element schemaElement = doc.createElementNS(XMLConstants.W3C_XML_SCHEMA_NS_URI, "schema");
 		doc.appendChild(schemaElement);
 		schemaElement.setAttribute("elementFormDefault", "qualified");
 		schemaElement.setAttribute("attributeFormDefault", "unqualified");
 		schemaElement.setAttribute("targetNamespace", wpd.getNamespace());
-		
+
 		// create XSD element itself
 		Element el = doc.createElementNS(XMLConstants.W3C_XML_SCHEMA_NS_URI, "element");
 		schemaElement.appendChild(el);
@@ -207,10 +226,10 @@ public class ModelUtilities {
 		el2 = doc.createElementNS(XMLConstants.W3C_XML_SCHEMA_NS_URI, "sequence");
 		el.appendChild(el2);
 		el = el2;
-		
+
 		// currently, "xsd" is a hardcoded prefix in the type definition
 		el.setAttribute("xmlns:xsd", XMLConstants.W3C_XML_SCHEMA_NS_URI);
-		
+
 		for (PropertyDefinitionKV prop : wpd.getPropertyDefinitionKVList()) {
 			el2 = doc.createElementNS(XMLConstants.W3C_XML_SCHEMA_NS_URI, "element");
 			el.appendChild(el2);
@@ -218,10 +237,10 @@ public class ModelUtilities {
 			// prop.getType has the prefix included
 			el2.setAttribute("type", prop.getType());
 		}
-		
+
 		return doc;
 	}
-	
+
 	/**
 	 * Removes an existing Winery's Properties definition. If no such definition
 	 * exists, the TEntityType is not modified
@@ -235,12 +254,12 @@ public class ModelUtilities {
 			}
 		}
 	}
-	
+
 	public static void replaceWinerysPropertiesDefinition(TEntityType et, WinerysPropertiesDefinition wpd) {
 		ModelUtilities.removeWinerysPropertiesDefinition(et);
 		et.getAny().add(wpd);
 	}
-	
+
 	public static String getBorderColor(TNodeType nt) {
 		String borderColor = nt.getOtherAttributes().get(QNames.QNAME_BORDER_COLOR);
 		if (borderColor == null) {
@@ -248,7 +267,7 @@ public class ModelUtilities {
 		}
 		return borderColor;
 	}
-	
+
 	public static String getColor(TRelationshipType rt) {
 		String color = rt.getOtherAttributes().get(QNames.QNAME_COLOR);
 		if (color == null) {
@@ -256,11 +275,9 @@ public class ModelUtilities {
 		}
 		return color;
 	}
-	
+
 	/**
 	 * Returns the Properties. If no properties exist, the element is created
-	 * 
-	 * @return
 	 */
 	public static org.eclipse.winery.model.tosca.TBoundaryDefinitions.Properties getProperties(TBoundaryDefinitions defs) {
 		org.eclipse.winery.model.tosca.TBoundaryDefinitions.Properties properties = defs.getProperties();
@@ -270,16 +287,15 @@ public class ModelUtilities {
 		}
 		return properties;
 	}
-	
+
 	/**
 	 * Special method to get the name of an extensible element as the TOSCA
 	 * specification does not have a separate super type for elements with a
 	 * name
-	 * 
-	 * {@link
-	 * org.eclipse.winery.common.Util.instanceSupportsNameAttribute(Class<?
-	 * extends TOSCAComponentId>)} is related
-	 * 
+	 *
+	 * {@link Util#instanceSupportsNameAttribute(java.lang.Class)}
+	 * is related
+	 *
 	 * @param e the extensible element offering a name attribute (besides an id
 	 *            attribute)
 	 * @return the name of the extensible element
@@ -296,19 +312,20 @@ public class ModelUtilities {
 		}
 		return (String) res;
 	}
-	
+
 	/**
 	 * Returns the name of the given element. If the name does not exist or is
 	 * empty, the id is returned
-	 * 
+	 *
 	 * {@see getName}
-	 * 
+	 *
 	 * @return the name if there is a name field, if not, the id is returned. In
 	 *         case there is a Name field,
 	 */
 	public static String getNameWithIdFallBack(TExtensibleElements ci) {
 		Method method;
 		String res = null;
+		//noinspection EmptyCatchBlock
 		try {
 			method = ci.getClass().getMethod("getName");
 			res = (String) method.invoke(ci);
@@ -324,12 +341,12 @@ public class ModelUtilities {
 		}
 		return res;
 	}
-	
+
 	/**
 	 * Special method to set the name of an extensible element as the TOSCA
 	 * specification does not have a separate super type for elements with a
 	 * name
-	 * 
+	 *
 	 * @param e the extensible element offering a name attribute (besides an id
 	 *            attribute)
 	 * @param name the new name
@@ -344,7 +361,7 @@ public class ModelUtilities {
 			throw new IllegalStateException(ex);
 		}
 	}
-	
+
 	public static boolean allRequiredFieldsNonNull(WinerysPropertiesDefinition wpd) {
 		boolean valid = wpd.getNamespace() != null;
 		valid = valid && (wpd.getElementName() != null);
@@ -360,31 +377,29 @@ public class ModelUtilities {
 		}
 		return valid;
 	}
-	
+
 	/**
 	 * @return null if no explicit left is set
 	 */
 	public static String getLeft(TNodeTemplate nodeTemplate) {
 		Map<QName, String> otherAttributes = nodeTemplate.getOtherAttributes();
-		String left = otherAttributes.get(new QName(Namespaces.TOSCA_WINERY_EXTENSIONS_NAMESPACE, "x"));
-		return left;
+		return otherAttributes.get(new QName(Namespaces.TOSCA_WINERY_EXTENSIONS_NAMESPACE, "x"));
 	}
-	
+
 	/**
 	 * @return null if no explicit left is set
 	 */
 	public static String getTop(TNodeTemplate nodeTemplate) {
 		Map<QName, String> otherAttributes = nodeTemplate.getOtherAttributes();
-		String top = otherAttributes.get(new QName(Namespaces.TOSCA_WINERY_EXTENSIONS_NAMESPACE, "y"));
-		return top;
+		return otherAttributes.get(new QName(Namespaces.TOSCA_WINERY_EXTENSIONS_NAMESPACE, "y"));
 	}
-	
+
 	/**
 	 * locates targetObjectRef inside a topology template
-	 * 
+	 *
 	 * @param topologyTemplate the topology template to search in
 	 * @param targetObjectRef the object ref as String
-	 * 
+	 *
 	 * @return null if not found, otherwise the entity template in the topology
 	 */
 	public static TEntityTemplate findNodeTemplateOrRequirementOfNodeTemplateOrCapabilityOfNodeTemplateOrRelationshipTemplate(TTopologyTemplate topologyTemplate, String targetObjectRef) {
@@ -396,7 +411,7 @@ public class ModelUtilities {
 					return t;
 				}
 				TNodeTemplate nt = (TNodeTemplate) t;
-				
+
 				Requirements requirements = nt.getRequirements();
 				if (requirements != null) {
 					for (TRequirement req : requirements.getRequirement()) {
@@ -405,7 +420,7 @@ public class ModelUtilities {
 						}
 					}
 				}
-				
+
 				Capabilities capabilities = nt.getCapabilities();
 				if (capabilities != null) {
 					for (TCapability cap : capabilities.getCapability()) {
@@ -414,7 +429,7 @@ public class ModelUtilities {
 						}
 					}
 				}
-				
+
 			} else {
 				assert (t instanceof TRelationshipTemplate);
 				if (t.getId().equals(targetObjectRef)) {
@@ -422,18 +437,18 @@ public class ModelUtilities {
 				}
 			}
 		}
-		
+
 		// no return hit inside the loop: nothing was found
 		return null;
 	}
-	
+
 	/**
 	 * Returns the id of the given element
-	 * 
+	 *
 	 * The TOSCA specification does NOT always put an id field. In the case of
 	 * EntityTypes and EntityTypeImplementations, there is no id, but a name
 	 * field
-	 * 
+	 *
 	 * This method abstracts from that fact.
 	 */
 	public static String getId(TExtensibleElements ci) {
@@ -453,10 +468,10 @@ public class ModelUtilities {
 		}
 		return (String) res;
 	}
-	
+
 	/**
 	 * Resolves a given id as requirement in the given ServiceTemplate
-	 * 
+	 *
 	 * @return null if not found
 	 */
 	public static TRequirement resolveRequirement(TServiceTemplate serviceTemplate, String reference) {
@@ -476,7 +491,7 @@ public class ModelUtilities {
 		}
 		return resolved;
 	}
-	
+
 	public static TCapability resolveCapability(TServiceTemplate serviceTemplate, String reference) {
 		TCapability resolved = null;
 		for (TEntityTemplate tmpl : serviceTemplate.getTopologyTemplate().getNodeTemplateOrRelationshipTemplate()) {
@@ -494,7 +509,7 @@ public class ModelUtilities {
 		}
 		return resolved;
 	}
-	
+
 	public static TNodeTemplate resolveNodeTemplate(TServiceTemplate serviceTemplate, String reference) {
 		TNodeTemplate resolved = null;
 		for (TEntityTemplate tmpl : serviceTemplate.getTopologyTemplate().getNodeTemplateOrRelationshipTemplate()) {
@@ -507,7 +522,7 @@ public class ModelUtilities {
 		}
 		return resolved;
 	}
-	
+
 	public static TRelationshipTemplate resolveRelationshipTemplate(TServiceTemplate serviceTemplate, String reference) {
 		TRelationshipTemplate resolved = null;
 		for (TEntityTemplate tmpl : serviceTemplate.getTopologyTemplate().getNodeTemplateOrRelationshipTemplate()) {
@@ -520,7 +535,7 @@ public class ModelUtilities {
 		}
 		return resolved;
 	}
-	
+
 	public static TPlan resolvePlan(TServiceTemplate serviceTemplate, String reference) {
 		TPlan resolved = null;
 		TPlans plans = serviceTemplate.getPlans();
@@ -542,15 +557,10 @@ public class ModelUtilities {
 	 * 			 the nodeTemplate to be altered
 	 * @param coordinate
 	 * 			 the value of the coordinate to be set
-	 * @return
-	 * 			 the altered {@link TNodeTemplate}
 	 */
-	public static TNodeTemplate setLeft(TNodeTemplate nodeTemplate, String coordinate) {
-
+	public static void setLeft(TNodeTemplate nodeTemplate, String coordinate) {
 		Map<QName, String> otherNodeTemplateAttributes = nodeTemplate.getOtherAttributes();
 		otherNodeTemplateAttributes.put(new QName(Namespaces.TOSCA_WINERY_EXTENSIONS_NAMESPACE, "x"), coordinate);
-
-		return nodeTemplate;
 	}
 
 	/**
@@ -563,12 +573,9 @@ public class ModelUtilities {
 	 * @return
 	 * 			 the altered {@link TNodeTemplate}
 	 */
-	public static TNodeTemplate setTop(TNodeTemplate nodeTemplate, String coordinate) {
-
+	public static void setTop(TNodeTemplate nodeTemplate, String coordinate) {
 		Map<QName, String> otherNodeTemplateAttributes = nodeTemplate.getOtherAttributes();
 		otherNodeTemplateAttributes.put(new QName(Namespaces.TOSCA_WINERY_EXTENSIONS_NAMESPACE, "y"), coordinate);
-
-		return nodeTemplate;
 
 	}
 
@@ -654,7 +661,7 @@ public class ModelUtilities {
 		String targetLabel = otherAttributes.get(QNAME_LOCATION);
 		return Optional.ofNullable(targetLabel);
 	}
-	
+
 	public static void setTargetLabel(TNodeTemplate nodeTemplate, String targetLabel) {
 		Objects.requireNonNull(nodeTemplate);
 		Objects.requireNonNull(targetLabel);
