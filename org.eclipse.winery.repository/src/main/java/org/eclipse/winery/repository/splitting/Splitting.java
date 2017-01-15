@@ -22,15 +22,22 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.xml.namespace.QName;
+
 import org.eclipse.winery.common.ModelUtilities;
+import org.eclipse.winery.common.ids.definitions.RequirementTypeId;
 import org.eclipse.winery.common.ids.definitions.ServiceTemplateId;
+import org.eclipse.winery.model.tosca.TCapability;
 import org.eclipse.winery.model.tosca.TNodeTemplate;
 import org.eclipse.winery.model.tosca.TRelationshipTemplate;
 import org.eclipse.winery.model.tosca.TTopologyTemplate;
 import org.eclipse.winery.repository.backend.BackendUtils;
 import org.eclipse.winery.repository.backend.Repository;
 import org.eclipse.winery.repository.resources.AbstractComponentsResource;
+import org.eclipse.winery.repository.resources.entitytypes.requirementtypes.RequirementTypeResource;
 import org.eclipse.winery.repository.resources.servicetemplates.ServiceTemplateResource;
+
+import com.sun.jersey.api.NotFoundException;
 
 public class Splitting {
 
@@ -198,10 +205,16 @@ public class Splitting {
 		return topologyTemplate;
 	}
 
-	public List<TNodeTemplate> matching (TTopologyTemplate topologyTemplate){
+	/**
+	 * This method matches each topology fragment to the respective target cloud provider.
+	 * @param topologyTemplate which is already split and which should be mapped to the cloud provider according to the attached target labels
+	 * @return topology template with the corresponding node templates of the cloud provider at the lowest level
+	 */
+	public TTopologyTemplate matching (TTopologyTemplate topologyTemplate){
+		ProviderRepository repository = new ProviderRepository();
 		List<TNodeTemplate> matching = new ArrayList<>();
 		matching.clear();
-		List<TNodeTemplate> replacementNodeTemplateCandidates = getReplacementNodeTemplateCandidatesForMatching(topologyTemplate);
+		List<TNodeTemplate> replacementNodeTemplateCandidates = getReplacementNodeTemplateCandidatesForMatching(topologyTemplate, matching);
 
 		while (!replacementNodeTemplateCandidates.isEmpty()){
 			for (TNodeTemplate replacementCandidate : replacementNodeTemplateCandidates){
@@ -210,14 +223,34 @@ public class Splitting {
 
 				for (TNodeTemplate predecessor : predecessorsOfReplacementCandidate){
 					TNodeTemplate matchingNodeTemplate = getCompatibleNodeTemplateForMatching(matching, predecessor).orElse(null);
-					//Es wird nur ein Kompatibles NodeTemplate zurückgegeben
-					if (getCompatibleNodeTemplateForMatching(matching, predecessor) != null){
 
-						//Only the incoming Relationships from the currently considered predecessor should be switched
-						ModelUtilities.getIncomingRelationshipTemplates(topologyTemplate, replacementCandidate)
-								.stream()
+					if (matchingNodeTemplate != null){
+
+						List<TRelationshipTemplate> incomingRelationshipsOfReplacementCandidate =
+								ModelUtilities.getIncomingRelationshipTemplates(topologyTemplate, replacementCandidate);
+
+						//The incoming Relationships from the currently considered predecessor should be switched
+						incomingRelationshipsOfReplacementCandidate.stream()
 								.filter(rt -> rt.getSourceElement().getRef().equals(predecessor))
 								.forEach(rt -> rt.getTargetElement().setRef(matchingNodeTemplate));
+
+						//The incoming Relationships not from the predecessors have to be copied
+						List<TRelationshipTemplate> incomingRelationshipsNotHostedOn = incomingRelationshipsOfReplacementCandidate
+								.stream()
+								.filter(rt -> rt.getSourceElement().getRef() instanceof TNodeTemplate)
+								.filter(rt -> !((TNodeTemplate) rt.getSourceElement().getRef()).equals(predecessorsOfReplacementCandidate))
+								.collect(Collectors.toList());
+
+						for (TRelationshipTemplate incomingRelationship : incomingRelationshipsNotHostedOn){
+							TRelationshipTemplate newIncomingRelationship = BackendUtils.cloneRelationshipTemplate(incomingRelationship);
+							TRelationshipTemplate.TargetElement targetElementNew = new TRelationshipTemplate.TargetElement();
+							targetElementNew.setRef(matchingNodeTemplate);
+							newIncomingRelationship.setTargetElement(targetElementNew);
+							newIncomingRelationship.setId(incomingRelationship.getId() + "-" + targetLocation);
+							newIncomingRelationship.setName(incomingRelationship.getName() + "-" + targetLocation);
+
+							topologyTemplate.getNodeTemplateOrRelationshipTemplate().add(newIncomingRelationship);
+						}
 
 						List<TRelationshipTemplate> outgoingRelationshipsOfReplacementCandidate =
 								ModelUtilities.getOutgoingRelationshipTemplates(topologyTemplate, replacementCandidate);
@@ -226,10 +259,24 @@ public class Splitting {
 							TRelationshipTemplate.SourceElement sourceElementNew = new TRelationshipTemplate.SourceElement();
 							sourceElementNew.setRef(matchingNodeTemplate);
 							newOutgoingRelationship.setSourceElement(sourceElementNew);
+							newOutgoingRelationship.setId(outgoingRelationship.getId() + "-" + targetLocation);
+							newOutgoingRelationship.setName(outgoingRelationship.getName() + "-" + targetLocation);
+
+							topologyTemplate.getNodeTemplateOrRelationshipTemplate().add(newOutgoingRelationship);
 						}
 					} else {
-						//TODO reicht es nicht eigentlich wenn mir die Methode ein compatibles Node Template zurückgibt
-						//List<TNodeTemplates> compatibleNodes ProviderRepository.getAllNodeTemplatesForLocationAndOfferingCapability(targetLocation, ??)
+						List<TNodeTemplate> compatibleNodeTemplates = repository
+								.getAllNodeTemplatesForLocationAndOfferingCapability(targetLocation, predecessor.getRequirements().getRequirement());
+
+						if (!compatibleNodeTemplates.isEmpty()){
+							TNodeTemplate newMatchingNodeTemplate = compatibleNodeTemplates.get(0);
+							topologyTemplate.getNodeTemplateOrRelationshipTemplate().add(newMatchingNodeTemplate);
+							matching.add(newMatchingNodeTemplate);
+							//TODO umsetzen der Relationships - vielleicht muss das auch noch in einen eigenen Code gezogen werden, weil wieder gleich wie oben
+
+						} else {
+							throw new NotFoundException("No matching possible");
+						}
 
 					}
 
@@ -240,20 +287,28 @@ public class Splitting {
 			List<TRelationshipTemplate> removingRelationships = ModelUtilities.getAllRelationshipTemplates(topologyTemplate)
 					.stream()
 					.filter (rt -> rt.getSourceElement().getRef() instanceof TNodeTemplate
-							|| rt.getTargetElement().getRef() instanceof TNodeTemplate)
+							&& rt.getTargetElement().getRef() instanceof TNodeTemplate)
 					.filter(rt -> replacementNodeTemplateCandidates.contains((TNodeTemplate) rt.getSourceElement().getRef())
 							|| replacementNodeTemplateCandidates.contains((TNodeTemplate) rt.getTargetElement().getRef()))
 					.collect(Collectors.toList());
 
 			topologyTemplate.getNodeTemplateOrRelationshipTemplate().removeAll(removingRelationships);
 			replacementNodeTemplateCandidates.clear();
-			replacementNodeTemplateCandidates.addAll(getReplacementNodeTemplateCandidatesForMatching(topologyTemplate));
+			replacementNodeTemplateCandidates.addAll(getReplacementNodeTemplateCandidatesForMatching(topologyTemplate, matching));
 
 		}
+		List <TNodeTemplate> checkListAllNodesMatched = ModelUtilities.getAllNodeTemplates(topologyTemplate)
+				.stream()
+				.filter(z -> getNodeTemplatesWithoutOutgoingHostedOnRelationships(topologyTemplate).contains(z))
+				.filter(y -> !matching.contains(y))
+				.collect(Collectors.toList());
 
-		return replacementNodeTemplateCandidates;
+		if (!checkListAllNodesMatched.isEmpty()){
+			throw new NotFoundException("No matching possible");
+		}
+
+		return topologyTemplate;
 	}
-	//TODO Requirement and Capability Matching -wie setzen wir das um?
 
 	/**
 	 *
@@ -265,15 +320,25 @@ public class Splitting {
 		if (currentPredecessor == null || matchingNodeTemplates.isEmpty()) {
 			return Optional.empty();
 		}
-
-
+		String reqCapType = null;
+		//Assumption: at least one requirement is assigned to each Node Template
+		if (!currentPredecessor.getRequirements().getRequirement().isEmpty()){
+			QName reqTypeQName = currentPredecessor.getRequirements().getRequirement().get(0).getType();
+			RequirementTypeId reqTypeId = new RequirementTypeId(reqTypeQName);
+			RequirementTypeResource reqTypeResource = (RequirementTypeResource) AbstractComponentsResource.getComponentInstaceResource(reqTypeId);
+			reqCapType = reqTypeResource.getRequirementType().getRequiredCapabilityType().toString();
+		}
 
 		String targetLabel = ModelUtilities.getTargetLabel(currentPredecessor).orElse(null);
-		for (TNodeTemplate matchingNodeTemplate : matchingNodeTemplates){
-			if (ModelUtilities.getTargetLabel(matchingNodeTemplate).equals(targetLabel)){
+		List<TNodeTemplate> matchingNodeTemplatesofTargetLabel = matchingNodeTemplates.stream()
+				.filter(mn -> ModelUtilities.getTargetLabel(mn).equals(targetLabel))
+				.collect(Collectors.toList());
 
-
-				return Optional.ofNullable(matchingNodeTemplate);
+		for (TNodeTemplate matchingNodeTemplate : matchingNodeTemplatesofTargetLabel){
+			for(TCapability capaNodeTemplate : matchingNodeTemplate.getCapabilities().getCapability()) {
+				if (capaNodeTemplate.getType().toString().equals(reqCapType)){
+					return Optional.ofNullable(matchingNodeTemplate);
+				}
 			}
 		}
 		return Optional.empty();
@@ -284,12 +349,11 @@ public class Splitting {
 	 * @param topologyTemplate
 	 * @return
 	 */
-	protected List<TNodeTemplate> getReplacementNodeTemplateCandidatesForMatching(TTopologyTemplate topologyTemplate) {
+	protected List<TNodeTemplate> getReplacementNodeTemplateCandidatesForMatching(TTopologyTemplate topologyTemplate, List<TNodeTemplate> matchingNodeTemplates) {
 
-		return topologyTemplate.getNodeTemplateOrRelationshipTemplate()
+		return ModelUtilities.getAllNodeTemplates(topologyTemplate)
 				.stream()
-				.filter(x -> x instanceof TNodeTemplate)
-				.map(TNodeTemplate.class::cast)
+				.filter(y -> !matchingNodeTemplates.contains(y))
 				.filter(y -> !getNodeTemplatesWithoutIncomingHostedOnRelationships(topologyTemplate).contains(y))
 				.filter(z -> getNodeTemplatesWithoutOutgoingHostedOnRelationships(topologyTemplate).contains(z))
 				.collect(Collectors.toList());
