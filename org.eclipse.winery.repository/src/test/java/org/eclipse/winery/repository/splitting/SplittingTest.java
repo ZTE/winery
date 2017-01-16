@@ -309,18 +309,5 @@ public class SplittingTest {
 
 	}
 
-	@Test
-	public void testmatchinglistreplacementCadindartesCorrect() throws Exception {
-		List<String> expectedIds = Arrays.asList("NT1", "NT1_2", "NT1_3-A", "NT1_3-B", "NT1_4-A", "NT1_4-B", "NT1_5-A", "NT1_5-B", "con37", "con45", "con_91-A-A", "con_57-B-B");
-		List<TNodeTemplate> NodeTemplates = splitting.matching(topologyTemplate);
-
-		List<String> Ids = new ArrayList<>();
-		for (TNodeTemplate nodeTemplate : NodeTemplates){
-			Ids.add(nodeTemplate.getId());
-		}
-
-		assertEquals(expectedIds, Ids);
-
-	}
 
 }

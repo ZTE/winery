@@ -693,7 +693,7 @@ public class BackendUtils {
 	 * @param topologyTemplate which should be cloned
 	 * @return Copy od topologyTemplate
 	 */
-	public static TTopologyTemplate cloneTopologyTemplate (TTopologyTemplate topologyTemplate) {
+	public static TTopologyTemplate clone(TTopologyTemplate topologyTemplate) {
 		TTopologyTemplate topologyTemplateClone = new TTopologyTemplate();
 		List<TEntityTemplate> entityTemplate = topologyTemplate.getNodeTemplateOrRelationshipTemplate();
 		topologyTemplateClone.getNodeTemplateOrRelationshipTemplate().addAll(entityTemplate);
@@ -716,7 +716,7 @@ public class BackendUtils {
 	 * @param nodeTemplate which should be cloned
 	 * @return copy of nodeTemplate
 	 */
-	public static TNodeTemplate cloneNodeTemplate (TNodeTemplate nodeTemplate){
+	public static TNodeTemplate clone(TNodeTemplate nodeTemplate){
 		TNodeTemplate nodeTemplateClone = new TNodeTemplate();
 		nodeTemplateClone.setType(nodeTemplate.getType());
 		nodeTemplateClone.setId(nodeTemplate.getId());
@@ -738,7 +738,7 @@ public class BackendUtils {
 	 * @param relationshipTemplate which should be cloned
 	 * @return copy of relationshipTemplate
 	 */
-	public static TRelationshipTemplate cloneRelationshipTemplate (TRelationshipTemplate relationshipTemplate) {
+	public static TRelationshipTemplate clone(TRelationshipTemplate relationshipTemplate) {
 		TRelationshipTemplate relationshipTemplateClone = new TRelationshipTemplate();
 		relationshipTemplateClone.setSourceElement(relationshipTemplate.getSourceElement());
 		relationshipTemplateClone.setType(relationshipTemplate.getType());

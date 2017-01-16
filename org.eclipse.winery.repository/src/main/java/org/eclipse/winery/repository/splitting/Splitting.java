@@ -116,7 +116,7 @@ public class Splitting {
 	 * @return split topologyTemplate
 	 */
 	public TTopologyTemplate split(TTopologyTemplate topologyTemplate) {
-		TTopologyTemplate topologyTemplateCopy = BackendUtils.cloneTopologyTemplate(topologyTemplate);
+		TTopologyTemplate topologyTemplateCopy = BackendUtils.clone(topologyTemplate);
 
 		HashSet<TNodeTemplate> nodeTemplatesWhichPredecessorsHasNoPredecessors = new HashSet<>(getNodeTemplatesWhichPredecessorsHasNoPredecessors(topologyTemplateCopy));
 
@@ -137,7 +137,7 @@ public class Splitting {
 					List<TRelationshipTemplate> outgoingRelationships = ModelUtilities.getOutgoingRelationshipTemplates(topologyTemplateCopy, node);
 
 					for (String targetLabel: predecessorsTargetLabel) {
-						TNodeTemplate newNode = BackendUtils.cloneNodeTemplate(node);
+						TNodeTemplate newNode = BackendUtils.clone(node);
 						newNode.setId(node.getId() + "-" + targetLabel);
 						newNode.setName(node.getName() + "-" + targetLabel);
 						topologyTemplate.getNodeTemplateOrRelationshipTemplate().add(newNode);
@@ -145,7 +145,7 @@ public class Splitting {
 						ModelUtilities.setTargetLabel(newNode, targetLabel);
 
 						for (TRelationshipTemplate outgoingRelationship : outgoingRelationships) {
-							TRelationshipTemplate newOutgoingRelationship = BackendUtils.cloneRelationshipTemplate(outgoingRelationship);
+							TRelationshipTemplate newOutgoingRelationship = BackendUtils.clone(outgoingRelationship);
 							TRelationshipTemplate.SourceElement sourceElementNew = new TRelationshipTemplate.SourceElement();
 							sourceElementNew.setRef(newNode);
 							newOutgoingRelationship.setSourceElement(sourceElementNew);
@@ -165,7 +165,7 @@ public class Splitting {
 									&& incomingRelationship.getType().getLocalPart().toLowerCase().contains("hostedon"))
 									|| !predecessors.contains((TNodeTemplate) ref))) {
 
-								TRelationshipTemplate newIncomingRelationship = BackendUtils.cloneRelationshipTemplate(incomingRelationship);
+								TRelationshipTemplate newIncomingRelationship = BackendUtils.clone(incomingRelationship);
 								TRelationshipTemplate.TargetElement targetElementNew = new TRelationshipTemplate.TargetElement();
 								targetElementNew.setRef(newNode);
 								newIncomingRelationship.setTargetElement(targetElementNew);
@@ -242,7 +242,7 @@ public class Splitting {
 								.collect(Collectors.toList());
 
 						for (TRelationshipTemplate incomingRelationship : incomingRelationshipsNotHostedOn){
-							TRelationshipTemplate newIncomingRelationship = BackendUtils.cloneRelationshipTemplate(incomingRelationship);
+							TRelationshipTemplate newIncomingRelationship = BackendUtils.clone(incomingRelationship);
 							TRelationshipTemplate.TargetElement targetElementNew = new TRelationshipTemplate.TargetElement();
 							targetElementNew.setRef(matchingNodeTemplate);
 							newIncomingRelationship.setTargetElement(targetElementNew);
@@ -255,7 +255,7 @@ public class Splitting {
 						List<TRelationshipTemplate> outgoingRelationshipsOfReplacementCandidate =
 								ModelUtilities.getOutgoingRelationshipTemplates(topologyTemplate, replacementCandidate);
 						for (TRelationshipTemplate outgoingRelationship : outgoingRelationshipsOfReplacementCandidate){
-							TRelationshipTemplate newOutgoingRelationship = BackendUtils.cloneRelationshipTemplate(outgoingRelationship);
+							TRelationshipTemplate newOutgoingRelationship = BackendUtils.clone(outgoingRelationship);
 							TRelationshipTemplate.SourceElement sourceElementNew = new TRelationshipTemplate.SourceElement();
 							sourceElementNew.setRef(matchingNodeTemplate);
 							newOutgoingRelationship.setSourceElement(sourceElementNew);
@@ -270,9 +270,51 @@ public class Splitting {
 
 						if (!compatibleNodeTemplates.isEmpty()){
 							TNodeTemplate newMatchingNodeTemplate = compatibleNodeTemplates.get(0);
+							ModelUtilities.setTargetLabel(newMatchingNodeTemplate, targetLocation);
 							topologyTemplate.getNodeTemplateOrRelationshipTemplate().add(newMatchingNodeTemplate);
 							matching.add(newMatchingNodeTemplate);
-							//TODO umsetzen der Relationships - vielleicht muss das auch noch in einen eigenen Code gezogen werden, weil wieder gleich wie oben
+
+							//Duplicated Code
+							List<TRelationshipTemplate> incomingRelationshipsOfReplacementCandidate =
+									ModelUtilities.getIncomingRelationshipTemplates(topologyTemplate, replacementCandidate);
+
+							//The incoming Relationships from the currently considered predecessor should be switched
+							incomingRelationshipsOfReplacementCandidate.stream()
+									.filter(rt -> rt.getSourceElement().getRef().equals(predecessor))
+									.forEach(rt -> rt.getTargetElement().setRef(matchingNodeTemplate));
+
+							//The incoming Relationships not from the predecessors have to be copied
+							List<TRelationshipTemplate> incomingRelationshipsNotHostedOn = incomingRelationshipsOfReplacementCandidate
+									.stream()
+									.filter(rt -> rt.getSourceElement().getRef() instanceof TNodeTemplate)
+									.filter(rt -> !((TNodeTemplate) rt.getSourceElement().getRef()).equals(predecessorsOfReplacementCandidate))
+									.collect(Collectors.toList());
+
+							for (TRelationshipTemplate incomingRelationship : incomingRelationshipsNotHostedOn){
+								TRelationshipTemplate newIncomingRelationship = BackendUtils.clone(incomingRelationship);
+								TRelationshipTemplate.TargetElement targetElementNew = new TRelationshipTemplate.TargetElement();
+								targetElementNew.setRef(matchingNodeTemplate);
+								newIncomingRelationship.setTargetElement(targetElementNew);
+								newIncomingRelationship.setId(incomingRelationship.getId() + "-" + targetLocation);
+								newIncomingRelationship.setName(incomingRelationship.getName() + "-" + targetLocation);
+
+								topologyTemplate.getNodeTemplateOrRelationshipTemplate().add(newIncomingRelationship);
+							}
+
+							List<TRelationshipTemplate> outgoingRelationshipsOfReplacementCandidate =
+									ModelUtilities.getOutgoingRelationshipTemplates(topologyTemplate, replacementCandidate);
+							for (TRelationshipTemplate outgoingRelationship : outgoingRelationshipsOfReplacementCandidate){
+								TRelationshipTemplate newOutgoingRelationship = BackendUtils.clone(outgoingRelationship);
+								TRelationshipTemplate.SourceElement sourceElementNew = new TRelationshipTemplate.SourceElement();
+								sourceElementNew.setRef(matchingNodeTemplate);
+								newOutgoingRelationship.setSourceElement(sourceElementNew);
+								newOutgoingRelationship.setId(outgoingRelationship.getId() + "-" + targetLocation);
+								newOutgoingRelationship.setName(outgoingRelationship.getName() + "-" + targetLocation);
+
+								topologyTemplate.getNodeTemplateOrRelationshipTemplate().add(newOutgoingRelationship);
+							}
+							//End duplicated code
+
 
 						} else {
 							throw new NotFoundException("No matching possible");
