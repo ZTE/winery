@@ -116,6 +116,7 @@
 							</includes>
 						</resource>
 					</webResources>
+					<attachClasses>true</attachClasses> 
 				</configuration>
 			</plugin>
 			<plugin>
