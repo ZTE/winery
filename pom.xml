@@ -59,7 +59,10 @@
     <prerequisites>
         <maven>3.0.3</maven>
     </prerequisites>
-	<modules>
+	<modules>	
+		<module>org.eclipse.winery.model.tosca</module>
+		<module>org.eclipse.winery.model.csar.toscametafile</module>
+		<module>org.eclipse.winery.model.selfservice</module>		
 		<module>org.eclipse.winery.generators.ia</module>
 		<module>org.eclipse.winery.common</module>
 		<module>org.eclipse.winery.repository</module>
