@@ -7,7 +7,7 @@
      Source: http://docs.oasis-open.org/tosca/TOSCA/v1.0/csd08/schemas/
 -->
 <xs:schema targetNamespace="http://docs.oasis-open.org/tosca/ns/2011/12" elementFormDefault="qualified" attributeFormDefault="unqualified" xmlns="http://docs.oasis-open.org/tosca/ns/2011/12" xmlns:xs="http://www.w3.org/2001/XMLSchema">
- <xs:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://www.w3.org/2001/xml.xsd"/>
+ <xs:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http_www.w3.org_2001_xml.xsd"/>
  <xs:element name="documentation" type="tDocumentation"/>
  <xs:complexType name="tDocumentation" mixed="true">
   <xs:sequence>
@@ -359,6 +359,7 @@
      </xs:element>
     </xs:sequence>
     <xs:attribute name="name" type="xs:string" use="optional"/>
+    <xs:attribute name="own" type="xs:string" use="optional" default="0"/>
    </xs:extension>
   </xs:complexContent>
  </xs:complexType>
