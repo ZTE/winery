@@ -369,7 +369,8 @@
 								]]></script>
 
 								<echo message="Bower command: ${bowerCommand} ${bowerArguments} prune" />
-								<exec executable="${bowerCommand}" outputproperty="bower.cmdOut" errorproperty="bower.cmdErr" resultproperty="bower.cmdExit" failonerror="true" dir="${basedir}" searchpath="true">
+								<!--exec executable="${bowerCommand}" outputproperty="bower.cmdOut" errorproperty="bower.cmdErr" resultproperty="bower.cmdExit" failonerror="true" dir="${basedir}" searchpath="true" -->
+								<exec executable="${bowerCommand}" resultproperty="bower.cmdExit" failonerror="true" dir="${basedir}" searchpath="true">
 									<arg line="${bowerArguments} prune" />
 								</exec>
 								<echo message="bower.cmdOut: ${bower.cmdOut}" />
@@ -377,7 +378,8 @@
 								<echo message="bower.cmdExit: ${bower.cmdExit}" />
 
 								<echo message="Bower command: ${bowerCommand} ${bowerArguments} update" />
-								<exec executable="${bowerCommand}" outputproperty="bower.cmdOut" errorproperty="bower.cmdErr" resultproperty="bower.cmdExit" failonerror="true" dir="${basedir}" searchpath="true">
+								<!-- exec executable="${bowerCommand}" outputproperty="bower.cmdOut" errorproperty="bower.cmdErr" resultproperty="bower.cmdExit" failonerror="true" dir="${basedir}" searchpath="true" -->
+								<exec executable="${bowerCommand}"  resultproperty="bower.cmdExit" failonerror="true" dir="${basedir}" searchpath="true">
 									<arg line="${bowerArguments} update" />
 								</exec>
 								<echo message="bower.cmdOut: ${bower.cmdOut}" />
