@@ -1,0 +1,4 @@
+{
+    "proxy": "http://proxynj.zte.com.cn:80",
+    "rejectUnauthorized": false
+}
