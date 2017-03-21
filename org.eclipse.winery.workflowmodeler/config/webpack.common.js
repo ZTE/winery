@@ -43,17 +43,18 @@ module.exports = {
             },
             {
                 test: /\.less$/,
-                use: [
-                    "style-loader",
-                    "css-loader",
-                    "less-loader"
-                ]
+                use: [{
+                    loader: "style-loader"
+                }, {
+                    loader: "css-loader"
+                }, {
+                    loader: "less-loader"
+                }]
             },
             {   // create scc file, will be ref by link
                 test: /\.css$/,
                 exclude: helpers.root('src', 'app'),
-                //loader: ExtractTextPlugin.extract('style', 'css?sourceMap')
-                use : ExtractTextPlugin.extract({
+                use: ExtractTextPlugin.extract({
                     fallback: "style-loader",
                     use: "css-loader"
                 })

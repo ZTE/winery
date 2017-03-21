@@ -8,6 +8,11 @@
     "experimentalDecorators": true,
     "removeComments": false,
     "noImplicitAny": false,
-    "suppressImplicitAnyIndexErrors": true
+    "suppressImplicitAnyIndexErrors": true,
+      "typingOptions": {
+          "enableAutoDiscovery": false,
+          "include": [],
+          "exclude": []
+      }
   }
 }
