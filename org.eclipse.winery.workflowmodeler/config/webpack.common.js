@@ -11,25 +11,31 @@ module.exports = {
     },
 
     resolve: {
-        extensions: ['', '.js', '.ts']
+        extensions: ['.js', '.ts']
     },
 
     module: {
-        loaders: [
+        rules: [
             {
                 test: /\.ts$/,
                 // awesome-typescript-loader compiles ts
                 // angular2-template-loader will translate templateUrl,styleUrls to require
-                loaders: ['awesome-typescript-loader', 'angular2-template-loader']
+                use: ['awesome-typescript-loader', 'angular2-template-loader']
 
             },
             {
                 test: /\.html$/,
-                loader: 'html'
+                loader: 'html-loader'
             },
             {
                 test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
-                loader: "url-loader?limit=10000&mimetype=application/font-woff"
+                //loader: "url-loader?limit=10000&mimetype="
+                loader: "url-loader",
+                options: {
+                    limit: 10000,
+                    mimetype: "application/font-woff"
+                }
+
             },
             {
                 test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
@@ -37,17 +43,25 @@ module.exports = {
             },
             {
                 test: /\.less$/,
-                loader:'style-loader!css-loader!less-loader'
+                use: [
+                    "style-loader",
+                    "css-loader",
+                    "less-loader"
+                ]
             },
             {   // create scc file, will be ref by link
                 test: /\.css$/,
                 exclude: helpers.root('src', 'app'),
-                loader: ExtractTextPlugin.extract('style', 'css?sourceMap')
+                //loader: ExtractTextPlugin.extract('style', 'css?sourceMap')
+                use : ExtractTextPlugin.extract({
+                    fallback: "style-loader",
+                    use: "css-loader"
+                })
             },
             {
                 test: /\.css$/,
                 include: helpers.root('src', 'app'),
-                loader: 'raw'
+                loader: 'raw-loader'
             }
         ]
     },
