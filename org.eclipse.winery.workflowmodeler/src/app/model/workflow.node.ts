@@ -10,8 +10,6 @@
  *     ZTE - initial API and implementation and/or initial documentation
  *******************************************************************************/
 
-import {isNullOrUndefined} from "util";
-
 export const WorkflowNodeType = [
     "StartEvent",
     "EndEvent",
