@@ -25,7 +25,7 @@ export class JsPlumbService {
                 private modelService: ModelService) {
     }
 
-    public connectNodes() {
+    public connectNode() {
         this.modelService.getNodes()
 			.forEach(node => node.connection
 				.forEach(target => this.jsplumbInstance.connect({source: node.id, target})));

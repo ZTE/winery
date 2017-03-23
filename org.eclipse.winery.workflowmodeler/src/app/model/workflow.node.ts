@@ -70,8 +70,7 @@ export class WorkflowNode {
     }
 
 	public toJSON() {
-		let target = {node_template: "", node_operation: "", interface: ""};
-		Object.assign(target, this);
+		let target = Object.assign({node_template: "", node_operation: "", interface: ""}, this);
 
 		target.node_template = this.nodeTemplate;
 		target.node_operation = this.nodeOperation;
