@@ -10,63 +10,30 @@
  *     ZTE - initial API and implementation and/or initial documentation
  *******************************************************************************/
 
-import {Component, AfterViewInit} from '@angular/core';
-import {WineryService} from "../../services/winery.service";
-import {JsPlumbService} from "../../services/jsplumb.service";
-import {BroadcastService} from "../../services/broadcast.service";
-import {ModelService} from "../../services/model.service";
-import {WorkflowNodeType} from "../../model/workflow.node";
-
+import { Component } from "@angular/core";
+import { WorkflowNodeType } from "../../model/workflow.node";
+import { BroadcastService } from "../../services/broadcast.service";
+import { JsPlumbService } from "../../services/jsplumb.service";
+import { ModelService } from "../../services/model.service";
+import { WineryService } from "../../services/winery.service";
 
 @Component({
-    selector: 'wm-toolbar',
-    styleUrls: ['./toolbar.component.css'],
-    templateUrl: 'toolbar.component.html',
+    selector: "wm-toolbar",
+    styleUrls: ["./toolbar.component.css"],
+    templateUrl: "toolbar.component.html",
 })
-export class WmToolbarComponent implements AfterViewInit {
-    isCollapsed = false;
+export class WmToolbarComponent {
     private nodeTypes = WorkflowNodeType;
 
-    constructor(private wineryService:WineryService,
-                private modelSerivce:ModelService,
-                private jsPlumbService:JsPlumbService,
-                private broadcastSerice:BroadcastService) {
-        this.broadcastSerice.jsPlumbInstance$.subscribe(instance => this.jsPlumbService.buttonDraggable());
+    constructor(private wineryService: WineryService,
+                private modelSerivce: ModelService,
+                private jsPlumbService: JsPlumbService,
+                private broadcastSerice: BroadcastService) {
+        this.broadcastSerice.jsPlumbInstance$.subscribe(
+			instance => this.jsPlumbService.buttonDraggable());
     }
 
-    ngAfterViewInit() {
-    }
-
-
-    toggleCollapse = function () {
-        this.isCollapsed = !this.isCollapsed;
-    }
-
-    loadIA() {
-        //this.wineryService.getAllImplementationArtifacts();
-    }
-
-    getNodeTemplates() {
-        this.wineryService.loadNodeTemplates();
-    }
-
-    getInterfaces() {
-        //this.wineryService.loadNodeTemplateInterfaces(null);
-    }
-
-    getOperations() {
-        //this.wineryService.loadNodeTemplateOperations(null, null);
-    }
-
-    getParams() {
-        //this.wineryService.loadNodeTemplateOperationParameter(null, null, null);
-    }
-
-    getProperties() {
-        this.wineryService.loadTopologyProperties(null);
-    }
-
-    save() {
+    private save() {
         this.modelSerivce.save();
     }
 }

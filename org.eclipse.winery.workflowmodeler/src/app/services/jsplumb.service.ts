@@ -10,80 +10,77 @@
  *     ZTE - initial API and implementation and/or initial documentation
  *******************************************************************************/
 
-import $ = require('jquery');
+import {Injectable} from "@angular/core";
+import {WorkflowNode} from "../model/workflow.node";
 import {BroadcastService} from "./broadcast.service";
-import {Injectable} from '@angular/core';
 import {ModelService} from "./model.service";
-import {WorkflowNode} from '../model/workflow.node';
+import $ = require("jquery");
 
 @Injectable()
 export class JsPlumbService {
 
-    jsplumbInstance:any;
+    public jsplumbInstance: any;
 
-    constructor(private broadcastService:BroadcastService,
-                private modelService:ModelService) {
+    constructor(private broadcastService: BroadcastService,
+                private modelService: ModelService) {
     }
 
-    connectNode() {
-        this.modelService.getNodes().forEach(node =>
-            node.connection.forEach(target =>
-                this.jsplumbInstance.connect({source: node.id, target: target})
-            )
-        );
+    public connectNodes() {
+        this.modelService.getNodes()
+			.forEach(node => node.connection
+				.forEach(target => this.jsplumbInstance.connect({source: node.id, target})));
     }
 
-    initJsPlumbInstance() {
-        console.log("init jsplumb instance start")
-        let jsPlumb = require('../assets/jslib/jsplumb/index').jsPlumb;
-        let _this = this;
+    public initJsPlumbInstance() {
+        console.log("init jsplumb instance start");
+        let jsPlumb = require("../assets/jslib/jsplumb/index").jsPlumb;
+        let jsplumbService = this;
 
         jsPlumb.ready(() => {
-            _this.jsplumbInstance = jsPlumb.getInstance();
+            jsplumbService.jsplumbInstance = jsPlumb.getInstance();
 
-            _this.jsplumbInstance.importDefaults({
+            jsplumbService.jsplumbInstance.importDefaults({
                 Anchor: ["Top", "RightMiddle", "LeftMiddle", "Bottom"],
                 Connector: [
                     "Flowchart",
-                    {cornerRadius: 0, stub: 0, gap: 3}
+                    {cornerRadius: 0, stub: 0, gap: 3},
                 ],
                 ConnectionOverlays: [
                     [
                         "Arrow",
-                        {direction: 1, foldback: 1, location: 1, width: 10, length: 10}
+                        {direction: 1, foldback: 1, location: 1, width: 10, length: 10},
                     ],
-                    ["Label", {label: "", id: "label", cssClass: "aLabel"}]
+                    ["Label", {label: "", id: "label", cssClass: "aLabel"}],
                 ],
                 connectorPaintStyle: {
-                    lineWidth: 2
+                    lineWidth: 2,
                 },
                 Endpoint: "Blank",
-                PaintStyle: {lineWidth: 1}
+                PaintStyle: {lineWidth: 1},
             });
 
-            _this.broadcastService.broadcast(_this.broadcastService.jsPlumbInstance, _this.jsplumbInstance);
+            jsplumbService.broadcastService.broadcast(jsplumbService.broadcastService.jsPlumbInstance,
+				jsplumbService.jsplumbInstance);
 
             // add connection to model data while a new connection is build
-            _this.jsplumbInstance.bind("connection", function (info, originalEvent) {
-                _this.modelService.addConnection(info.connection.sourceId, info.connection.targetId);
+            jsplumbService.jsplumbInstance.bind("connection", info => {
+                jsplumbService.modelService.addConnection(info.connection.sourceId, info.connection.targetId);
 
-                info.connection.bind("click", function (connection) {
-                    _this.modelService.deleteConnection(connection.sourceId, connection.targetId);
+                info.connection.bind("click", connection => {
+                    jsplumbService.modelService.deleteConnection(connection.sourceId, connection.targetId);
                     jsPlumb.detach(connection);
                 });
             });
         });
     }
 
-    initNode(node:WorkflowNode) {
+	public initNode(node: WorkflowNode) {
 
         this.jsplumbInstance.draggable(node.id, {
-            start: function (event, ui) {
-            },
-            stop: function (event) {
+            stop(event) {
                 node.position.left = event.pos[0];
                 node.position.top = event.pos[1];
-            }
+            },
         });
 
         this.jsplumbInstance.makeTarget(node.id, {
@@ -101,32 +98,29 @@ export class JsPlumbService {
 
     }
 
-    /**
-     * set each button in toolbar draggable
-     */
-    buttonDraggable() {
+	public buttonDraggable() {
         this.jsplumbInstance.draggable($(".toolbar .item"),
             {
                 scope: "btn",
-                clone: true
+                clone: true,
             });
     }
 
-    buttonDroppable() {
-        let _this = this;
+	public buttonDroppable() {
+        let jsplumbService = this;
         this.jsplumbInstance.droppable($(".canvas"), {
             scope: "btn",
-            drop: function (ev) {
+            drop(ev) {
                 let type = $(ev.drag.el).attr("nodeType");
                 let left = ev.e.clientX - ev.drop.position[0];
                 let top = ev.e.clientY - ev.drop.position[1];
 
-                _this.modelService.addNode(type, type, left, top);
-            }
+                jsplumbService.modelService.addNode(type, type, left, top);
+            },
         });
     }
 
-    remove(nodeId:string) {
+	public remove(nodeId: string) {
         this.jsplumbInstance.remove(nodeId);
     }
 

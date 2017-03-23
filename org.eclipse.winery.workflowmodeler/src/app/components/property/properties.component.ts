@@ -10,45 +10,44 @@
  *     ZTE - initial API and implementation and/or initial documentation
  *******************************************************************************/
 
-import {Component, Input, AfterViewInit } from '@angular/core';
-import {BroadcastService} from "../../services/broadcast.service";
-import {ModelService} from "../../services/model.service";
-import {JsPlumbService} from "../../services/jsplumb.service";
-import {WorkflowNodeType} from "../../model/workflow.node";
+import { AfterViewInit, Component } from "@angular/core";
+import { WorkflowNodeType } from "../../model/workflow.node";
+import { BroadcastService } from "../../services/broadcast.service";
+import { JsPlumbService } from "../../services/jsplumb.service";
+import { ModelService } from "../../services/model.service";
 
 @Component({
-    selector: 'wm-properties',
-    styleUrls: ['./properties.component.css'],
-    templateUrl: 'properties.component.html',
+    selector: "wm-properties",
+    styleUrls: ["./properties.component.css"],
+    templateUrl: "properties.component.html",
 })
 export class WmPropertiesComponent implements AfterViewInit {
-    private nodeTypes = WorkflowNodeType;
-    show:boolean = false;
-    node:any;
+    private node: any;
+    private nodeTypes: string[] = WorkflowNodeType;
+    private show: boolean = false;
+	private titleEditing: any = false;
 
-    constructor(private broadcastService:BroadcastService,
-                private modelService:ModelService,
-                private jsPlumnService:JsPlumbService) {
+    constructor(private broadcastService: BroadcastService,
+                private modelService: ModelService,
+                private jsPlumnService: JsPlumbService) {
 
     }
 
-    ngAfterViewInit() {
+    public ngAfterViewInit() {
         this.broadcastService.showProperty$.subscribe(show => this.show = show);
         this.broadcastService.nodeProperty$.subscribe(node => this.node = node);
     }
 
-    titleEditing:any = false;
-
-    addNewParam = function () {
+    private addNewParam() {
         alert("add new Param");
     }
 
-    nodeNameChanged() {
+    private nodeNameChanged() {
         this.titleEditing = !this.titleEditing;
         this.jsPlumnService.jsplumbInstance.repaintEverything();
     }
 
-    deleteNode() {
+	private deleteNode() {
         this.show = false;
 
         this.jsPlumnService.remove(this.node.id);

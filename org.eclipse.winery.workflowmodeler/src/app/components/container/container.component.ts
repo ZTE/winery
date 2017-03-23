@@ -10,36 +10,31 @@
  *     ZTE - initial API and implementation and/or initial documentation
  *******************************************************************************/
 
-import {Component, AfterViewInit, AfterViewChecked} from '@angular/core';
-import {BroadcastService} from "../../services/broadcast.service";
-import {JsPlumbService} from "../../services/jsplumb.service";
-import {NodeTemplate} from '../../model/nodetemplate';
+import { AfterViewInit, Component } from "@angular/core";
+import { BroadcastService } from "../../services/broadcast.service";
+import { JsPlumbService } from "../../services/jsplumb.service";
 import {ModelService} from "../../services/model.service";
-import {WineryService} from "../../services/winery.service";
 
 @Component({
-    selector: 'wm-container',
-    styleUrls: ['./container.component.css'],
-    templateUrl: 'container.component.html',
+	selector: "wm-container",
+	styleUrls: ["./container.component.css"],
+	templateUrl: "container.component.html",
 })
 export class WmContainerComponent implements AfterViewInit {
 
+	constructor(private broadcastService: BroadcastService,
+				private jsPlumbService: JsPlumbService,
+				private modelService: ModelService) {
 
-    constructor(private broadcastService:BroadcastService,
-                private jsPlumbService:JsPlumbService,
-                private modelService:ModelService,
-                private wineryService:WineryService) {
-        this.broadcastService.jsPlumbInstance$.subscribe(instance => this.jsPlumbService.buttonDroppable());
-    }
+		this.broadcastService.jsPlumbInstance$.subscribe(instance => this.jsPlumbService.buttonDroppable());
+	}
 
-    ngAfterViewInit() {
-        this.jsPlumbService.initJsPlumbInstance();
-    }
+	public ngAfterViewInit() {
+		this.jsPlumbService.initJsPlumbInstance();
+	}
 
-
-    canvasClick() {
-        this.broadcastService.showProperty.next(false);
-    }
-
+	private canvasClick() {
+		this.broadcastService.showProperty.next(false);
+	}
 
 }

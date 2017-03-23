@@ -9,7 +9,7 @@
  * Contributors:
  *     ZTE - initial API and implementation and/or initial documentation
  *******************************************************************************/
-const baseUrl:string = '/api';
+const baseUrl: string = "/api";
 export const ApiConfig = {
-    demo: baseUrl + '/demo/'
+    demo: baseUrl + "/demo/",
 };

@@ -19,50 +19,68 @@ export const WorkflowNodeType = [
 ];
 
 export class WorkflowNode {
-    id:string;
-    name:string;
-    type:string;
-    input:any[];
-    output:any[];
+    public id: string;
+	public name: string;
+	public type: string;
+	public input: any[];
+	public output: any[];
+	public connection: any[];
+	public template: any;
+	public position: any;
 
-    connection:any[];
+	public nodeInterface: string;
+	public nodeTemplate: string;
+	public nodeOperation: string;
 
-    template:any;
-
-    position:any;
-
-    interface:string;
-    node_template:string;
-    node_operation;
-    string;
-
-    constructor(option:any) {
-        this.id = option.id;
-        this.name = option.name;
-        this.type = option.type;
-        this.position = option.position;
-        this.input = option.input || [];
-        this.connection = option.connection || [];
-        this.output = option.output || [];
-
-        this.template = option.template || {};
-
-        this.interface = option.interface || "";
-        this.node_operation = option.node_operation || "";
-        this.node_template = option.node_template || "";
+    constructor({
+		id, name, type,
+		position = {},
+		input = [],
+		connection = [],
+		output = [],
+		template = {},
+		interface: nodeInterface = "",
+		node_operation: nodeOperation = "",
+		node_template: nodeTemplate = "",
+		}) {
+        this.id = id;
+        this.name = name;
+        this.type = type;
+        this.position = position;
+        this.input = input;
+        this.connection = connection;
+        this.output = output;
+        this.template = template;
+        this.nodeInterface = nodeInterface;
+        this.nodeOperation = nodeOperation;
+        this.nodeTemplate = nodeTemplate;
     }
 
-    addConnection(targetId) {
+    public addConnection(targetId: string) {
         if (!this.connection.includes(targetId)) {
             this.connection.push(targetId);
         }
     }
 
-    deleteConnection(targetId:string) {
-        let index = this.connection.findIndex(target => target == targetId);
-        if (index != -1) {
+    public deleteConnection(targetId: string) {
+        let index = this.connection.findIndex(target => target === targetId);
+        if (index !== -1) {
             this.connection.splice(index, 1);
         }
     }
+
+	public toJSON() {
+		let target = {node_template: "", node_operation: "", interface: ""};
+		Object.assign(target, this);
+
+		target.node_template = this.nodeTemplate;
+		target.node_operation = this.nodeOperation;
+		target.interface = this.nodeInterface;
+
+		delete target.nodeTemplate;
+		delete target.nodeOperation;
+		delete target.nodeInterface;
+		return target;
+	}
 
 }

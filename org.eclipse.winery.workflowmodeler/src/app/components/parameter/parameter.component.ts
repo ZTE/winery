@@ -10,14 +10,14 @@
  *     ZTE - initial API and implementation and/or initial documentation
  *******************************************************************************/
 
-import {Component, Input } from '@angular/core';
+import {Component, Input } from "@angular/core";
 
 @Component({
-    selector: 'wm-parameter',
-    styleUrls:['./parameter.component.css'],
-    templateUrl: 'parameter.component.html',
+    selector: "wm-parameter",
+    styleUrls: ["./parameter.component.css"],
+    templateUrl: "parameter.component.html",
 })
-export  class WmParameterComponent{
+export  class WmParameterComponent {
     @Input()
-    param: any;
+    private param: any;
 }

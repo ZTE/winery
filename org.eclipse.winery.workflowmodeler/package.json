@@ -7,7 +7,8 @@
     "test": "karma start",
     "build": "rimraf dist && webpack --config config/webpack.prod.js --progress --profile --bail",
     "postinstall": "typings install",
-    "mock": "node mock/server.js"
+    "mock": "node mock/server.js",
+    "lint": "tslint ./src/**/*.ts -t verbose"
   },
   "licenses": [
     {
@@ -63,6 +64,7 @@
     "restify": "4.3.0",
     "rimraf": "2.6.1",
     "style-loader": "0.15.0",
+    "tslint": "^4.5.1",
     "typescript": "2.2.1",
     "url-loader": "0.5.8",
     "util": "0.10.3",

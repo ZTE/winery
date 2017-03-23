@@ -13,10 +13,10 @@
 import {Operation} from "./operation";
 
 export class Interface {
-    name:string;
-    operations:Operation[] = [];
+    public name: string;
+    public operations: Operation[] = [];
 
-    constructor(name:string) {
+    constructor(name: string) {
         this.name = name;
     }
 }

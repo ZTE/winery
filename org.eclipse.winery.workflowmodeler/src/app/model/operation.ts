@@ -11,11 +11,11 @@
  *******************************************************************************/
 
 export class Operation {
-    name:string;
-    inputs:string[];
-    outputs:string[];
+    public name: string;
+	public inputs: string[];
+	public outputs: string[];
 
-    constructor(name:string) {
+    constructor(name: string) {
         this.name = name;
     }
 }

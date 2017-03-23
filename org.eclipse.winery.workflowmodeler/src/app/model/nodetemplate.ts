@@ -13,20 +13,20 @@
 import {Interface} from "./interface";
 
 export class NodeTemplate {
-    id:string;
-    name:string;
-    namespace:string;
-    properties:string[] = [];
-    interfaces:Interface[] = [];
+    public id: string;
+	public name: string;
+	public namespace: string;
+	public properties: string[] = [];
+	public interfaces: Interface[] = [];
 
-    top:any;
-    left:any;
+	public top: number;
+	public left: number;
 
-    constructor(id:string,
-                name:string,
-                namespace:string,
-                top:any,
-                left:any) {
+    constructor(id: string,
+                name: string,
+                namespace: string,
+                top: number,
+                left: number) {
         this.id = id;
         this.name = name;
         this.namespace = namespace;

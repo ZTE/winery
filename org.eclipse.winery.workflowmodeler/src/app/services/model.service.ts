@@ -10,94 +10,79 @@
  *     ZTE - initial API and implementation and/or initial documentation
  *******************************************************************************/
 
-import $ = require('jquery');
-import {BroadcastService} from "./broadcast.service";
-import {Injectable} from '@angular/core';
-
-import { WorkflowNode } from '../model/workflow.node';
+import { Injectable } from "@angular/core";
 import {isNullOrUndefined} from "util";
-import {JsPlumbService} from "./jsplumb.service";
+import { WorkflowNode } from "../model/workflow.node";
+import { BroadcastService } from "./broadcast.service";
 
 @Injectable()
 export class ModelService {
-    private nodes:WorkflowNode[] = [];
+    private nodes: WorkflowNode[] = [];
 
-    constructor(private broadcastService:BroadcastService) {
+    constructor(private broadcastService: BroadcastService) {
         this.broadcastService.planModel$.subscribe(nodes => {
             nodes.forEach(node => this.nodes.push(new WorkflowNode(node)));
         });
 
     }
 
-    createId() {
-        let idSet = new Set();
-        this.nodes.forEach(node => idSet.add(node.id));
-
-        for (let i = 0; i < idSet.size; i++) {
-            if (!idSet.has("node" + i)) {
-                return "node" + i;
-            }
-        }
-
-        return "node" + idSet.size;
-    }
-
-
-    getNodes():WorkflowNode[] {
+    public getNodes(): WorkflowNode[] {
         return this.nodes;
     }
 
-    addNode(name:string,
-            type:string,
-            left:number,
-            top:number) {
+    public addNode(name: string, type: string, left: number, top: number) {
         this.nodes.push(new WorkflowNode({
-            "id": this.createId(),
-            "name": name,
-            "type": type,
-            "position": {
-                "left": left, "top": top
+            id: this.createId(),
+            name,
+            type,
+			position: {
+				left,
+				top,
             },
-            "template": {},
-            "input": [],
-            "output": []
         }));
     }
 
-    deleteNode(nodeId:string) {
+    public deleteNode(nodeId: string) {
         // delete related connections
         this.nodes.forEach(node => node.deleteConnection(nodeId));
 
         // delete current node
-        let index = this.nodes.findIndex(node => node.id == nodeId);
-        if (index != -1) {
+        let index = this.nodes.findIndex(node => node.id === nodeId);
+        if (index !== -1) {
             this.nodes.splice(index, 1);
         }
     }
 
-    addConnection(sourceId:string, targetId:string) {
-        let node = this.nodes.find(node => node.id == sourceId);
-        if (isNullOrUndefined(node)) {
-
-        } else {
-            node.addConnection(targetId);
+    public addConnection(sourceId: string, targetId: string) {
+        let node = this.nodes.find(tmpNode => tmpNode.id === sourceId);
+        if (!isNullOrUndefined(node)) {
+			node.addConnection(targetId);
         }
     }
 
-    deleteConnection(sourceId:string, targetId:string) {
-        let node = this.nodes.find(node => node.id == sourceId);
-        if (isNullOrUndefined(node)) {
-
-        } else {
-            node.deleteConnection(targetId);
+    public deleteConnection(sourceId: string, targetId: string) {
+        let node = this.nodes.find(tmpNode => tmpNode.id === sourceId);
+        if (!isNullOrUndefined(node)) {
+			node.deleteConnection(targetId);
         }
     }
 
-    save() {
+    public save() {
         console.log("****************** save data *********************");
         console.log(this.nodes);
         this.broadcastService.broadcast(this.broadcastService.saveEvent, JSON.stringify(this.nodes));
     }
 
+	private createId() {
+		let idSet = new Set();
+		this.nodes.forEach(node => idSet.add(node.id));
 
+		for (let i = 0; i < idSet.size; i++) {
+			if (!idSet.has("node" + i)) {
+				return "node" + i;
+			}
+		}
+
+		return "node" + idSet.size;
+	}
 }

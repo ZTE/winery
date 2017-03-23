@@ -9,22 +9,22 @@
  * Contributors:
  *     ZTE - initial API and implementation and/or initial documentation
  *******************************************************************************/
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
-import { HttpModule } from '@angular/http';
+import { CommonModule } from "@angular/common";
+import { NgModule } from "@angular/core";
+import { FormsModule } from "@angular/forms";
+import { HttpModule } from "@angular/http";
+import { RouterModule } from "@angular/router";
 
 const module = [
     CommonModule,
     FormsModule,
     HttpModule,
-    RouterModule
+    RouterModule,
 ];
 
 @NgModule({
     imports: module,
-    exports: module
+    exports: module,
 })
 
 export class SharedModule {

@@ -10,34 +10,21 @@
  *     ZTE - initial API and implementation and/or initial documentation
  *******************************************************************************/
 
-import { Component, AfterViewInit } from '@angular/core';
-import {Location} from '@angular/common';
-import {ActivatedRoute, Params} from '@angular/router';
-import {Observable} from "rxjs/Observable";
-import {WineryService} from "./services/winery.service";
-import {JsPlumbService} from "./services/jsplumb.service";
-import {BroadcastService} from "./services/broadcast.service";
+import { Component, OnInit } from "@angular/core";
+import { ActivatedRoute } from "@angular/router";
+import { WineryService } from "./services/winery.service";
 
 @Component({
-    selector: 'my-app',
-    templateUrl: 'app.component.html',
+    selector: "my-app",
+    templateUrl: "app.component.html",
 })
-export class AppComponent implements AfterViewInit {
-    constructor(private route:ActivatedRoute,
-                private wineryService:WineryService) {
+export class AppComponent implements OnInit {
+    constructor(private route: ActivatedRoute,
+                private wineryService: WineryService) {
 
     }
 
-    ngOnInit() {
-        this.route.queryParams.subscribe(
-            params =>
-                this.wineryService.setRequestParam(params)
-        );
+    public ngOnInit() {
+        this.route.queryParams.subscribe(params => this.wineryService.setRequestParam(params));
     }
-
-    ngAfterViewInit() {
-
-    }
-
-
 }
