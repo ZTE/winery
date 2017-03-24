@@ -10,21 +10,21 @@
  *     ZTE - initial API and implementation and/or initial documentation
  *******************************************************************************/
 
-var webpack = require('webpack');
-var webpackMerge = require('webpack-merge');
-var ExtractTextPlugin = require('extract-text-webpack-plugin');
-var commonConfig = require('./webpack.common.js');
-var helpers = require('./helpers');
+var webpack = require("webpack");
+var webpackMerge = require("webpack-merge");
+var ExtractTextPlugin = require("extract-text-webpack-plugin");
+var commonConfig = require("./webpack.common.js");
+var helpers = require("./helpers");
 
-const ENV = process.env.NODE_ENV = process.env.ENV = 'production';
+const ENV = process.env.NODE_ENV = process.env.ENV = "production";
 
 module.exports = webpackMerge(commonConfig, {
-    devtool: 'source-map',
+    devtool: "source-map",
 
     output: {
-        path: helpers.root('dist'),
-        filename: '[name].[hash].js',
-        chunkFilename: '[id].[hash].chunk.js'
+        path: helpers.root("dist"),
+        filename: "[name].[hash].js",
+        chunkFilename: "[id].[hash].chunk.js"
     },
 
     htmlLoader: {
@@ -38,10 +38,10 @@ module.exports = webpackMerge(commonConfig, {
                 keep_fnames: true
             }
         }),
-        new ExtractTextPlugin('[name].[hash].css'),
+        new ExtractTextPlugin("[name].[hash].css"),
         new webpack.DefinePlugin({
-            'process.env': {
-                'ENV': JSON.stringify(ENV)
+            "process.env": {
+                "ENV": JSON.stringify(ENV)
             }
         })
     ]

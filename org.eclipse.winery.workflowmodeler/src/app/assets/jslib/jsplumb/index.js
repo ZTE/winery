@@ -1,3 +1,3 @@
-require('jsplumb/dist/js/jsplumb.js');
+require("jsplumb/dist/js/jsplumb.js");
 
-module.exports = {'jsPlumb': jsPlumb};
+module.exports = {jsPlumb};

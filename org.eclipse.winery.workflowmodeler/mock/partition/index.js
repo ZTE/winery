@@ -10,5 +10,5 @@
  *     ZTE - initial API and implementation and/or initial documentation
  *******************************************************************************/
 
-module['exports'] = function (server) {
+module.exports = function (server) {
 };

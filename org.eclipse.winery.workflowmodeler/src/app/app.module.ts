@@ -10,7 +10,7 @@
  *     ZTE - initial API and implementation and/or initial documentation
  *******************************************************************************/
 
-//noinspection TypeScriptCheckImport
+// noinspection TypeScriptCheckImport
 import { NgModule }      from "@angular/core";
 import { BrowserModule } from "@angular/platform-browser";
 import { RouterModule } from "@angular/router";

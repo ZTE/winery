@@ -17,7 +17,7 @@ import { AppModule } from "./app/app.module";
 if (process.env.ENV === "production") {
     enableProdMode();
 }
-//noinspection TypeScriptValidateTypes
+// noinspection TypeScriptValidateTypes
 platformBrowserDynamic().bootstrapModule(AppModule);
 
 // global styles

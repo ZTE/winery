@@ -10,4 +10,4 @@
  *     ZTE - initial API and implementation and/or initial documentation
  *******************************************************************************/
 
-module.exports = require('./config/webpack.dev.js');
+module.exports = require("./config/webpack.dev.js");

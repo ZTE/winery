@@ -2,12 +2,11 @@
 	"extends": "tslint:recommended",
 	"rules": {
 		"arrow-parens": false,
-		"object-literal-sort-keys": false,
-		"no-unused-variable": false,
-		"no-console": false,
 		"indent":  {
 			"options": ["tabs"]
 		},
+		"no-console": false,
+		"no-unused-variable": false,
 		"object-literal-sort-keys": false
 	}
 }

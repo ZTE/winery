@@ -10,4 +10,4 @@
  *     ZTE - initial API and implementation and/or initial documentation
  *******************************************************************************/
 
-module.exports = require('./config/karma.conf.js');
+module.exports = require("./config/karma.conf.js");
