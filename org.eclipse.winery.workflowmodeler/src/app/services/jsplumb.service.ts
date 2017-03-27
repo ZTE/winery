@@ -15,6 +15,8 @@ import {WorkflowNode} from "../model/workflow.node";
 import {BroadcastService} from "./broadcast.service";
 import {ModelService} from "./model.service";
 import $ = require("jquery");
+import {jsPlumb} from "jsplumb/dist/js/jsplumb.js";
+
 
 @Injectable()
 export class JsPlumbService {
@@ -33,7 +35,6 @@ export class JsPlumbService {
 
     public initJsPlumbInstance() {
         console.log("init jsplumb instance start");
-        let jsPlumb = require("../assets/jslib/jsplumb/index").jsPlumb;
         let jsplumbService = this;
 
         jsPlumb.ready(() => {
