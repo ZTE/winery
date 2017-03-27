@@ -17,7 +17,6 @@ import {ModelService} from "./model.service";
 import $ = require("jquery");
 import {jsPlumb} from "jsplumb/dist/js/jsplumb.js";
 
-
 @Injectable()
 export class JsPlumbService {
 
