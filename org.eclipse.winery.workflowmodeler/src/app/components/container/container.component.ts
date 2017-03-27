@@ -22,9 +22,10 @@ import {ModelService} from "../../services/model.service";
 })
 export class WmContainerComponent implements AfterViewInit {
 
-	constructor(private broadcastService: BroadcastService,
-				private jsPlumbService: JsPlumbService,
-				private modelService: ModelService) {
+	constructor(
+		private broadcastService: BroadcastService,
+		private jsPlumbService: JsPlumbService,
+		private modelService: ModelService) {
 
 		this.broadcastService.jsPlumbInstance$.subscribe(instance => this.jsPlumbService.buttonDroppable());
 	}

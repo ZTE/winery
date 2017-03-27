@@ -116,9 +116,7 @@ export class WineryService {
     }
 
     public save(data: string) {
-		console.log("process data:");
-		console.log(data);
-        let url = "servicetemplates/" + this.encode(this.namespace)
+		let url = "servicetemplates/" + this.encode(this.namespace)
 			+ "/" + this.encode(this.serviceTemplateId) + "/plans/" + this.encode(this.plan) + "/file";
 
 		let requestData = "-----------------------------7da24f2e50046\r\n"
@@ -126,16 +124,16 @@ export class WineryService {
 			+ "Content-type: plain/text\r\n\r\n"
 			+ data + "\r\n-----------------------------7da24f2e50046--\r\n";
 
-        $.ajax({
-            crossDomain: true,
-            contentType: "multipart/form-data; boundary=---------------------------7da24f2e50046",
-            data: requestData,
-            url: this.repositoryURL + url,
-            type: "PUT",
-            success() {
-                console.log("save success");
-            },
-        });
+		$.ajax({
+			crossDomain: true,
+			contentType: "multipart/form-data; boundary=---------------------------7da24f2e50046",
+			data: requestData,
+			url: this.repositoryURL + url,
+			type: "PUT",
+			success() {
+				console.log("save success");
+			},
+		});
     }
 
 	public loadPlan() {

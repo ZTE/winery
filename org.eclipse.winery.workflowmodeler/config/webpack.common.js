@@ -41,7 +41,6 @@ module.exports = {
             },
             {
                 test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
-                //loader: "url-loader?limit=10000&mimetype="
                 loader: "url-loader",
                 options: {
                     limit: 10000,
@@ -85,8 +84,7 @@ module.exports = {
         }),
 
         new HtmlWebpackPlugin({
-            template: "src/index.html"/*,
-             favicon:　"src/venus.png"*/
+            template: "src/index.html"
         })
     ]
 };
