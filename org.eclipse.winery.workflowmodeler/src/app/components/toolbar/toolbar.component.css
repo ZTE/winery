@@ -18,3 +18,7 @@
     width: 100%;
     z-index: 4;
 }
+
+button {
+	transition: all 0s;
+}
