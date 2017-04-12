@@ -44,13 +44,13 @@ export class BroadcastService {
 
     /**
      * broadcast datas
-     * this method will catch the exceptions for
-     * @param sub
-     * @param data
+     * this method will catch the exceptions for the broadcast
+     * @param subject will broadcast data
+     * @param data will be broadcated
      */
-    public broadcast(sub: any, data: any) {
+    public broadcast(subject: Subject, data: any) {
         try {
-            sub.next(data);
+            subject.next(data);
         } catch (err) {
             console.error(err);
         }
