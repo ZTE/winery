@@ -15,6 +15,10 @@ import { WorkflowNode } from '../../model/workflow.node';
 import { BroadcastService } from '../../services/broadcast.service';
 import { WineryService } from '../../services/winery.service';
 
+/**
+ * node template component provides operations about tosca modules which saved in winery.
+ * This component will be used in the property component while the corresponding workflow node is calling the node template's operation
+ */
 @Component({
     selector: 'b4t-node-template',
     templateUrl: 'nodetemplate.component.html',

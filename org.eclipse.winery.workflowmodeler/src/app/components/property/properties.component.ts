@@ -16,6 +16,11 @@ import { BroadcastService } from '../../services/broadcast.service';
 import { JsPlumbService } from '../../services/jsplumb.service';
 import { ModelService } from '../../services/model.service';
 
+/**
+ * property component presents information of a workflow node.
+ * the presented information can be edit in this component.
+ * it may load information dynamically. the content may be different for different node type.
+ */
 @Component({
     selector: 'b4t-properties',
     styleUrls: ['./properties.component.css'],

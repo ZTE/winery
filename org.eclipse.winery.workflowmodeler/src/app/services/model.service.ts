@@ -15,6 +15,10 @@ import {isNullOrUndefined} from 'util';
 import { WorkflowNode } from '../model/workflow.node';
 import { BroadcastService } from './broadcast.service';
 
+/**
+ * ModelService
+ * provides all operations about plan model.
+ */
 @Injectable()
 export class ModelService {
     private nodes: WorkflowNode[] = [];

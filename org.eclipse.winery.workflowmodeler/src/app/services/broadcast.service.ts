@@ -14,6 +14,11 @@ import {Subject} from 'rxjs/Subject';
 import {WorkflowNode} from '../model/workflow.node';
 import {Operation} from '../model/operation';
 
+/**
+ * BroadcastService
+ * All of the observable subject should be registered to this service.
+ * It provider a broadcast method to broadcast data. the broadcast method would catch error while broadcasting.
+ */
 @Injectable()
 export class BroadcastService {
 

@@ -17,6 +17,10 @@ import {ModelService} from './model.service';
 import $ = require('jquery');
 import {jsPlumb} from 'jsplumb/dist/js/jsplumb.js';
 
+/**
+ * JsPlumbService
+ * provides all of the operations about jsplumb plugin.
+ */
 @Injectable()
 export class JsPlumbService {
 

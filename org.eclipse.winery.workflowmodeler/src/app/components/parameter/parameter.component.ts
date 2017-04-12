@@ -12,6 +12,10 @@
 
 import {Component, Input } from '@angular/core';
 
+/**
+ * this component contains in property component if the corresponding node has parameter properties
+ * eg. task node have input and output params, start event node has input param
+ */
 @Component({
     selector: 'b4t-parameter',
     styleUrls: ['./parameter.component.css'],

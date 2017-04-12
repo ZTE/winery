@@ -15,6 +15,10 @@ import { WorkflowNode } from '../../model/workflow.node';
 import { BroadcastService } from '../../services/broadcast.service';
 import { JsPlumbService } from '../../services/jsplumb.service';
 
+/**
+ * node component represent a single workflow node.
+ * every node would be rendered on the container component
+ */
 @Component({
     selector: 'b4t-node',
     styleUrls: ['./node.component.css'],

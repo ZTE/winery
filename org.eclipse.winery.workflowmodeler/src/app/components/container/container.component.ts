@@ -15,6 +15,10 @@ import { BroadcastService } from '../../services/broadcast.service';
 import { JsPlumbService } from '../../services/jsplumb.service';
 import {ModelService} from '../../services/model.service';
 
+/**
+ * main canvas, it contains two parts: canvas and node property component
+ * bpmn task nodes can be dropped into this canvas, and then the workflow can be edit
+ */
 @Component({
     selector: 'b4t-container',
     styleUrls: ['./container.component.css'],

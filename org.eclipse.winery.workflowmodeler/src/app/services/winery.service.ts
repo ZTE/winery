@@ -17,6 +17,10 @@ import {Operation} from '../model/operation';
 import {BroadcastService} from './broadcast.service';
 import $ = require('jquery');
 
+/**
+ * WineryService
+ * provides operation about winery. It can load and save data from winery.
+ */
 @Injectable()
 export class WineryService {
     private repositoryURL: string;

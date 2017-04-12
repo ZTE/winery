@@ -17,6 +17,10 @@ import { JsPlumbService } from '../../services/jsplumb.service';
 import { ModelService } from '../../services/model.service';
 import { WineryService } from '../../services/winery.service';
 
+/**
+ * toolbar component contains some basic operations(save) and all of the supported workflow nodes.
+ * The supported nodes can be dragged to container component. which will add a new node to the workflow.
+ */
 @Component({
     selector: 'b4t-toolbar',
     styleUrls: ['./toolbar.component.css'],

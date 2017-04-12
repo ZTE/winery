@@ -14,6 +14,9 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { WineryService } from './services/winery.service';
 
+/**
+ * main component
+ */
 @Component({
     selector: 'b4t-app',
     templateUrl: 'app.component.html',
