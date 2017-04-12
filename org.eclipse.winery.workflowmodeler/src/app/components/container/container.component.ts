@@ -34,7 +34,7 @@ export class WmContainerComponent implements AfterViewInit {
     }
 
     public canvasClick() {
-        this.broadcastService.showProperty.next(false);
+        this.broadcastService.broadcast(this.broadcastService.showProperty, false);
     }
 
 }

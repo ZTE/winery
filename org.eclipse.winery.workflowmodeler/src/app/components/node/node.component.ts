@@ -64,7 +64,7 @@ export class WmNodeComponent implements AfterViewInit, OnDestroy {
     }
 
     public showProperties() {
-        this.broadcastService.nodeProperty.next(this.node);
-        this.broadcastService.showProperty.next(true);
+        this.broadcastService.broadcast(this.broadcastService.nodeProperty, this.node);
+        this.broadcastService.broadcast(this.broadcastService.showProperty, true);
     }
 }

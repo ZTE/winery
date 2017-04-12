@@ -11,6 +11,8 @@
  *******************************************************************************/
 import {Injectable} from '@angular/core';
 import {Subject} from 'rxjs/Subject';
+import {WorkflowNode} from '../model/workflow.node';
+import {Operation} from '../model/operation';
 
 @Injectable()
 export class BroadcastService {
@@ -18,28 +20,28 @@ export class BroadcastService {
     public jsPlumbInstance = new Subject<any>();
     public jsPlumbInstance$ = this.jsPlumbInstance.asObservable();
 
-    public showProperty = new Subject<any>();
+    public showProperty = new Subject<boolean>();
     public showProperty$ = this.showProperty.asObservable();
 
-    public planModel = new Subject<any>();
+    public planModel = new Subject<any[]>();
     public planModel$ = this.planModel.asObservable();
 
-    public saveEvent = new Subject<any>();
+    public saveEvent = new Subject<string>();
     public saveEvent$ = this.saveEvent.asObservable();
 
-    public nodeProperty = new Subject<any>();
+    public nodeProperty = new Subject<WorkflowNode>();
     public nodeProperty$ = this.nodeProperty.asObservable();
 
-    public nodeTemplates = new Subject<any>();
+    public nodeTemplates = new Subject<any[]>();
     public nodeTemplates$ = this.nodeTemplates.asObservable();
 
-    public nodeInterfaces = new Subject<any>();
+    public nodeInterfaces = new Subject<any[]>();
     public nodeInterfaces$ = this.nodeInterfaces.asObservable();
 
-    public nodeOperations = new Subject<any>();
+    public nodeOperations = new Subject<Operation[]>();
     public nodeOperations$ = this.nodeOperations.asObservable();
 
-    public nodeParameters = new Subject<any>();
+    public nodeParameters = new Subject<{input:any[], output:any[]}>();
     public nodeParameters$ = this.nodeParameters.asObservable();
 
     /**
