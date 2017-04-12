@@ -10,7 +10,7 @@
  *     ZTE - initial API and implementation and/or initial documentation
  *******************************************************************************/
 
-import {Operation} from "./operation";
+import {Operation} from './operation';
 
 export class Interface {
     public name: string;

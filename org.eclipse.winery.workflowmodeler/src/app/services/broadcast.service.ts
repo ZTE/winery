@@ -9,50 +9,50 @@
  * Contributors:
  *     ZTE - initial API and implementation and/or initial documentation
  *******************************************************************************/
-import {Injectable} from "@angular/core";
-import {Subject} from "rxjs/Subject";
+import {Injectable} from '@angular/core';
+import {Subject} from 'rxjs/Subject';
 
 @Injectable()
 export class BroadcastService {
 
     public jsPlumbInstance = new Subject<any>();
-	public jsPlumbInstance$ = this.jsPlumbInstance.asObservable();
+    public jsPlumbInstance$ = this.jsPlumbInstance.asObservable();
 
-	public showProperty = new Subject<any>();
-	public showProperty$ = this.showProperty.asObservable();
+    public showProperty = new Subject<any>();
+    public showProperty$ = this.showProperty.asObservable();
 
-	public planModel = new Subject<any>();
-	public planModel$ = this.planModel.asObservable();
+    public planModel = new Subject<any>();
+    public planModel$ = this.planModel.asObservable();
 
-	public saveEvent = new Subject<any>();
-	public saveEvent$ = this.saveEvent.asObservable();
+    public saveEvent = new Subject<any>();
+    public saveEvent$ = this.saveEvent.asObservable();
 
-	public nodeProperty = new Subject<any>();
-	public nodeProperty$ = this.nodeProperty.asObservable();
+    public nodeProperty = new Subject<any>();
+    public nodeProperty$ = this.nodeProperty.asObservable();
 
-	public nodeTemplates = new Subject<any>();
-	public nodeTemplates$ = this.nodeTemplates.asObservable();
+    public nodeTemplates = new Subject<any>();
+    public nodeTemplates$ = this.nodeTemplates.asObservable();
 
-	public nodeInterfaces = new Subject<any>();
-	public nodeInterfaces$ = this.nodeInterfaces.asObservable();
+    public nodeInterfaces = new Subject<any>();
+    public nodeInterfaces$ = this.nodeInterfaces.asObservable();
 
-	public nodeOperations = new Subject<any>();
-	public nodeOperations$ = this.nodeOperations.asObservable();
+    public nodeOperations = new Subject<any>();
+    public nodeOperations$ = this.nodeOperations.asObservable();
 
-	public nodeParameters = new Subject<any>();
-	public nodeParameters$ = this.nodeParameters.asObservable();
+    public nodeParameters = new Subject<any>();
+    public nodeParameters$ = this.nodeParameters.asObservable();
 
-	/**
-	 * broadcast datas
-	 * this method will catch the exceptions for
-	 * @param sub
-	 * @param data
-	 */
-	public broadcast(sub: any, data: any) {
-		try {
-			sub.next(data);
-		} catch (err) {
-			console.error(err);
-		}
-	}
+    /**
+     * broadcast datas
+     * this method will catch the exceptions for
+     * @param sub
+     * @param data
+     */
+    public broadcast(sub: any, data: any) {
+        try {
+            sub.next(data);
+        } catch (err) {
+            console.error(err);
+        }
+    }
 }

@@ -11,19 +11,19 @@
  *******************************************************************************/
 
 // Angular 2
-import "@angular/common";
-import "@angular/core";
-import "@angular/http";
-import "@angular/platform-browser";
-import "@angular/platform-browser-dynamic";
-import "@angular/router";
-import "angular-in-memory-web-api";
+import '@angular/common';
+import '@angular/core';
+import '@angular/http';
+import '@angular/platform-browser';
+import '@angular/platform-browser-dynamic';
+import '@angular/router';
+import 'angular-in-memory-web-api';
 
 // bootstrap
-import "bootstrap/dist/css/bootstrap.css";
+import 'bootstrap/dist/css/bootstrap.css';
 
 // font-awesome
-import "font-awesome/less/font-awesome.less";
+import 'font-awesome/less/font-awesome.less';
 
 // RxJS
-import "rxjs";
+import 'rxjs';

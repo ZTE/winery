@@ -10,15 +10,15 @@
  *     ZTE - initial API and implementation and/or initial documentation
  *******************************************************************************/
 
-import { enableProdMode } from "@angular/core";
-import { platformBrowserDynamic } from "@angular/platform-browser-dynamic";
-import { AppModule } from "./app/app.module";
+import { enableProdMode } from '@angular/core';
+import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
+import { AppModule } from './app/app.module';
 
-if (process.env.ENV === "production") {
+if (process.env.ENV === 'production') {
     enableProdMode();
 }
 // noinspection TypeScriptValidateTypes
 platformBrowserDynamic().bootstrapModule(AppModule);
 
 // global styles
-import "./index.css";
+import './index.css';

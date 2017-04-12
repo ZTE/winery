@@ -10,18 +10,18 @@
  *     ZTE - initial API and implementation and/or initial documentation
  *******************************************************************************/
 
-import {NgModule} from "@angular/core";
-import {RouterModule, Routes} from "@angular/router";
-import {WmToolbarComponent} from "./components/toolbar/toolbar.component";
+import {NgModule} from '@angular/core';
+import {RouterModule, Routes} from '@angular/router';
+import {WmToolbarComponent} from './components/toolbar/toolbar.component';
 
 const routes = [
     {
-        path: "",
-        redirectTo: "main",
-        pathMatch: "full",
+        path: '',
+        redirectTo: 'main',
+        pathMatch: 'full',
     },
     {
-        path: "main",
+        path: 'main',
         component: WmToolbarComponent,
     },
 ];

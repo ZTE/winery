@@ -10,13 +10,13 @@
  *     ZTE - initial API and implementation and/or initial documentation
  *******************************************************************************/
 
-import { Component, OnInit } from "@angular/core";
-import { ActivatedRoute } from "@angular/router";
-import { WineryService } from "./services/winery.service";
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { WineryService } from './services/winery.service';
 
 @Component({
-    selector: "my-app",
-    templateUrl: "app.component.html",
+    selector: 'b4t-app',
+    templateUrl: 'app.component.html',
 })
 export class AppComponent implements OnInit {
     constructor(private route: ActivatedRoute,

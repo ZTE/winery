@@ -10,22 +10,22 @@
  *     ZTE - initial API and implementation and/or initial documentation
  *******************************************************************************/
 
-import { AfterViewInit, Component } from "@angular/core";
-import { WorkflowNodeType } from "../../model/workflow.node";
-import { BroadcastService } from "../../services/broadcast.service";
-import { JsPlumbService } from "../../services/jsplumb.service";
-import { ModelService } from "../../services/model.service";
+import { AfterViewInit, Component } from '@angular/core';
+import { WorkflowNodeType } from '../../model/workflow.node';
+import { BroadcastService } from '../../services/broadcast.service';
+import { JsPlumbService } from '../../services/jsplumb.service';
+import { ModelService } from '../../services/model.service';
 
 @Component({
-    selector: "wm-properties",
-    styleUrls: ["./properties.component.css"],
-    templateUrl: "properties.component.html",
+    selector: 'b4t-properties',
+    styleUrls: ['./properties.component.css'],
+    templateUrl: 'properties.component.html',
 })
 export class WmPropertiesComponent implements AfterViewInit {
-    private node: any;
+    public node: any;
     private nodeTypes: string[] = WorkflowNodeType;
-    private show: boolean = false;
-	private titleEditing: any = false;
+    public show = false;
+    public titleEditing = false;
 
     constructor(private broadcastService: BroadcastService,
                 private modelService: ModelService,
@@ -39,15 +39,15 @@ export class WmPropertiesComponent implements AfterViewInit {
     }
 
     private addNewParam() {
-        alert("add new Param");
+        alert('add new Param');
     }
 
-    private nodeNameChanged() {
+    public nodeNameChanged() {
         this.titleEditing = !this.titleEditing;
         this.jsPlumnService.jsplumbInstance.repaintEverything();
     }
 
-	private deleteNode() {
+    public deleteNode() {
         this.show = false;
 
         this.jsPlumnService.remove(this.node.id);

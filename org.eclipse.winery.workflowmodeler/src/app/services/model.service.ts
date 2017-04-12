@@ -10,10 +10,10 @@
  *     ZTE - initial API and implementation and/or initial documentation
  *******************************************************************************/
 
-import { Injectable } from "@angular/core";
-import {isNullOrUndefined} from "util";
-import { WorkflowNode } from "../model/workflow.node";
-import { BroadcastService } from "./broadcast.service";
+import { Injectable } from '@angular/core';
+import {isNullOrUndefined} from 'util';
+import { WorkflowNode } from '../model/workflow.node';
+import { BroadcastService } from './broadcast.service';
 
 @Injectable()
 export class ModelService {
@@ -35,9 +35,9 @@ export class ModelService {
             id: this.createId(),
             name,
             type,
-			position: {
-				left,
-				top,
+            position: {
+                left,
+                top,
             },
         }));
     }
@@ -47,42 +47,42 @@ export class ModelService {
         this.nodes.forEach(node => node.deleteConnection(nodeId));
 
         // delete current node
-        let index = this.nodes.findIndex(node => node.id === nodeId);
+        const index = this.nodes.findIndex(node => node.id === nodeId);
         if (index !== -1) {
             this.nodes.splice(index, 1);
         }
     }
 
     public addConnection(sourceId: string, targetId: string) {
-        let node = this.nodes.find(tmpNode => tmpNode.id === sourceId);
+        const node = this.nodes.find(tmpNode => tmpNode.id === sourceId);
         if (!isNullOrUndefined(node)) {
-			node.addConnection(targetId);
+            node.addConnection(targetId);
         }
     }
 
     public deleteConnection(sourceId: string, targetId: string) {
-        let node = this.nodes.find(tmpNode => tmpNode.id === sourceId);
+        const node = this.nodes.find(tmpNode => tmpNode.id === sourceId);
         if (!isNullOrUndefined(node)) {
-			node.deleteConnection(targetId);
+            node.deleteConnection(targetId);
         }
     }
 
     public save() {
-        console.log("****************** save data *********************");
+        console.log('****************** save data *********************');
         console.log(this.nodes);
         this.broadcastService.broadcast(this.broadcastService.saveEvent, JSON.stringify(this.nodes));
     }
 
-	private createId() {
-		let idSet = new Set();
-		this.nodes.forEach(node => idSet.add(node.id));
+    private createId() {
+        const idSet = new Set();
+        this.nodes.forEach(node => idSet.add(node.id));
 
-		for (let i = 0; i < idSet.size; i++) {
-			if (!idSet.has("node" + i)) {
-				return "node" + i;
-			}
-		}
+        for (let i = 0; i < idSet.size; i++) {
+            if (!idSet.has('node' + i)) {
+                return 'node' + i;
+            }
+        }
 
-		return "node" + idSet.size;
-	}
+        return 'node' + idSet.size;
+    }
 }

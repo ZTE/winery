@@ -12,8 +12,8 @@
 
 export class Operation {
     public name: string;
-	public inputs: string[];
-	public outputs: string[];
+    public inputs: string[];
+    public outputs: string[];
 
     constructor(name: string) {
         this.name = name;

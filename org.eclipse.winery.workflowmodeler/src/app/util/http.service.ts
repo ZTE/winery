@@ -9,10 +9,10 @@
  * Contributors:
  *     ZTE - initial API and implementation and/or initial documentation
  *******************************************************************************/
-import { Injectable } from "@angular/core";
-import { Headers, Http } from "@angular/http";
-import { Observable } from "rxjs/Rx";
-import "./rxjs-operators";
+import { Injectable } from '@angular/core';
+import { Headers, Http } from '@angular/http';
+import { Observable } from 'rxjs/Rx';
+import './rxjs-operators';
 
 @Injectable()
 export class HttpService {
@@ -20,39 +20,39 @@ export class HttpService {
 
     constructor(private http: Http) {
         this.headers = new Headers({
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
         });
     }
 
-	public get(uri: string) {
-        return this.getHttp("get", uri);
+    public get(uri: string) {
+        return this.getHttp('get', uri);
     }
 
-	public post(uri: string, data: any) {
-        return this.getHttp("post", uri, data);
+    public post(uri: string, data: any) {
+        return this.getHttp('post', uri, data);
     }
 
-	public put(uri: string, data: any) {
-        return this.getHttp("put", uri, data);
+    public put(uri: string, data: any) {
+        return this.getHttp('put', uri, data);
     }
 
-	public delete(uri: string) {
-        return this.getHttp("delete", uri);
+    public delete(uri: string) {
+        return this.getHttp('delete', uri);
     }
 
     public getHttp(type: string, uri: string, data?: any) {
         if (data) {
             return this.http[type](uri, JSON.stringify(data), {headers: this.headers})
-				.catch(this.handleError);
+                .catch(this.handleError);
         } else {
             return this.http[type](uri, {headers: this.headers})
-				.catch(this.handleError);
+                .catch(this.handleError);
         }
     }
 
-	private handleError(error: any) {
-        let errMsg = (error.message) ? error.message :
-			error.status ? `${error.status}-${error.statusText}` : "Server error";
+    private handleError(error: any) {
+        const errMsg = (error.message) ? error.message :
+            error.status ? `${error.status}-${error.statusText}` : 'Server error';
         return Observable.throw(errMsg);
     }
 }

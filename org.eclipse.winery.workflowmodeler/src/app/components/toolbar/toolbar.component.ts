@@ -10,17 +10,17 @@
  *     ZTE - initial API and implementation and/or initial documentation
  *******************************************************************************/
 
-import { Component } from "@angular/core";
-import { WorkflowNodeType } from "../../model/workflow.node";
-import { BroadcastService } from "../../services/broadcast.service";
-import { JsPlumbService } from "../../services/jsplumb.service";
-import { ModelService } from "../../services/model.service";
-import { WineryService } from "../../services/winery.service";
+import { Component } from '@angular/core';
+import { WorkflowNodeType } from '../../model/workflow.node';
+import { BroadcastService } from '../../services/broadcast.service';
+import { JsPlumbService } from '../../services/jsplumb.service';
+import { ModelService } from '../../services/model.service';
+import { WineryService } from '../../services/winery.service';
 
 @Component({
-    selector: "wm-toolbar",
-    styleUrls: ["./toolbar.component.css"],
-    templateUrl: "toolbar.component.html",
+    selector: 'b4t-toolbar',
+    styleUrls: ['./toolbar.component.css'],
+    templateUrl: 'toolbar.component.html',
 })
 export class WmToolbarComponent {
     private nodeTypes = WorkflowNodeType;
@@ -30,10 +30,10 @@ export class WmToolbarComponent {
                 private jsPlumbService: JsPlumbService,
                 private broadcastSerice: BroadcastService) {
         this.broadcastSerice.jsPlumbInstance$.subscribe(
-			instance => this.jsPlumbService.buttonDraggable());
+            instance => this.jsPlumbService.buttonDraggable());
     }
 
-    private save() {
+    public save() {
         this.modelSerivce.save();
     }
 }

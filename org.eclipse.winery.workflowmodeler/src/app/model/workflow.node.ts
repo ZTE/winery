@@ -11,38 +11,38 @@
  *******************************************************************************/
 
 export const WorkflowNodeType = [
-    "StartEvent",
-    "EndEvent",
-    "ToscaNodeManagementTask",
-    "ExclusiveGateway",
-    "ParallelGateway",
+    'StartEvent',
+    'EndEvent',
+    'ToscaNodeManagementTask',
+    'ExclusiveGateway',
+    'ParallelGateway',
 ];
 
 export class WorkflowNode {
     public id: string;
-	public name: string;
-	public type: string;
-	public input: any[];
-	public output: any[];
-	public connection: any[];
-	public template: any;
-	public position: any;
+    public name: string;
+    public type: string;
+    public input: any[];
+    public output: any[];
+    public connection: any[];
+    public template: any;
+    public position: any;
 
-	public nodeInterface: string;
-	public nodeTemplate: string;
-	public nodeOperation: string;
+    public nodeInterface: string;
+    public nodeTemplate: string;
+    public nodeOperation: string;
 
     constructor({
-		id, name, type,
-		position = {},
-		input = [],
-		connection = [],
-		output = [],
-		template = {},
-		interface: nodeInterface = "",
-		node_operation: nodeOperation = "",
-		node_template: nodeTemplate = "",
-		}) {
+        id, name, type,
+        position = {},
+        input = [],
+        connection = [],
+        output = [],
+        template = {},
+        interface: nodeInterface = '',
+        node_operation: nodeOperation = '',
+        node_template: nodeTemplate = '',
+        }) {
         this.id = id;
         this.name = name;
         this.type = type;
@@ -63,23 +63,23 @@ export class WorkflowNode {
     }
 
     public deleteConnection(targetId: string) {
-        let index = this.connection.findIndex(target => target === targetId);
+        const index = this.connection.findIndex(target => target === targetId);
         if (index !== -1) {
             this.connection.splice(index, 1);
         }
     }
 
-	public toJSON() {
-		let target = Object.assign({node_template: "", node_operation: "", interface: ""}, this);
+    public toJSON() {
+        const target = Object.assign({node_template: '', node_operation: '', interface: ''}, this);
 
-		target.node_template = this.nodeTemplate;
-		target.node_operation = this.nodeOperation;
-		target.interface = this.nodeInterface;
+        target.node_template = this.nodeTemplate;
+        target.node_operation = this.nodeOperation;
+        target.interface = this.nodeInterface;
 
-		delete target.nodeTemplate;
-		delete target.nodeOperation;
-		delete target.nodeInterface;
-		return target;
-	}
+        delete target.nodeTemplate;
+        delete target.nodeOperation;
+        delete target.nodeInterface;
+        return target;
+    }
 
 }

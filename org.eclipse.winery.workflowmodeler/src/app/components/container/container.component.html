@@ -12,7 +12,7 @@
  *******************************************************************************/
 -->
 <div id="canvas" class="canvas" (click)="canvasClick()">
-    <wf-node *ngFor="let node of modelService.getNodes(); let last = last;" [node]="node" [last]="last"></wf-node>
+    <b4t-node *ngFor="let node of modelService.getNodes(); let last = last;" [node]="node" [last]="last"></b4t-node>
 </div>
 
-<wm-properties></wm-properties>
+<b4t-properties></b4t-properties>

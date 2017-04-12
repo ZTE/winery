@@ -10,14 +10,14 @@
  *     ZTE - initial API and implementation and/or initial documentation
  *******************************************************************************/
 
-import "core-js/es6";
-import "core-js/es7/reflect";
-// require("zone.js/dist/zone");
-import "zone.js/dist/zone";
+import 'core-js/es6';
+import 'core-js/es7/reflect';
+// require('zone.js/dist/zone');
+import 'zone.js/dist/zone';
 
-if (process.env.ENV === "production") {
-	// Production
+if (process.env.ENV === 'production') {
+    // Production
 } else {
-	// Development
-	Error.stackTraceLimit = Infinity;
+    // Development
+    Error.stackTraceLimit = Infinity;
 }

@@ -9,24 +9,24 @@
  * Contributors:
  *     ZTE - initial API and implementation and/or initial documentation
  *******************************************************************************/
-import { AfterViewInit, Component, Input, OnDestroy } from "@angular/core";
-import { Subscription } from "rxjs/Subscription";
-import { WorkflowNode } from "../../model/workflow.node";
-import { BroadcastService } from "../../services/broadcast.service";
-import { JsPlumbService } from "../../services/jsplumb.service";
+import { AfterViewInit, Component, Input, OnDestroy } from '@angular/core';
+import { Subscription } from 'rxjs/Subscription';
+import { WorkflowNode } from '../../model/workflow.node';
+import { BroadcastService } from '../../services/broadcast.service';
+import { JsPlumbService } from '../../services/jsplumb.service';
 
 @Component({
-    selector: "wf-node",
-    styleUrls: ["./node.component.css"],
-    templateUrl: "node.component.html",
+    selector: 'b4t-node',
+    styleUrls: ['./node.component.css'],
+    templateUrl: 'node.component.html',
 })
 export class WmNodeComponent implements AfterViewInit, OnDestroy {
     @Input()
-    private node: WorkflowNode;
+    public node: WorkflowNode;
     @Input()
     private last: boolean;
 
-    private selected: boolean = false;
+    private selected = false;
 
     private jsPlumbInstanceSubscription: Subscription;
     private nfForJsPlumbInstanceSubscription: Subscription;
@@ -40,7 +40,7 @@ export class WmNodeComponent implements AfterViewInit, OnDestroy {
             this.jsPlumbService.initNode(this.node);
         } else {
             this.jsPlumbInstanceSubscription = this.broadcastService.jsPlumbInstance$
-				.subscribe(instance => this.jsPlumbService.initNode(this.node));
+                .subscribe(instance => this.jsPlumbService.initNode(this.node));
         }
 
         if (this.last) {
@@ -48,7 +48,7 @@ export class WmNodeComponent implements AfterViewInit, OnDestroy {
                 this.jsPlumbService.connectNode();
             } else {
                 this.nfForJsPlumbInstanceSubscription = this.broadcastService.jsPlumbInstance$
-					.subscribe(instance => this.jsPlumbService.connectNode());
+                    .subscribe(instance => this.jsPlumbService.connectNode());
             }
         }
     }
@@ -63,7 +63,7 @@ export class WmNodeComponent implements AfterViewInit, OnDestroy {
         }
     }
 
-    private showProperties() {
+    public showProperties() {
         this.broadcastService.nodeProperty.next(this.node);
         this.broadcastService.showProperty.next(true);
     }
