@@ -17,11 +17,6 @@ import {WmToolbarComponent} from './components/toolbar/toolbar.component';
 const routes = [
     {
         path: '',
-        redirectTo: 'main',
-        pathMatch: 'full',
-    },
-    {
-        path: 'main',
         component: WmToolbarComponent,
     },
 ];
