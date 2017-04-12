@@ -28,7 +28,6 @@
         </div>
 
     </div>
-
     <hr>
 
     <div class="form-group row">
@@ -42,12 +41,8 @@
 
     <hr>
     <b4t-node-template *ngIf="node.type == 'ToscaNodeManagementTask'" [node]="node"></b4t-node-template>
-
-
     <b4t-parameter *ngFor="let param of node.input" [param]="param"></b4t-parameter>
-
     <hr>
     <b4t-parameter *ngFor="let param of node.output" [param]="param"></b4t-parameter>
-
 
 </div>

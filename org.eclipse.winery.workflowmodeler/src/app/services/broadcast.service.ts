@@ -48,7 +48,7 @@ export class BroadcastService {
      * @param subject will broadcast data
      * @param data will be broadcated
      */
-    public broadcast(subject: Subject, data: any) {
+    public broadcast(subject: Subject<any>, data: any) {
         try {
             subject.next(data);
         } catch (err) {

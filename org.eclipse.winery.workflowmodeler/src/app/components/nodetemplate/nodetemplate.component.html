@@ -27,7 +27,6 @@
     <div class="col-md-10">
         <select class="form-control" [ngModel]="node.template.interface"
                 (ngModelChange)="node.template.interface=$event; nodeInterfaceChanged();">
-            <!--<option value="">select</option>-->
             <option *ngFor="let interface of nodeInterfaces" value="{{interface}}">{{interface}}</option>
         </select>
     </div>
@@ -38,7 +37,6 @@
     <div class="col-md-10">
         <select class="form-control" [ngModel]="node.template.operation"
                 (ngModelChange)="node.template.operation=$event; nodeOperationChanged();">
-            <!--<option value="">select</option>-->
             <option *ngFor="let operation of nodeOperations" value="{{operation.name}}">{{operation.name}}</option>
         </select>
     </div>
