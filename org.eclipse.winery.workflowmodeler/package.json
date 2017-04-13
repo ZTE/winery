@@ -7,8 +7,7 @@
     "test": "karma start",
     "build": "rimraf dist && webpack --config config/webpack.prod.js --progress --profile --bail",
     "mock": "node mock/server.js",
-    "lint": "tslint ./src/**/*.ts -t verbose",
-    "cli-lint": "ng lint"
+    "lint": "ng lint"
   },
   "licenses": [
     {
