@@ -20,7 +20,7 @@ import { AppComponent } from './app.component';
 
 import { WmContainerComponent } from './components/container/container.component';
 import { WmNodeComponent } from './components/node/node.component';
-import { WmNodeTemplateComponent } from './components/nodetemplate/nodetemplate.component';
+import { WmNodeTemplateComponent } from './components/nodetemplate/node-template.component.ts';
 import { WmParameterComponent } from './components/parameter/parameter.component';
 import { WmPropertiesComponent } from './components/property/properties.component';
 import { WmToolbarComponent } from './components/toolbar/toolbar.component';

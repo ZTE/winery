@@ -21,7 +21,7 @@ import { WineryService } from '../../services/winery.service';
  */
 @Component({
     selector: 'b4t-node-template',
-    templateUrl: 'nodetemplate.component.html',
+    templateUrl: 'node-template.component.html',
 })
 export class WmNodeTemplateComponent implements AfterViewInit, OnDestroy {
     @Input()
