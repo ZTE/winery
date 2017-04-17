@@ -34,7 +34,7 @@ export class WmContainerComponent implements AfterViewInit {
     }
 
     public ngAfterViewInit() {
-        this.jsPlumbService.initJsPlumbInstance();
+        setTimeout(() => this.jsPlumbService.initJsPlumbInstance(), 0);
     }
 
     public canvasClick() {

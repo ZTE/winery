@@ -24,10 +24,9 @@ export class ModelService {
     private nodes: WorkflowNode[] = [];
 
     constructor(private broadcastService: BroadcastService) {
-        this.broadcastService.planModel$.subscribe(nodes => {
-            nodes.forEach(node => this.nodes.push(new WorkflowNode(node)));
-        });
-
+        this.broadcastService.planModel$.subscribe(planNodes =>
+            planNodes.forEach(node => this.nodes.push(new WorkflowNode(node)))
+        );
     }
 
     public getNodes(): WorkflowNode[] {
