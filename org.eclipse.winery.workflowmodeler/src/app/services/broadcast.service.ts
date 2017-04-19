@@ -11,8 +11,8 @@
  */
 import {Injectable} from '@angular/core';
 import {Subject} from 'rxjs/Subject';
-import {WorkflowNode} from '../model/workflow.node';
 import {Operation} from '../model/operation';
+import {WorkflowNode} from '../model/workflow.node';
 
 /**
  * BroadcastService

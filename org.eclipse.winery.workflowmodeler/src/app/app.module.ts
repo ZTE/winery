@@ -13,14 +13,13 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 
 import { WmContainerComponent } from './components/container/container.component';
 import { WmNodeComponent } from './components/node/node.component';
-import { WmNodeTemplateComponent } from './components/nodetemplate/node-template.component.ts';
+import { WmNodeTemplateComponent } from './components/nodetemplate/node-template.component';
 import { WmParameterComponent } from './components/parameter/parameter.component';
 import { WmPropertiesComponent } from './components/property/properties.component';
 import { WmToolbarComponent } from './components/toolbar/toolbar.component';
@@ -35,24 +34,23 @@ import { SharedModule } from './shared/shared.module';
 @NgModule({
     declarations: [
         AppComponent,
-        WmToolbarComponent,
         WmContainerComponent,
         WmNodeComponent,
-        WmPropertiesComponent,
-        WmParameterComponent,
         WmNodeTemplateComponent,
+        WmParameterComponent,
+        WmPropertiesComponent,
+        WmToolbarComponent,
     ],
     providers: [
         BroadcastService,
-        WineryService,
         JsPlumbService,
         ModelService,
+        WineryService,
     ],
     imports: [
-        BrowserModule,
-        NgbModule.forRoot(),
-        RouterModule.forRoot([]),
         AppRoutingModule,
+        BrowserModule,
+        RouterModule.forRoot([]),
         SharedModule,
     ],
     bootstrap: [
@@ -60,4 +58,5 @@ import { SharedModule } from './shared/shared.module';
     ],
 })
 export class AppModule {
+
 }
