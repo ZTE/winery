@@ -11,11 +11,10 @@
  */
 
 import {Injectable} from '@angular/core';
+import {jsPlumb} from 'jsplumb/dist/js/jsplumb.js';
 import {WorkflowNode} from '../model/workflow.node';
 import {BroadcastService} from './broadcast.service';
 import {ModelService} from './model.service';
-import $ = require('jquery');
-import {jsPlumb} from 'jsplumb/dist/js/jsplumb.js';
 
 /**
  * JsPlumbService
@@ -103,7 +102,8 @@ export class JsPlumbService {
     }
 
     public buttonDraggable() {
-        this.jsplumbInstance.draggable($('.toolbar .item'),
+        const selector = this.jsplumbInstance.getSelector('.toolbar .item');
+        this.jsplumbInstance.draggable(selector,
             {
                 scope: 'btn',
                 clone: true,
@@ -112,10 +112,12 @@ export class JsPlumbService {
 
     public buttonDroppable() {
         const jsplumbService = this;
-        this.jsplumbInstance.droppable($('.canvas'), {
+        const selector = this.jsplumbInstance.getSelector('.canvas');
+        this.jsplumbInstance.droppable(selector, {
             scope: 'btn',
             drop(ev) {
-                const type = $(ev.drag.el).attr('nodeType');
+                const el = jsplumbService.jsplumbInstance.getSelector(ev.drag.el);
+                const type = el.attributes.nodeType.value;
                 const left = ev.e.clientX - ev.drop.position[0];
                 const top = ev.e.clientY - ev.drop.position[1];
 

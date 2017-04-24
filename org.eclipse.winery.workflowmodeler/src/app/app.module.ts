@@ -30,6 +30,7 @@ import { ModelService } from './services/model.service';
 import { WineryService } from './services/winery.service';
 
 import { SharedModule } from './shared/shared.module';
+import {HttpService} from './util/http.service';
 
 @NgModule({
     declarations: [
@@ -43,6 +44,7 @@ import { SharedModule } from './shared/shared.module';
     ],
     providers: [
         BroadcastService,
+        HttpService,
         JsPlumbService,
         ModelService,
         WineryService,

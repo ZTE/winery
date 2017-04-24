@@ -10,42 +10,38 @@
  *     ZTE - initial API and implementation and/or initial documentation
  */
 import { Injectable } from '@angular/core';
-import { Headers, Http } from '@angular/http';
+import { Http, RequestOptionsArgs } from '@angular/http';
 import { Observable } from 'rxjs/Rx';
 import './rxjs-operators';
 
 @Injectable()
 export class HttpService {
-    private headers: any;
+    constructor(private http: Http) {}
 
-    constructor(private http: Http) {
-        this.headers = new Headers({
-            'Content-Type': 'application/json',
-        });
-    }
-
-    public get(uri: string) {
+    public get(uri: string): Observable<any> {
         return this.getHttp('get', uri);
     }
 
-    public post(uri: string, data: any) {
+    public post(uri: string, data: any): Observable<any> {
         return this.getHttp('post', uri, data);
     }
 
-    public put(uri: string, data: any) {
-        return this.getHttp('put', uri, data);
+    public put(uri: string, data: any, options?: RequestOptionsArgs): Observable<any> {
+        return this.getHttp('put', uri, data, options);
     }
 
-    public delete(uri: string) {
+    public delete(uri: string): Observable<any> {
         return this.getHttp('delete', uri);
     }
 
-    public getHttp(type: string, uri: string, data?: any) {
+    public getHttp(type: string, uri: string, data?: any, options?: RequestOptionsArgs): Observable<any> {
         if (data) {
-            return this.http[type](uri, JSON.stringify(data), {headers: this.headers})
+            return this.http[type](uri, data, options)
+                .map(response => response.json())
                 .catch(this.handleError);
         } else {
-            return this.http[type](uri, {headers: this.headers})
+            return this.http[type](uri, options)
+                .map(response => response.json())
                 .catch(this.handleError);
         }
     }

@@ -14,8 +14,8 @@ import {Injectable} from '@angular/core';
 import {isNullOrUndefined} from 'util';
 import {NodeTemplate} from '../model/nodetemplate';
 import {Operation} from '../model/operation';
+import {HttpService} from '../util/http.service';
 import {BroadcastService} from './broadcast.service';
-import $ = require('jquery');
 
 /**
  * WineryService
@@ -28,7 +28,9 @@ export class WineryService {
     private serviceTemplateId: string;
     private plan: string;
 
-    constructor(private broadcastService: BroadcastService) {
+    constructor(
+        private broadcastService: BroadcastService,
+        private httpService: HttpService) {
         this.broadcastService.saveEvent$.subscribe(data => this.save(data));
     }
 
@@ -49,7 +51,7 @@ export class WineryService {
         const url = 'servicetemplates/' + this.encode(this.namespace)
             + '/' + this.encode(this.serviceTemplateId) + '/topologytemplate/';
 
-        this.request(url, response => {
+        this.httpService.get(this.getFullUrl(url)).subscribe(response => {
             const nodeTemplates = [];
             for (const key in response.nodeTemplates) {
                 if (response.nodeTemplates.hasOwnProperty(key)) {
@@ -70,7 +72,7 @@ export class WineryService {
         const url = 'nodetypes/' + this.encode(nodeTemplate.namespace)
             + '/' + this.encode(nodeTemplate.id) + '/propertiesdefinition/winery/list/';
 
-        this.request(url, properties => {
+        this.httpService.get(this.getFullUrl(url)).subscribe(properties => {
             properties.forEach(property => nodeTemplate.properties.push(property.key));
         });
     }
@@ -79,7 +81,8 @@ export class WineryService {
         const url = 'nodetypes/' + this.encode(namespace)
             + '/' + this.encode(nodeType) + '/interfaces/';
         const wineryService = this;
-        this.request(url, interfaces => {
+
+        this.httpService.get(this.getFullUrl(url)).subscribe(interfaces => {
             wineryService.broadcastService.broadcast(wineryService.broadcastService.nodeInterfaces, interfaces);
         });
     }
@@ -89,7 +92,7 @@ export class WineryService {
         const url = 'nodetypes/' + this.encode(namespace)
             + '/' + this.encode(nodeType) + '/interfaces/' + this.encode(interfaceName) + '/operations/';
 
-        this.request(url, operations => {
+        this.httpService.get(this.getFullUrl(url)).subscribe(operations => {
             const res = [];
             operations.forEach(operation => res.push(new Operation(operation)));
             wineryService.broadcastService.broadcast(wineryService.broadcastService.nodeOperations, res);
@@ -103,19 +106,21 @@ export class WineryService {
             output: [],
         };
 
-        // inputparameters
         const relativePath = 'nodetypes/' + this.encode(namespace) + '/' + this.encode(nodeType)
             + '/interfaces/' + this.encode(interfaceName) + '/operations/' + this.encode(operation) + '/';
-        this.request(relativePath + 'inputparameters', response => {
+
+        // inputparameters
+        this.httpService.get(this.getFullUrl(relativePath + 'inputparameters')).subscribe(response => {
             params.input = response;
             wineryService.broadcastService.broadcast(wineryService.broadcastService.nodeParameters, params);
         });
 
         // outputparameters
-        this.request(relativePath + 'outputparameters', response => {
+        this.httpService.get(this.getFullUrl(relativePath + 'outputparameters')).subscribe(response => {
             params.output = response;
             wineryService.broadcastService.broadcast(wineryService.broadcastService.nodeParameters, params);
         });
+
     }
 
     public save(data: string) {
@@ -127,23 +132,21 @@ export class WineryService {
             + 'Content-type: plain/text\r\n\r\n'
             + data + '\r\n-----------------------------7da24f2e50046--\r\n';
 
-        $.ajax({
-            crossDomain: true,
-            contentType: 'multipart/form-data; boundary=---------------------------7da24f2e50046',
-            data: requestData,
-            url: this.repositoryURL + url,
-            type: 'PUT',
-            success() {
-                console.log('save success');
+        const options: any = {
+            headers: {
+                'Content-Type': 'multipart/form-data; boundary=---------------------------7da24f2e50046',
             },
-        });
+        };
+
+        this.httpService.put(this.getFullUrl(url), requestData, options)
+            .subscribe(response => console.log('save date success'));
     }
 
     public loadPlan() {
         const wineryService = this;
         const url = 'servicetemplates/' + this.encode(this.namespace)
             + '/' + this.encode(this.serviceTemplateId) + '/plans/' + this.encode(this.plan) + '/file';
-        this.request(url, response => {
+        this.httpService.get(this.getFullUrl(url)).subscribe( response => {
             const nodes = JSON.stringify(response) === '{}' ? [] : response;
             console.log('load plan success');
             console.log(nodes);
@@ -159,17 +162,7 @@ export class WineryService {
         return encodeURIComponent(encodeURIComponent(param));
     }
 
-    private request(url: string, callback: any) {
-        $.ajax({
-            crossDomain: true,
-            dataType: 'json',
-            url: this.repositoryURL + url,
-            success: callback,
-            error(err) {
-                console.log('request error');
-                console.log(err);
-            },
-        });
+    private getFullUrl(relativePath: string) {
+        return this.repositoryURL + relativePath;
     }
-
 }
