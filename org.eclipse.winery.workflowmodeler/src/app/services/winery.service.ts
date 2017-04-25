@@ -11,6 +11,7 @@
  */
 
 import {Injectable} from '@angular/core';
+import { Observable } from 'rxjs/Rx';
 import {isNullOrUndefined} from 'util';
 import {NodeTemplate} from '../model/nodetemplate';
 import {Operation} from '../model/operation';
@@ -46,12 +47,11 @@ export class WineryService {
 
     }
 
-    public loadNodeTemplates() {
-        const wineryService = this;
+    public loadNodeTemplates(): Observable<any> {
         const url = 'servicetemplates/' + this.encode(this.namespace)
             + '/' + this.encode(this.serviceTemplateId) + '/topologytemplate/';
 
-        this.httpService.get(this.getFullUrl(url)).subscribe(response => {
+        return this.httpService.get(this.getFullUrl(url)).map(response => {
             const nodeTemplates = [];
             for (const key in response.nodeTemplates) {
                 if (response.nodeTemplates.hasOwnProperty(key)) {
@@ -64,7 +64,7 @@ export class WineryService {
                     });
                 }
             }
-            wineryService.broadcastService.nodeTemplates.next(nodeTemplates);
+            return nodeTemplates;
         });
     }
 
@@ -77,50 +77,40 @@ export class WineryService {
         });
     }
 
-    public loadNodeTemplateInterfaces(namespace: string, nodeType: string) {
+    public loadNodeTemplateInterfaces(namespace: string, nodeType: string): Observable<any> {
         const url = 'nodetypes/' + this.encode(namespace)
             + '/' + this.encode(nodeType) + '/interfaces/';
-        const wineryService = this;
 
-        this.httpService.get(this.getFullUrl(url)).subscribe(interfaces => {
-            wineryService.broadcastService.broadcast(wineryService.broadcastService.nodeInterfaces, interfaces);
-        });
+        return this.httpService.get(this.getFullUrl(url));
     }
 
-    public loadNodeTemplateOperations(namespace: string, nodeType: string, interfaceName: string) {
-        const wineryService = this;
+    public loadNodeTemplateOperations(namespace: string,
+                                      nodeType: string,
+                                      interfaceName: string): Observable<any> {
         const url = 'nodetypes/' + this.encode(namespace)
             + '/' + this.encode(nodeType) + '/interfaces/' + this.encode(interfaceName) + '/operations/';
 
-        this.httpService.get(this.getFullUrl(url)).subscribe(operations => {
-            const res = [];
-            operations.forEach(operation => res.push(new Operation(operation)));
-            wineryService.broadcastService.broadcast(wineryService.broadcastService.nodeOperations, res);
-        });
+        return this.httpService.get(this.getFullUrl(url));
     }
 
-    public loadNodeTemplateOperationParameter(namespace: string, nodeType: string, interfaceName: string, operation: string) {
-        const wineryService = this;
-        const params = {
-            input: [],
-            output: [],
-        };
-
+    public loadNodeTemplateOperationParameter(namespace: string,
+                                              nodeType: string,
+                                              interfaceName: string,
+                                              operation: string): Promise<any> {
         const relativePath = 'nodetypes/' + this.encode(namespace) + '/' + this.encode(nodeType)
             + '/interfaces/' + this.encode(interfaceName) + '/operations/' + this.encode(operation) + '/';
 
-        // inputparameters
-        this.httpService.get(this.getFullUrl(relativePath + 'inputparameters')).subscribe(response => {
-            params.input = response;
-            wineryService.broadcastService.broadcast(wineryService.broadcastService.nodeParameters, params);
-        });
+        // input parameters
+        let inputPromise: Promise<any> = this.httpService
+            .get(this.getFullUrl(relativePath + 'inputparameters')).toPromise();
 
-        // outputparameters
-        this.httpService.get(this.getFullUrl(relativePath + 'outputparameters')).subscribe(response => {
-            params.output = response;
-            wineryService.broadcastService.broadcast(wineryService.broadcastService.nodeParameters, params);
-        });
+        // output parameters
+        let outputPromise: Promise<any> = this.httpService
+            .get(this.getFullUrl(relativePath + 'outputparameters')).toPromise();
 
+        return Promise.all([inputPromise, outputPromise]).then(params => {
+            return {"input": params[0], "output": params[1]}
+        });
     }
 
     public save(data: string) {

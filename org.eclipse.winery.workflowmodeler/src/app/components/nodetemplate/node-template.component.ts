@@ -9,11 +9,12 @@
  * Contributors:
  *     ZTE - initial API and implementation and/or initial documentation
  */
-import { AfterViewInit, Component, Input, OnDestroy  } from '@angular/core';
+import { AfterViewInit, Component, Input  } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 import { WorkflowNode } from '../../model/workflow.node';
 import { BroadcastService } from '../../services/broadcast.service';
 import { WineryService } from '../../services/winery.service';
+import {Operation} from '../../model/operation';
 
 /**
  * node template component provides operations about tosca modules which saved in winery.
@@ -23,58 +24,22 @@ import { WineryService } from '../../services/winery.service';
     selector: 'b4t-node-template',
     templateUrl: 'node-template.component.html',
 })
-export class WmNodeTemplateComponent implements AfterViewInit, OnDestroy {
+export class WmNodeTemplateComponent implements AfterViewInit {
     @Input()
     public node: WorkflowNode;
     private nodeTemplates: any[] = [];
     private nodeInterfaces: any[] = [];
     private nodeOperations: any[] = [];
 
-    private nodeTemplateSubscription: Subscription;
-    private nodeInterfaceSubscription: Subscription;
-    private nodeOperationSubscription: Subscription;
-    private nodeParameterSubscription: Subscription;
-
-    constructor(private wineryService: WineryService,
-                private broadcastService: BroadcastService) {
-        this.nodeTemplateSubscription = this.broadcastService.nodeTemplates$.subscribe(
-            nodeTemplates => this.nodeTemplates = nodeTemplates);
-        this.nodeInterfaceSubscription = this.broadcastService.nodeInterfaces$.subscribe(
-            interfaces => this.nodeInterfaces = interfaces);
-        this.nodeOperationSubscription = this.broadcastService.nodeOperations$.subscribe(
-            operations => this.nodeOperations = operations);
+    constructor(private wineryService: WineryService) {
     }
 
     public ngAfterViewInit() {
-        this.wineryService.loadNodeTemplates();
+        this.wineryService.loadNodeTemplates()
+            .subscribe(nodeTemplates => this.nodeTemplates = nodeTemplates);
+
         this.loadInterfaces();
         this.loadOperations();
-
-        const template = this;
-        this.nodeParameterSubscription = this.broadcastService.nodeParameters$.subscribe(params => {
-            template.node.input = [];
-            template.node.output = [];
-
-            params.input.forEach(param => template.node.input.push({
-                name: param,
-                type: 'string',
-                value: '',
-            }));
-
-            params.output.forEach(param => template.node.output.push({
-                name: param,
-                type: 'string',
-                value: '',
-            }));
-        });
-    }
-
-    public ngOnDestroy() {
-        // prevent memory leak when component destroyed
-        this.nodeTemplateSubscription.unsubscribe();
-        this.nodeInterfaceSubscription.unsubscribe();
-        this.nodeOperationSubscription.unsubscribe();
-        this.nodeParameterSubscription.unsubscribe();
     }
 
     public nodeTemplateChanged() {
@@ -115,22 +80,50 @@ export class WmNodeTemplateComponent implements AfterViewInit, OnDestroy {
 
     private loadInterfaces() {
         if (this.node.template.id) {
-            this.wineryService.loadNodeTemplateInterfaces(this.node.template.namespace, this.node.template.type);
+            this.wineryService
+                .loadNodeTemplateInterfaces(this.node.template.namespace, this.node.template.type)
+                .subscribe(interfaces => this.nodeInterfaces = interfaces);
         }
     }
 
     private loadOperations() {
         if (this.node.template.interface) {
+            this.nodeOperations = [];
             this.wineryService.loadNodeTemplateOperations(
-                this.node.template.namespace, this.node.template.type, this.node.template.interface);
+                this.node.template.namespace,
+                this.node.template.type,
+                this.node.template.interface)
+                .subscribe(operations =>
+                    operations.forEach(operation => this.nodeOperations.push(new Operation(operation))));
         }
     }
 
     private loadParameters() {
         if (this.node.template.operation) {
             const template = this.node.template;
-            this.wineryService.loadNodeTemplateOperationParameter(
-                template.namespace, template.type, template.interface, template.operation);
+            let that = this;
+            this.wineryService
+                .loadNodeTemplateOperationParameter(
+                    template.namespace,
+                    template.type,
+                    template.interface,
+                    template.operation)
+                .then(params => {
+                    that.node.input = [];
+                    that.node.output = [];
+
+                    params.input.forEach(param => that.node.input.push({
+                        name: param,
+                        type: 'string',
+                        value: '',
+                    }));
+
+                    params.output.forEach(param => that.node.output.push({
+                        name: param,
+                        type: 'string',
+                        value: '',
+                    }));
+                });
         }
     }
 }

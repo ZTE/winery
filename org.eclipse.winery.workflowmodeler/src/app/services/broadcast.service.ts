@@ -37,18 +37,6 @@ export class BroadcastService {
     public nodeProperty = new Subject<WorkflowNode>();
     public nodeProperty$ = this.nodeProperty.asObservable();
 
-    public nodeTemplates = new Subject<any[]>();
-    public nodeTemplates$ = this.nodeTemplates.asObservable();
-
-    public nodeInterfaces = new Subject<any[]>();
-    public nodeInterfaces$ = this.nodeInterfaces.asObservable();
-
-    public nodeOperations = new Subject<Operation[]>();
-    public nodeOperations$ = this.nodeOperations.asObservable();
-
-    public nodeParameters = new Subject<{input: any[], output: any[]}>();
-    public nodeParameters$ = this.nodeParameters.asObservable();
-
     /**
      * broadcast datas
      * this method will catch the exceptions for the broadcast
