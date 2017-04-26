@@ -13,6 +13,7 @@ import {Injectable} from '@angular/core';
 import {Subject} from 'rxjs/Subject';
 import {Operation} from '../model/operation';
 import {WorkflowNode} from '../model/workflow.node';
+import {Swagger} from '../model/swagger';
 
 /**
  * BroadcastService
@@ -36,6 +37,16 @@ export class BroadcastService {
 
     public nodeProperty = new Subject<WorkflowNode>();
     public nodeProperty$ = this.nodeProperty.asObservable();
+
+    /**
+     * this should be uesd while the source of rest interfaces changed.
+     * @type {Subject<>}
+     */
+    public serviceSource = new Subject<any>();
+    public serviceSource$ = this.serviceSource.asObservable();
+
+    public swagger = new Subject<any>();
+    public swagger$ = this.swagger.asObservable();
 
     /**
      * broadcast datas

@@ -10,12 +10,15 @@
  *     ZTE - initial API and implementation and/or initial documentation
  */
 
-import { Component } from '@angular/core';
+import { AfterViewInit, Component, ViewChild } from '@angular/core';
 import { WorkflowNodeType } from '../../model/workflow.node';
 import { BroadcastService } from '../../services/broadcast.service';
 import { JsPlumbService } from '../../services/jsplumb.service';
 import { ModelService } from '../../services/model.service';
 import { WineryService } from '../../services/winery.service';
+import { ModalDirective } from 'ngx-bootstrap/modal';
+import {RestService} from '../../services/rest.service';
+import {WmRestConfigComponent} from './restconfig/rest-config.component';
 
 /**
  * toolbar component contains some basic operations(save) and all of the supported workflow nodes.
@@ -26,18 +29,26 @@ import { WineryService } from '../../services/winery.service';
     styleUrls: ['./toolbar.component.css'],
     templateUrl: 'toolbar.component.html',
 })
-export class WmToolbarComponent {
-    private nodeTypes = WorkflowNodeType;
+export class WmToolbarComponent implements AfterViewInit {
+    public nodeTypes = WorkflowNodeType;
 
-    constructor(private wineryService: WineryService,
-                private modelSerivce: ModelService,
-                private jsPlumbService: JsPlumbService,
-                private broadcastSerice: BroadcastService) {
-        this.broadcastSerice.jsPlumbInstance$.subscribe(
-            instance => this.jsPlumbService.buttonDraggable());
+    @ViewChild(WmRestConfigComponent) public restConfigComponent: WmRestConfigComponent;
+
+    constructor(private jsPlumbService: JsPlumbService,
+                private modelService: ModelService,
+                private broadcastService: BroadcastService) {
+        this.broadcastService.jsPlumbInstance$
+            .subscribe(instance => this.jsPlumbService.buttonDraggable());
+    }
+
+    public ngAfterViewInit() {
     }
 
     public save() {
-        this.modelSerivce.save();
+        this.modelService.save();
+    }
+
+    public showRestConfigModal() {
+        this.restConfigComponent.show();
     }
 }

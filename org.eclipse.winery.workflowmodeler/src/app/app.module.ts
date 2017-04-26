@@ -31,6 +31,11 @@ import { WineryService } from './services/winery.service';
 
 import { SharedModule } from './shared/shared.module';
 import {HttpService} from './util/http.service';
+import {AlertModule} from 'ngx-bootstrap/index';
+import {ModalModule} from 'ngx-bootstrap/index';
+import {WmRestTaskComponent} from './components/property/resttask/resttask.component';
+import {RestService} from './services/rest.service';
+import {WmRestConfigComponent} from './components/toolbar/restconfig/rest-config.component';
 
 @NgModule({
     declarations: [
@@ -40,6 +45,8 @@ import {HttpService} from './util/http.service';
         WmNodeTemplateComponent,
         WmParameterComponent,
         WmPropertiesComponent,
+        WmRestConfigComponent,
+        WmRestTaskComponent,
         WmToolbarComponent,
     ],
     providers: [
@@ -47,11 +54,14 @@ import {HttpService} from './util/http.service';
         HttpService,
         JsPlumbService,
         ModelService,
+        RestService,
         WineryService,
     ],
     imports: [
+        AlertModule.forRoot(),
         AppRoutingModule,
         BrowserModule,
+        ModalModule.forRoot(),
         RouterModule.forRoot([]),
         SharedModule,
     ],

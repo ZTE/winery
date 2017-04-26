@@ -14,6 +14,7 @@ export const WorkflowNodeType = [
     'StartEvent',
     'EndEvent',
     'ToscaNodeManagementTask',
+    'RestTask',
     'ExclusiveGateway',
     'ParallelGateway',
 ];

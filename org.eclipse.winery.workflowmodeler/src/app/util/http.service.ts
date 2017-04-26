@@ -18,8 +18,8 @@ import './rxjs-operators';
 export class HttpService {
     constructor(private http: Http) {}
 
-    public get(uri: string): Observable<any> {
-        return this.getHttp('get', uri);
+    public get(uri: string, options?: RequestOptionsArgs): Observable<any> {
+        return this.getHttp('get', uri, options);
     }
 
     public post(uri: string, data: any): Observable<any> {

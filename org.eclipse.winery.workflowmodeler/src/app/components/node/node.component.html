@@ -15,7 +15,7 @@
 <div (dblclick)="showProperties()" class="node" id="{{node.id}}" [style.top]="node.position.top + 'px'"
      [style.left]="node.position.left + 'px'">
     <div [class]="node.type">
-        <div [style.visibility]="node.type=='ToscaNodeManagementTask' ? 'visible' : 'hidden'" class="name">
+        <div class="name">
             {{node.name}}
         </div>
     </div>

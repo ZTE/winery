@@ -260,6 +260,25 @@
     /*padding:10px 15px;*/
 }
 
+.node .RestTask {
+    border-radius: 8px;
+    border: 2px solid rgb(0, 0, 0);
+    font-size: 10px;
+    /*padding:10px 15px;*/
+}
+
+.node .name {
+    visibility: hidden;
+}
+
+.node .ToscaNodeManagementTask .name {
+    visibility: visible;
+}
+
+.node .RestTask .name {
+    visibility: visible;
+}
+
 .node:hover {
     border: 1px dotted #000;
 }
