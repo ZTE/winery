@@ -37,13 +37,21 @@ export class RestService {
 	//	},
 	//];
 
-    private swaggers: {name: string, baseUrl: string, swagger: Swagger}[] = [];
+    private swaggers: {name: string, baseUrl: string, swagger?: Swagger}[] = [
+        {name:"service1", baseUrl:"http://www.baidu.lcom"},
+        {name:"service2", baseUrl:"http://www.baidu.lcom"},
+        {name:"service3", baseUrl:"http://www.baidu.lcom"},
+    ];
 
 	constructor(
         private broadcastService: BroadcastService,
         private httpService: HttpService) {
 		//this.broadcastService.serviceSource$.subscribe(sources => this.serviceResources = sources);
 	}
+
+    public getRestConfigs() {
+        return this.swaggers;
+    }
 
     public setSwaggers(swaggers: {name: string, baseUrl: string, swagger: any}[]) {
         swaggers.forEach(swaggerInfo => swaggerInfo.swagger = new Swagger(swaggerInfo.swagger));

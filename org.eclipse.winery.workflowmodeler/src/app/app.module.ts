@@ -33,9 +33,11 @@ import { SharedModule } from './shared/shared.module';
 import {HttpService} from './util/http.service';
 import {AlertModule} from 'ngx-bootstrap/index';
 import {ModalModule} from 'ngx-bootstrap/index';
-import {WmRestTaskComponent} from './components/property/resttask/resttask.component';
+import {WmRestTaskComponent} from './components/property/resttask/rest-task.component';
 import {RestService} from './services/rest.service';
 import {WmRestConfigComponent} from './components/toolbar/restconfig/rest-config.component';
+import {WmRestConfigDetailComponent} from './components/toolbar/restconfig/restconfigdetail/rest-config-detail.component';
+import {WmRestConfigListComponent} from './components/toolbar/restconfig/restconfiglist/rest-config-list.component';
 
 @NgModule({
     declarations: [
@@ -48,6 +50,8 @@ import {WmRestConfigComponent} from './components/toolbar/restconfig/rest-config
         WmRestConfigComponent,
         WmRestTaskComponent,
         WmToolbarComponent,
+        WmRestConfigDetailComponent,
+        WmRestConfigListComponent,
     ],
     providers: [
         BroadcastService,

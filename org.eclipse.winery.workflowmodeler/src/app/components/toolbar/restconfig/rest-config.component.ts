@@ -10,9 +10,10 @@
  *     ZTE - initial API and implementation and/or initial documentation
  */
 
-import { Component, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ViewChild } from '@angular/core';
 import { ModalDirective } from 'ngx-bootstrap/modal';
 import {RestService} from '../../../services/rest.service';
+import {WmRestConfigListComponent} from './restconfiglist/rest-config-list.component';
 
 /**
  * toolbar component contains some basic operations(save) and all of the supported workflow nodes.
@@ -25,21 +26,13 @@ import {RestService} from '../../../services/rest.service';
 export class WmRestConfigComponent {
     @ViewChild('restConfigModal') public restConfigModal: ModalDirective;
 
-    public name: string = '';
-    public baseUrl: string = '';
-    public detail = '';
+    public currentRestConfig: any = {};
 
-    constructor(private restService: RestService) {
-
+    constructor() {
     }
 
-    public confirmServiceResources() {
-        this.restService.setSwaggers([{
-            name: this.name,
-            baseUrl: this.baseUrl,
-            swagger:JSON.parse(this.detail)
-        }]);
-        this.restConfigModal.hide();
+    public configSelected(restConfig: any) {
+        this.currentRestConfig = restConfig;
     }
 
     public show() {

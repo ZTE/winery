@@ -24,8 +24,7 @@ import {SwaggerResponse} from "../../../model/swagger";
 
 @Component({
 	selector: "b4t-rest-task",
-	styleUrls: ["./resttask.component.css"],
-	templateUrl: "resttask.component.html",
+	templateUrl: "rest-task.component.html",
 })
 export class WmRestTaskComponent implements AfterViewInit {
 	@Input()
@@ -72,8 +71,13 @@ export class WmRestTaskComponent implements AfterViewInit {
 	private loadInterfaces() {
 		if (this.node.nodeTemplate) {
 			this.swagger = this.restService.getSwaggerInfo(this.node.nodeTemplate);
-            this.restInterfaces = Object.keys(this.swagger.paths.paths);
-            this.loadOperations();
+
+            if(this.swagger) {
+                this.restInterfaces = Object.keys(this.swagger.paths.paths);
+                this.loadOperations();
+            } else {
+                console.error("swagger info not specified");
+            }
 		}
 	}
 
