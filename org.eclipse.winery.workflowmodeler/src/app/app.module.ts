@@ -63,7 +63,7 @@ import {WmRestConfigListComponent} from './components/toolbar/restconfig/restcon
     ],
     imports: [
         AlertModule.forRoot(),
-        AppRoutingModule,
+        //AppRoutingModule,
         BrowserModule,
         ModalModule.forRoot(),
         RouterModule.forRoot([]),
