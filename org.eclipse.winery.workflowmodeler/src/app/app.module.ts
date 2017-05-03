@@ -14,7 +14,6 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
 
-import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 
 import { WmContainerComponent } from './components/container/container.component';
@@ -63,7 +62,6 @@ import {WmRestConfigListComponent} from './components/toolbar/restconfig/restcon
     ],
     imports: [
         AlertModule.forRoot(),
-        //AppRoutingModule,
         BrowserModule,
         ModalModule.forRoot(),
         RouterModule.forRoot([]),
