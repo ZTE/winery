@@ -135,14 +135,13 @@ export class WineryService {
     }
 
     public loadPlan() {
-        const wineryService = this;
         const url = 'servicetemplates/' + this.encode(this.namespace)
             + '/' + this.encode(this.serviceTemplateId) + '/plans/' + this.encode(this.plan) + '/file';
         this.httpService.get(this.getFullUrl(url)).subscribe( response => {
             const nodes = JSON.stringify(response) === '{}' ? [] : response;
             console.log('load plan success');
             console.log(nodes);
-            wineryService.broadcastService.broadcast(wineryService.broadcastService.planModel, nodes);
+            this.broadcastService.broadcast(this.broadcastService.planModel, nodes);
         });
     }
 

@@ -101,7 +101,6 @@ export class WmNodeTemplateComponent implements AfterViewInit {
     private loadParameters() {
         if (this.node.template.operation) {
             const template = this.node.template;
-            let that = this;
             this.wineryService
                 .loadNodeTemplateOperationParameter(
                     template.namespace,
@@ -109,16 +108,16 @@ export class WmNodeTemplateComponent implements AfterViewInit {
                     template.interface,
                     template.operation)
                 .then(params => {
-                    that.node.input = [];
-                    that.node.output = [];
+                    this.node.input = [];
+                    this.node.output = [];
 
-                    params.input.forEach(param => that.node.input.push({
+                    params.input.forEach(param => this.node.input.push({
                         name: param,
                         type: 'string',
                         value: '',
                     }));
 
-                    params.output.forEach(param => that.node.output.push({
+                    params.output.forEach(param => this.node.output.push({
                         name: param,
                         type: 'string',
                         value: '',

@@ -36,12 +36,10 @@ export class JsPlumbService {
     }
 
     public initJsPlumbInstance() {
-        const jsplumbService = this;
-
         jsPlumb.ready(() => {
-            jsplumbService.jsplumbInstance = jsPlumb.getInstance();
+            this.jsplumbInstance = jsPlumb.getInstance();
 
-            jsplumbService.jsplumbInstance.importDefaults({
+            this.jsplumbInstance.importDefaults({
                 Anchor: ['Top', 'RightMiddle', 'LeftMiddle', 'Bottom'],
                 Connector: [
                     'Flowchart',
@@ -61,15 +59,15 @@ export class JsPlumbService {
                 PaintStyle: {lineWidth: 1},
             });
 
-            jsplumbService.broadcastService.broadcast(jsplumbService.broadcastService.jsPlumbInstance,
-                jsplumbService.jsplumbInstance);
+            this.broadcastService.broadcast(this.broadcastService.jsPlumbInstance,
+                this.jsplumbInstance);
 
             // add connection to model data while a new connection is build
-            jsplumbService.jsplumbInstance.bind('connection', info => {
-                jsplumbService.modelService.addConnection(info.connection.sourceId, info.connection.targetId);
+            this.jsplumbInstance.bind('connection', info => {
+                this.modelService.addConnection(info.connection.sourceId, info.connection.targetId);
 
                 info.connection.bind('click', connection => {
-                    jsplumbService.modelService.deleteConnection(connection.sourceId, connection.targetId);
+                    this.modelService.deleteConnection(connection.sourceId, connection.targetId);
                     jsPlumb.detach(connection);
                 });
             });
@@ -110,17 +108,16 @@ export class JsPlumbService {
     }
 
     public buttonDroppable() {
-        const jsplumbService = this;
         const selector = this.jsplumbInstance.getSelector('.canvas');
         this.jsplumbInstance.droppable(selector, {
             scope: 'btn',
-            drop(ev) {
-                const el = jsplumbService.jsplumbInstance.getSelector(ev.drag.el);
+            drop: (ev) => {
+                const el = this.jsplumbInstance.getSelector(ev.drag.el);
                 const type = el.attributes.nodeType.value;
                 const left = ev.e.clientX - ev.drop.position[0];
                 const top = ev.e.clientY - ev.drop.position[1];
 
-                jsplumbService.modelService.addNode(type, type, left, top);
+                this.modelService.addNode(type, type, left, top);
             },
         });
     }
