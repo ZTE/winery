@@ -17,6 +17,7 @@ import {NodeTemplate} from '../model/nodetemplate';
 import {Operation} from '../model/operation';
 import {HttpService} from '../util/http.service';
 import {BroadcastService} from './broadcast.service';
+import {NotifyService} from './notify.service';
 
 /**
  * WineryService
@@ -31,7 +32,8 @@ export class WineryService {
 
     constructor(
         private broadcastService: BroadcastService,
-        private httpService: HttpService) {
+        private httpService: HttpService,
+        private notifyService: NotifyService) {
         this.broadcastService.saveEvent$.subscribe(data => this.save(data));
     }
 
@@ -129,7 +131,7 @@ export class WineryService {
         };
 
         this.httpService.put(this.getFullUrl(url), requestData, options)
-            .subscribe(response => console.log('save date success'));
+            .subscribe(response => this.notifyService.success('save plan success'));
     }
 
     public loadPlan() {

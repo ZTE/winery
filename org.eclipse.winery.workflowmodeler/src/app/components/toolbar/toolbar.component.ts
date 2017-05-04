@@ -19,6 +19,7 @@ import { WineryService } from '../../services/winery.service';
 import { ModalDirective } from 'ngx-bootstrap/modal';
 import {RestService} from '../../services/rest.service';
 import {WmRestConfigComponent} from './restconfig/rest-config.component';
+import {NotifyService} from '../../services/notify.service';
 
 /**
  * toolbar component contains some basic operations(save) and all of the supported workflow nodes.
@@ -36,6 +37,7 @@ export class WmToolbarComponent implements AfterViewInit {
 
     constructor(private jsPlumbService: JsPlumbService,
                 private modelService: ModelService,
+                private notifyService: NotifyService,
                 private broadcastService: BroadcastService) {
         this.broadcastService.jsPlumbInstance$
             .subscribe(instance => this.jsPlumbService.buttonDraggable());
@@ -50,5 +52,12 @@ export class WmToolbarComponent implements AfterViewInit {
 
     public showRestConfigModal() {
         this.restConfigComponent.show();
+    }
+
+    public test() {
+        this.notifyService.success("success info");
+        this.notifyService.info("info ddddd");
+        this.notifyService.warn("warn ssss");
+        this.notifyService.error("error ddd");
     }
 }

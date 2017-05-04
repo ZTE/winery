@@ -27,3 +27,9 @@ import 'font-awesome/less/font-awesome.less';
 
 // RxJS
 import 'rxjs';
+
+// pnotify
+import 'pnotify/dist/pnotify.css';
+import 'pnotify/dist/pnotify.buttons.js';
+import 'pnotify/dist/pnotify.buttons.css';
+

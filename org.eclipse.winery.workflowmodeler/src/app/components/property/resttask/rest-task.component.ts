@@ -21,6 +21,7 @@ import {SwaggerPath} from "../../../model/swagger";
 import {SwaggerMethod} from "../../../model/swagger";
 import {SwaggerParameter} from "../../../model/swagger";
 import {SwaggerResponse} from "../../../model/swagger";
+import {NotifyService} from '../../../services/notify.service';
 
 @Component({
 	selector: "b4t-rest-task",
@@ -35,7 +36,8 @@ export class WmRestTaskComponent implements AfterViewInit {
 	private restOperations: any = [];
 	private swagger: Swagger;
 
-	constructor(private restService: RestService) {
+	constructor(private notifyService: NotifyService,
+                private restService: RestService) {
 
 	}
 
@@ -76,7 +78,7 @@ export class WmRestTaskComponent implements AfterViewInit {
                 this.restInterfaces = Object.keys(this.swagger.paths.paths);
                 this.loadOperations();
             } else {
-                console.error("swagger info not specified");
+                this.notifyService.error('swagger info not specified, please set swagger info first');
             }
 		}
 	}

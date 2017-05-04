@@ -26,36 +26,25 @@ import {HttpService} from '../util/http.service';
 
 @Injectable()
 export class RestService {
-	//public serviceResources: any[] = [
-	//	{
-	//		name:"ms1",
-	//		url:"http://10.74.148.130:10080/api/microservices/v1/swagger.json"
-	//	},
-	//	{
-	//		name:"ms2",
-	//		url:"http://10.74.148.130:10080/api/microservices/v1/swagger.json"
-	//	},
-	//];
 
-    private swaggers: {name: string, baseUrl: string, swagger?: Swagger}[] = [
-        {name:"service1", baseUrl:"http://www.baidu.lcom"},
-        {name:"service2", baseUrl:"http://www.baidu.lcom"},
-        {name:"service3", baseUrl:"http://www.baidu.lcom"},
+    private restConfigs: {name: string, baseUrl: string, swagger?: Swagger}[] = [
+        {name:"service1", baseUrl:"http://www.service1.lcom"},
+        {name:"service2", baseUrl:"http://www.service2.lcom"},
+        {name:"service3", baseUrl:"http://www.service3.lcom"},
     ];
 
 	constructor(
         private broadcastService: BroadcastService,
         private httpService: HttpService) {
-		//this.broadcastService.serviceSource$.subscribe(sources => this.serviceResources = sources);
 	}
 
     public getRestConfigs() {
-        return this.swaggers;
+        return this.restConfigs;
     }
 
-    public setSwaggers(swaggers: {name: string, baseUrl: string, swagger: any}[]) {
-        swaggers.forEach(swaggerInfo => swaggerInfo.swagger = new Swagger(swaggerInfo.swagger));
-        this.swaggers = swaggers;
+    public setRestConfigs(restConfigs: {name: string, baseUrl: string, swagger: any}[]) {
+        restConfigs.forEach(restConfig => restConfig.swagger = new Swagger(restConfig.swagger));
+        this.restConfigs = restConfigs;
     }
 
 	public getInterfaces(url: string) {
@@ -68,8 +57,8 @@ export class RestService {
 	}
 
     public getSwaggerInfo(baseUrl: string): Swagger {
-        let swaggerInfo = this.swaggers.find(tmp => tmp.baseUrl == baseUrl);
-        return swaggerInfo == null ? null : swaggerInfo.swagger;
+        let restConfig = this.restConfigs.find(tmp => tmp.baseUrl == baseUrl);
+        return restConfig == null ? null : restConfig.swagger;
     }
 
 	public getResponseParameters(swagger: Swagger, interfaceUrl: string, operation: string): any[] {

@@ -37,6 +37,7 @@ import {RestService} from './services/rest.service';
 import {WmRestConfigComponent} from './components/toolbar/restconfig/rest-config.component';
 import {WmRestConfigDetailComponent} from './components/toolbar/restconfig/restconfigdetail/rest-config-detail.component';
 import {WmRestConfigListComponent} from './components/toolbar/restconfig/restconfiglist/rest-config-list.component';
+import {NotifyService} from './services/notify.service';
 
 @NgModule({
     declarations: [
@@ -57,6 +58,7 @@ import {WmRestConfigListComponent} from './components/toolbar/restconfig/restcon
         HttpService,
         JsPlumbService,
         ModelService,
+        NotifyService,
         RestService,
         WineryService,
     ],

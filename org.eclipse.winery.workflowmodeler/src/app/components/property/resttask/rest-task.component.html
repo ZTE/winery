@@ -17,7 +17,7 @@
 	<div class="col-md-10">
 		<select class="form-control" [ngModel]="node.template.id"
 				(ngModelChange)="node.template.id=$event; serviceChanged();">
-			<option *ngFor="let swaggerInfo of restService.swaggers" value="{{swaggerInfo.baseUrl}}">{{swaggerInfo.name}}</option>
+			<option *ngFor="let restConfig of restService.getRestConfigs()" value="{{restConfig.baseUrl}}">{{restConfig.name}}</option>
 		</select>
 	</div>
 </div>

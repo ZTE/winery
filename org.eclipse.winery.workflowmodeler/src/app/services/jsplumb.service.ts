@@ -36,7 +36,6 @@ export class JsPlumbService {
     }
 
     public initJsPlumbInstance() {
-        console.log('init jsplumb instance start');
         const jsplumbService = this;
 
         jsPlumb.ready(() => {
