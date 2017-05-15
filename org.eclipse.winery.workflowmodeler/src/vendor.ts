@@ -33,3 +33,6 @@ import 'pnotify/dist/pnotify.css';
 import 'pnotify/dist/pnotify.buttons.js';
 import 'pnotify/dist/pnotify.buttons.css';
 
+// primeng
+import 'primeng/resources/primeng.min.css';
+import 'primeng/resources/themes/bootstrap/theme.css';

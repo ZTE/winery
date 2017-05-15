@@ -53,6 +53,11 @@ module.exports = {
                 loader: "file-loader"
             },
             {
+                test: /\.(jpe?g|png|gif)$/,
+                //exclude: /(node_modules)/,
+                loader: 'url-loader?limit=10000'
+            },
+            {
                 test: /\.less$/,
                 use: [{
                     loader: "style-loader"

@@ -14,13 +14,9 @@
 
 <div class="wm-properties-wrapper" *ngIf="show">
     <div class="form-group row">
-        <div *ngIf="!titleEditing" class="view col-md-10" (dblclick)="titleEditing = !titleEditing">
-            <h4>{{node.name}}</h4>
+        <div class="view col-md-10">
+            <b4t-editable-property [(propertyValue)]="node.name"></b4t-editable-property>
         </div>
-        <div class="col-md-10" *ngIf="titleEditing">
-            <input class="form-control" (blur)="nodeNameChanged()" type="text" [(ngModel)]="node.name"/>
-        </div>
-
         <div class="col-md-2">
             <button (click)="deleteNode()" type="button" class="btn btn-danger">
                 <i class="fa fa-trash" style="margin-right: 5px;"></i>
@@ -47,4 +43,11 @@
     <hr>
     <b4t-parameter *ngFor="let param of node.output" [param]="param"></b4t-parameter>
 
+    <hr>
+    <h3 class="first">Basic</h3>
+    <p-tree [value]="filesTree1">
+        <ng-template let-node  pTemplate="default">
+            <input [(ngModel)]="node.label" type="text" style="width:100%">
+        </ng-template>
+    </p-tree>
 </div>
