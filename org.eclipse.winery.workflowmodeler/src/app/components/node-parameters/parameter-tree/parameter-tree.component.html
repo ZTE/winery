@@ -1,0 +1,50 @@
+
+<p-tree *ngIf="parameters.length > 0" [value]="parameters">
+    <ng-template let-node  pTemplate="default">
+        <span *ngIf="!node.keyEditable">[{{node.parameter.type}}]{{node.label}}:</span>
+        <span *ngIf="node.keyEditable">[{{node.parameter.type}}]
+            <b4t-editable-property [propertyValue]="node.label"
+                               (propertyValueChange)="propertyKeyChanged(node, $event)"></b4t-editable-property>:
+        </span>
+
+        <b4t-editable-property *ngIf="node.parent" [(propertyValue)]="node.parent.parameter.value[node.label]"></b4t-editable-property>
+        <b4t-editable-property *ngIf="!node.parent" [(propertyValue)]="node.parameter.value"></b4t-editable-property>
+
+        <i *ngIf="canDelete(node)" class="fa fa-minus-square-o" (click)="deleteTreeNode(node)"></i>
+    </ng-template>
+
+    <ng-template let-node  pTemplate="array">
+        <span *ngIf="!node.keyEditable">[Array]({{node.children.length}}) {{node.label}}:</span>
+        <span *ngIf="node.keyEditable">[Array]({{node.children.length}})
+            <b4t-editable-property [propertyValue]="node.label"
+                               (propertyValueChange)="propertyKeyChanged(node, $event)"></b4t-editable-property>
+        </span>
+        <i class="fa fa-plus-square-o" (click)="addChildNode4ObjectArray(node)"></i>
+    </ng-template>
+    <ng-template let-node pTemplate="object">
+        <span *ngIf="!node.keyEditable">[Object] {{node.label}}:</span>
+        <span *ngIf="node.keyEditable">[Object]
+            <b4t-editable-property [propertyValue]="node.label"
+                                   (propertyValueChange)="propertyKeyChanged(node, $event)"></b4t-editable-property>:
+        </span>
+
+        <span *ngIf="canEditValue(node)" class="dynamic-object-value">
+            ...
+            <textarea [ngModel]="getObjectValue(node)" (ngModelChange)="updateObjectValue(node, $event)"></textarea>
+        </span>
+
+        <i *ngIf="canDelete(node)" class="fa fa-minus-square-o" (click)="deleteTreeNode(node)"></i>
+        <i *ngIf="canAdd(node)" class="fa fa-plus-square-o" (click)="addChildNode4DynamicObject(node)"></i>
+    </ng-template>
+
+    <ng-template let-node pTemplate="map">
+        <span *ngIf="!node.keyEditable">[Map] {{node.label}}:</span>
+        <span *ngIf="node.keyEditable">[Map]
+            <b4t-editable-property [propertyValue]="node.label"
+                                   (propertyValueChange)="propertyKeyChanged(node, $event)"></b4t-editable-property>:
+        </span>
+
+        <i *ngIf="canDelete(node)" class="fa fa-minus-square-o" (click)="deleteTreeNode(node)"></i>
+        <i *ngIf="canAdd(node)" class="fa fa-plus-square-o" (click)="addChildNode4DynamicObject(node)"></i>
+    </ng-template>
+</p-tree>

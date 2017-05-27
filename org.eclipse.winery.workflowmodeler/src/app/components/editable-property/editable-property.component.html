@@ -1,15 +1,12 @@
-<div>
-    <div *ngIf="!isEditing()">
-        <span (dblclick)="startEdit()">{{propertyValue}}</span>
-        <i class="fa fa-edit" (click)="startEdit()"></i>
-    </div>
-    <div class="row" *ngIf="isEditing()">
-        <div class="col-sm-11">
-            <input class="form-control" (blur)="completeEdit()" type="text" [(ngModel)]="propertyValue"/>
-        </div>
-        <div class="col-sm-1">
-            <i class="fa fa-check" (click)="completeEdit()"></i>
-        </div>
-
-    </div>
-</div>
+<span *ngIf="!isEditing()">
+    <span (dblclick)="startEdit()">{{propertyValue}}</span>
+    <i class="fa fa-edit" (click)="startEdit()"></i>
+</span>
+<span class="row" *ngIf="isEditing()">
+    <span class="col-sm-10">
+        <input class="form-control" style="display: inline" (blur)="completeEdit()" type="text" [(ngModel)]="propertyValue"/>
+    </span>
+    <span class="col-sm-2">
+        <i class="fa fa-check" (click)="completeEdit()"></i>
+    </span>
+</span>

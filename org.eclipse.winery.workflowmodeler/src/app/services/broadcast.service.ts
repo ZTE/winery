@@ -48,6 +48,9 @@ export class BroadcastService {
     public swagger = new Subject<any>();
     public swagger$ = this.swagger.asObservable();
 
+    public nodeTaskChange = new Subject();
+    public nodeTaskChange$ = this.nodeTaskChange.asObservable();
+
     /**
      * broadcast datas
      * this method will catch the exceptions for the broadcast

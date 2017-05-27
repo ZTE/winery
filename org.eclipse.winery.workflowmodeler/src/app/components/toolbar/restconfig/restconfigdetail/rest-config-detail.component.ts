@@ -50,8 +50,10 @@ export class WmRestConfigDetailComponent implements OnChanges{
         let swagger: Swagger = null;
         try {
             swagger = new Swagger(JSON.parse(detail));
+            console.log(swagger);
         } catch(e) {
             console.log("detail transfer error");
+            console.error(e);
         }
         this.restConfig.swagger = swagger;
     }

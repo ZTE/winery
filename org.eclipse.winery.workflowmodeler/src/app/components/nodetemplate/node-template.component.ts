@@ -31,7 +31,8 @@ export class WmNodeTemplateComponent implements AfterViewInit {
     private nodeInterfaces: any[] = [];
     private nodeOperations: any[] = [];
 
-    constructor(private wineryService: WineryService) {
+    constructor(private broadcastService: BroadcastService,
+                private wineryService: WineryService) {
     }
 
     public ngAfterViewInit() {
@@ -65,7 +66,13 @@ export class WmNodeTemplateComponent implements AfterViewInit {
         this.node.input = [];
         this.node.output = [];
 
+        this.notifyTaskChanged();
+
         this.loadParameters();
+    }
+
+    private notifyTaskChanged() {
+        this.broadcastService.broadcast(this.broadcastService.nodeTaskChange, null);
     }
 
     private setTemplateNamespace() {
@@ -122,6 +129,7 @@ export class WmNodeTemplateComponent implements AfterViewInit {
                         type: 'string',
                         value: '',
                     }));
+                    this.notifyTaskChanged();
                 });
         }
     }

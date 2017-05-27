@@ -17,12 +17,10 @@ import {Operation} from "../model/operation";
 import {BroadcastService} from "./broadcast.service";
 import {SwaggerData} from "../model/swagger.data";
 import {Swagger} from "../model/swagger";
-import {SwaggerPath} from "../model/swagger";
 import {SwaggerMethod} from "../model/swagger";
 import {SwaggerResponse} from "../model/swagger";
-import {SwaggerDefinition} from "../model/swagger";
-import {SwaggerItems} from "../model/swagger";
 import {HttpService} from '../util/http.service';
+import {SwaggerSchemaObject} from '../model/swagger';
 
 @Injectable()
 export class RestService {
@@ -43,7 +41,16 @@ export class RestService {
     }
 
     public setRestConfigs(restConfigs: {name: string, baseUrl: string, swagger: any}[]) {
+        restConfigs.forEach(config => {
+            delete config.swagger;
+            console.log(JSON.stringify(config));
+        });
         restConfigs.forEach(restConfig => restConfig.swagger = new Swagger(restConfig.swagger));
+
+        restConfigs.forEach(config => {
+            console.log(JSON.stringify(config.swagger));
+        });
+
         this.restConfigs = restConfigs;
     }
 
@@ -62,29 +69,78 @@ export class RestService {
     }
 
 	public getResponseParameters(swagger: Swagger, interfaceUrl: string, operation: string): any[] {
-		let result = [];
-		let path: SwaggerPath = swagger.paths.paths[interfaceUrl];
-		let method: SwaggerMethod = path.methodObj[operation];
-		let response: SwaggerResponse = method.responses.responseObj["200"];
+		let path = swagger.paths.get(interfaceUrl);
+		let method: SwaggerMethod = path.get(operation);
+		let response: SwaggerResponse = method.responses.get("200");
 
-		if(response && response.schema && response.schema.$ref) {
-			// just obtain the first level param, it has to get the complete param in future
-			let definition: SwaggerDefinition = this.getDefinition(swagger, response.schema.$ref);
-			for(let key of Object.keys(definition.properties.propertiesObj)) {
-				let item: SwaggerItems = definition.properties.propertiesObj[key];
-				result.push({
-					name: key,
-					type: item.type,
-					value:"",
-				});
-			}
-		}
+        for(let key in method.responses.keys()) {
+            if(key.startsWith("20")) {
+                response = method.responses.get(key);
+            }
+        }
 
-		return result;
+		return [response];
 	}
 
-	public getDefinition(swagger: Swagger, position: string): SwaggerDefinition {
+	public getDefinition(swagger: Swagger, position: string): SwaggerSchemaObject {
 		let definitionName = position.substring("#/definitions/".length);
-		return swagger.definitions.definitionObj[definitionName];
+
+		return swagger.definitions.get(definitionName);
 	}
+
+    public deepClone(source: any) {
+        if(source == null || typeof source != 'object') {
+            return source;
+        } else {
+            if(source instanceof Array) {
+                let target = [];
+                source.forEach(item => target.push(this.deepClone(item)));
+                return target;
+            } else {
+                let target = {};
+                for(let key in source) {
+                    target[key] = this.deepClone(source[key]);
+                }
+                return target;
+            }
+        }
+        //
+        //let nu = null;
+        //let und = undefined;
+        //
+        //let a = [1,3,3,4];
+        //let o = {key:'a', name: 'value'};
+        //let b = true;
+        //let s = 'string';
+        //let n = 1;
+        //
+        //let $ref = '$ref';
+        //let ref = new SwaggerReference({$ref});
+        //
+        //
+        //console.log(`nu == null ${nu == null}`);
+        //console.log(`instance of Object nu ${nu instanceof Object}`);
+        //console.log(`type of nu ${typeof nu}`);
+        //console.log(`instance of Object und ${und instanceof Object}`);
+        //console.log(`type of und ${typeof und}`);
+        //
+        //console.log(`instance of Object ref ${a instanceof Object}`);
+        //console.log(`instance of SwaggerReference ref ${a instanceof SwaggerReference}`);
+        //
+        //console.log(`instance of Array a ${a instanceof Array}`);
+        //console.log(`instance of Object a ${a instanceof Object}`);
+        //console.log(`type of a ${typeof a}`);
+        //
+        //console.log(`instance of Object o ${o instanceof Object}`);
+        //console.log(`instance of Array o ${o instanceof Array}`);
+        //console.log(`type of o ${typeof o}`);
+        //
+        //console.log(`type of b ${typeof b}`);
+        //console.log(`type of s ${typeof s}`);
+        //console.log(`type of n ${typeof n}`);
+
+    }
+
+
+
 }

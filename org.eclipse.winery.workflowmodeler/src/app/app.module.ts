@@ -40,6 +40,10 @@ import {WmRestConfigListComponent} from './components/toolbar/restconfig/restcon
 import {NotifyService} from './services/notify.service';
 import {TreeModule } from 'primeng/primeng';
 import {WmEditablePropertyComponent} from './components/editable-property/editable-property.component';
+import {WmNodeParametersComponent} from './components/node-parameters/node-parameters.component';
+import {Swagger} from './model/swagger';
+import {SwaggerTreeConverterService} from './services/swagger-tree-converter.service';
+import {WmParameterTreeComponent} from './components/node-parameters/parameter-tree/parameter-tree.component';
 
 @NgModule({
     declarations: [
@@ -47,8 +51,10 @@ import {WmEditablePropertyComponent} from './components/editable-property/editab
         WmContainerComponent,
         WmEditablePropertyComponent,
         WmNodeComponent,
+        WmNodeParametersComponent,
         WmNodeTemplateComponent,
         WmParameterComponent,
+        WmParameterTreeComponent,
         WmPropertiesComponent,
         WmRestConfigComponent,
         WmRestTaskComponent,
@@ -63,6 +69,7 @@ import {WmEditablePropertyComponent} from './components/editable-property/editab
         ModelService,
         NotifyService,
         RestService,
+        SwaggerTreeConverterService,
         WineryService,
     ],
     imports: [

@@ -14,6 +14,7 @@ import { Injectable } from '@angular/core';
 import {isNullOrUndefined} from 'util';
 import { WorkflowNode } from '../model/workflow.node';
 import { BroadcastService } from './broadcast.service';
+import {SwaggerTreeConverterService} from './swagger-tree-converter.service';
 
 /**
  * ModelService
@@ -23,7 +24,7 @@ import { BroadcastService } from './broadcast.service';
 export class ModelService {
     private nodes: WorkflowNode[] = [];
 
-    constructor(private broadcastService: BroadcastService) {
+    constructor(private broadcastService: BroadcastService, private swaggerTreeConverterService: SwaggerTreeConverterService) {
         this.broadcastService.planModel$.subscribe(planNodes =>
             planNodes.forEach(node => this.nodes.push(new WorkflowNode(node))));
     }
@@ -72,6 +73,7 @@ export class ModelService {
     public save() {
         console.log('****************** save data *********************');
         console.log(this.nodes);
+
         this.broadcastService.broadcast(this.broadcastService.saveEvent, JSON.stringify(this.nodes));
     }
 

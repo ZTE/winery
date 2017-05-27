@@ -13,8 +13,8 @@
 -->
 
 <div class="form-group row">
-    <label class="col-md-2 form-control-label text-md-right">Node</label>
-    <div class="col-md-10">
+    <label class="col-md-3 form-control-label text-md-right">Node</label>
+    <div class="col-md-9">
         <select class="form-control" [ngModel]="node.template.id"
                 (ngModelChange)="node.template.id=$event; nodeTemplateChanged();">
             <option *ngFor="let template of nodeTemplates" value="{{template.id}}">{{template.name}}</option>
@@ -23,8 +23,8 @@
 </div>
 
 <div class="form-group row">
-    <label class="col-md-2 form-control-label text-md-right">Interface</label>
-    <div class="col-md-10">
+    <label class="col-md-3 form-control-label text-md-right">Interface</label>
+    <div class="col-md-9">
         <select class="form-control" [ngModel]="node.template.interface"
                 (ngModelChange)="node.template.interface=$event; nodeInterfaceChanged();">
             <option *ngFor="let interface of nodeInterfaces" value="{{interface}}">{{interface}}</option>
@@ -33,8 +33,8 @@
 </div>
 
 <div class="form-group row">
-    <label class="col-md-2 form-control-label text-md-right">Operation</label>
-    <div class="col-md-10">
+    <label class="col-md-3 form-control-label text-md-right">Operation</label>
+    <div class="col-md-9">
         <select class="form-control" [ngModel]="node.template.operation"
                 (ngModelChange)="node.template.operation=$event; nodeOperationChanged();">
             <option *ngFor="let operation of nodeOperations" value="{{operation.name}}">{{operation.name}}</option>

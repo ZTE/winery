@@ -17,7 +17,6 @@ import { WineryService } from "../../../services/winery.service";
 import {RestService} from "../../../services/rest.service";
 import {SwaggerData} from "../../../model/swagger.data";
 import {Swagger} from "../../../model/swagger";
-import {SwaggerPath} from "../../../model/swagger";
 import {SwaggerMethod} from "../../../model/swagger";
 import {SwaggerParameter} from "../../../model/swagger";
 import {SwaggerResponse} from "../../../model/swagger";
@@ -36,13 +35,17 @@ export class WmRestTaskComponent implements AfterViewInit {
 	private restOperations: any = [];
 	private swagger: Swagger;
 
-	constructor(private notifyService: NotifyService,
+	constructor(private broadcastService: BroadcastService,
+                private notifyService: NotifyService,
                 private restService: RestService) {
 
 	}
 
 	public ngAfterViewInit() {
-        setTimeout(() => this.loadInterfaces(), 0);
+        setTimeout(() => {
+            this.loadInterfaces();
+            this.notifyTaskChanged();
+        }, 0);
 	}
 
 	private serviceChanged() {
@@ -67,15 +70,22 @@ export class WmRestTaskComponent implements AfterViewInit {
 		this.node.input = [];
 		this.node.output = [];
 
+        this.notifyTaskChanged();
+
 		this.loadParameters();
 	}
+
+    private notifyTaskChanged() {
+        this.broadcastService.broadcast(this.broadcastService.nodeTaskChange, null);
+    }
 
 	private loadInterfaces() {
 		if (this.node.nodeTemplate) {
 			this.swagger = this.restService.getSwaggerInfo(this.node.nodeTemplate);
 
             if(this.swagger) {
-                this.restInterfaces = Object.keys(this.swagger.paths.paths);
+                this.restInterfaces = [];
+                this.swagger.paths.forEach((value, key) => this.restInterfaces.push(key));
                 this.loadOperations();
             } else {
                 this.notifyService.error('swagger info not specified, please set swagger info first');
@@ -85,27 +95,24 @@ export class WmRestTaskComponent implements AfterViewInit {
 
 	private loadOperations() {
 		if(this.node.nodeInterface) {
-			let swaggerPath: SwaggerPath = this.swagger.paths.paths[this.node.nodeInterface];
-			this.restOperations = Object.keys(swaggerPath.methodObj);
+			let swaggerPath: Map<string, SwaggerMethod> = this.swagger.paths.get(this.node.nodeInterface);
+			this.restOperations = [];
+            swaggerPath.forEach((value, key) => this.restOperations.push(key));
 		}
 	}
 
 	private loadParameters() {
 		if(this.node.nodeOperation) {
-			let path:SwaggerPath = this.swagger.paths.paths[this.node.nodeInterface];
-			let method: SwaggerMethod = path.methodObj[this.node.nodeOperation];
+			let path:Map<string, SwaggerMethod> = this.swagger.paths.get(this.node.nodeInterface);
+			let method: SwaggerMethod = path.get(this.node.nodeOperation);
 
-			this.node.input = [];
-			method.parameters.forEach(param => this.node.input.push({
-				name: param.name,
-				type: param.type,
-				value: "",
-				position: param.position,
-			}));
+            this.node.input = method.parameters.map(param => this.restService.deepClone(param));
 
 			let responseParams = this.restService.getResponseParameters(
 				this.swagger, this.node.nodeInterface, this.node.nodeOperation);
-			this.node.output = responseParams;
+            this.node.output = responseParams.map(param => this.restService.deepClone(param));
+
+            this.notifyTaskChanged();
 		}
 	}
 }
