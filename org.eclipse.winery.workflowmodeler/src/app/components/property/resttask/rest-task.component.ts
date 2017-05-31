@@ -85,7 +85,9 @@ export class WmRestTaskComponent implements AfterViewInit {
 
             if(this.swagger) {
                 this.restInterfaces = [];
-                this.swagger.paths.forEach((value, key) => this.restInterfaces.push(key));
+                for (let key of Object.keys(this.swagger.paths)) {
+                    this.restInterfaces.push(key);
+                }
                 this.loadOperations();
             } else {
                 this.notifyService.error('swagger info not specified, please set swagger info first');
@@ -95,16 +97,19 @@ export class WmRestTaskComponent implements AfterViewInit {
 
 	private loadOperations() {
 		if(this.node.nodeInterface) {
-			let swaggerPath: Map<string, SwaggerMethod> = this.swagger.paths.get(this.node.nodeInterface);
+			let swaggerPath: any = this.swagger.paths[this.node.nodeInterface];
+
 			this.restOperations = [];
-            swaggerPath.forEach((value, key) => this.restOperations.push(key));
+            for (let key of Object.keys(swaggerPath)) {
+                this.restOperations.push(key)
+            }
 		}
 	}
 
 	private loadParameters() {
 		if(this.node.nodeOperation) {
-			let path:Map<string, SwaggerMethod> = this.swagger.paths.get(this.node.nodeInterface);
-			let method: SwaggerMethod = path.get(this.node.nodeOperation);
+			let path: any = this.swagger.paths[this.node.nodeInterface];
+			let method: SwaggerMethod = path[this.node.nodeOperation];
 
             this.node.input = method.parameters.map(param => this.restService.deepClone(param));
 

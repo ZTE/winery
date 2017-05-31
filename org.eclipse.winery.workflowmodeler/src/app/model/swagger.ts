@@ -295,7 +295,7 @@ export class SwaggerHeader {
 export class SwaggerResponse {
     public description: string;
     public schema: SwaggerSchemaObject;
-    public headers: Map<string, SwaggerHeader>;
+    public headers: any;
 
     constructor({description, schema, headers}) {
         this.description = description;
@@ -305,9 +305,9 @@ export class SwaggerResponse {
         }
 
         if (headers) {
-            this.headers = new Map<string, SwaggerHeader>();
+            this.headers = {};
             for (let key in headers) {
-                this.headers.set(key, new SwaggerHeader(headers[key]));
+                this.headers[key] = new SwaggerHeader(headers[key]);
             }
         }
     }
@@ -319,7 +319,7 @@ export class SwaggerMethod {
     public operationId: string;
     public parameters: SwaggerParameter[];
     public produces: string[];
-    public responses: Map<string, SwaggerResponse>;
+    public responses: any;
     public summary: string;
     public tags: string[];
 
@@ -334,13 +334,13 @@ export class SwaggerMethod {
         this.tags = tags;
     }
 
-    private initResponses(responses: any): Map<string, SwaggerResponse> {
-        let responsesMap = new Map<string, SwaggerResponse>();
+    private initResponses(responses: any): any {
+        let responseObjs = {};
         for (let key in responses) {
-            responsesMap.set(key, new SwaggerResponse(responses[key]));
+            responseObjs[key] = new SwaggerResponse(responses[key]);
         }
 
-        return responsesMap;
+        return responseObjs;
     }
 }
 
@@ -364,9 +364,9 @@ export class SwaggerTag {
 
 export class Swagger {
     public basePath: string;
-    public definitions: Map<string, SwaggerSchemaObject>;
+    public definitions: any;
     public info: SwaggerInfo;
-    public paths: Map<string, Map<string, SwaggerMethod>>;
+    public paths: any;
     public swagger: string;
     public tags: SwaggerTag[];
 
@@ -379,30 +379,30 @@ export class Swagger {
         this.tags = tags.map(tag => new SwaggerTag(tag));
     }
 
-    private initPaths(paths: any): Map<string, Map<string, SwaggerMethod>> {
-        let pathMap = new Map<string, Map<string, SwaggerMethod>>();
+    private initPaths(paths: any): any {
+        let pathObjs = {};
         for (let key in paths) {
-            pathMap.set(key, this.initPath(paths[key]));
+            pathObjs[key] = this.initPath(paths[key]);
         }
-        return pathMap;
+        return pathObjs;
     }
 
-    private initPath(path: any): Map<string, SwaggerMethod> {
-        let pathMap = new Map<string, SwaggerMethod>();
+    private initPath(path: any): any {
+        let pathObj = {};
 
         for (let key in path) {
-            pathMap.set(key, new SwaggerMethod(path[key]));
+            pathObj[key] = new SwaggerMethod(path[key]);
         }
 
-        return pathMap;
+        return pathObj;
     }
 
-    private initDefinitions(definitions: any): Map<string, SwaggerSchemaObject> {
-        let definitionMap = new Map<string, SwaggerSchemaObject>();
+    private initDefinitions(definitions: any): any {
+        let definitionObjs = {};
         for (let key in definitions) {
-            definitionMap.set(key, getSchemaObject(definitions[key]));
+            definitionObjs[key] = getSchemaObject(definitions[key]);
         }
-        return definitionMap;
+        return definitionObjs;
     }
 }
 

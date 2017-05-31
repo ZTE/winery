@@ -29,7 +29,6 @@
         </span>
 
         <span *ngIf="canEditValue(node)" class="dynamic-object-value">
-            ...
             <textarea [ngModel]="getObjectValue(node)" (ngModelChange)="updateObjectValue(node, $event)"></textarea>
         </span>
 

@@ -26,14 +26,21 @@ import {SwaggerSchemaObject} from '../model/swagger';
 export class RestService {
 
     private restConfigs: {name: string, baseUrl: string, swagger?: Swagger}[] = [
-        {name:"service1", baseUrl:"http://www.service1.lcom"},
-        {name:"service2", baseUrl:"http://www.service2.lcom"},
-        {name:"service3", baseUrl:"http://www.service3.lcom"},
     ];
 
 	constructor(
         private broadcastService: BroadcastService,
         private httpService: HttpService) {
+
+        this.broadcastService.planModel$.subscribe(planModel => {
+            if(!planModel.configs.restConfigs) {
+                planModel.configs.restConfigs = [];
+            } else {
+                planModel.configs.restConfigs.forEach(restConfig => restConfig.swagger = new Swagger(restConfig.swagger));
+            }
+
+            this.restConfigs = planModel.configs.restConfigs;
+        });
 	}
 
     public getRestConfigs() {
@@ -69,13 +76,13 @@ export class RestService {
     }
 
 	public getResponseParameters(swagger: Swagger, interfaceUrl: string, operation: string): any[] {
-		let path = swagger.paths.get(interfaceUrl);
-		let method: SwaggerMethod = path.get(operation);
-		let response: SwaggerResponse = method.responses.get("200");
+		let path = swagger.paths[interfaceUrl];
+		let method: SwaggerMethod = path[operation];
+		let response: SwaggerResponse = null;
 
-        for(let key in method.responses.keys()) {
+        for(let key of Object.keys(method.responses)) {
             if(key.startsWith("20")) {
-                response = method.responses.get(key);
+                response = method.responses[key];
             }
         }
 
@@ -85,7 +92,7 @@ export class RestService {
 	public getDefinition(swagger: Swagger, position: string): SwaggerSchemaObject {
 		let definitionName = position.substring("#/definitions/".length);
 
-		return swagger.definitions.get(definitionName);
+		return swagger.definitions[definitionName];
 	}
 
     public deepClone(source: any) {

@@ -14,6 +14,7 @@ import {Subject} from 'rxjs/Subject';
 import {Operation} from '../model/operation';
 import {WorkflowNode} from '../model/workflow.node';
 import {Swagger} from '../model/swagger';
+import {PlanModel} from '../model/plan-model';
 
 /**
  * BroadcastService
@@ -29,7 +30,7 @@ export class BroadcastService {
     public showProperty = new Subject<boolean>();
     public showProperty$ = this.showProperty.asObservable();
 
-    public planModel = new Subject<any[]>();
+    public planModel = new Subject<PlanModel>();
     public planModel$ = this.planModel.asObservable();
 
     public saveEvent = new Subject<string>();

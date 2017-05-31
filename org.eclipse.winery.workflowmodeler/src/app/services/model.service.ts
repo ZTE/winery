@@ -15,6 +15,7 @@ import {isNullOrUndefined} from 'util';
 import { WorkflowNode } from '../model/workflow.node';
 import { BroadcastService } from './broadcast.service';
 import {SwaggerTreeConverterService} from './swagger-tree-converter.service';
+import {PlanModel} from '../model/plan-model';
 
 /**
  * ModelService
@@ -22,19 +23,29 @@ import {SwaggerTreeConverterService} from './swagger-tree-converter.service';
  */
 @Injectable()
 export class ModelService {
-    private nodes: WorkflowNode[] = [];
+    private planModel: PlanModel = new PlanModel({
+        nodes: [],
+        configs:{}
+    });
 
-    constructor(private broadcastService: BroadcastService, private swaggerTreeConverterService: SwaggerTreeConverterService) {
-        this.broadcastService.planModel$.subscribe(planNodes =>
-            planNodes.forEach(node => this.nodes.push(new WorkflowNode(node))));
+    constructor(private broadcastService: BroadcastService) {
+        this.broadcastService.planModel$.subscribe(planModel =>{
+            planModel.nodes = planModel.nodes.map(node => new WorkflowNode(node));
+            this.planModel = planModel;
+        }
+        );
     }
 
+    //constructor(private broadcastService: BroadcastService) {
+    //    this.broadcastService.planModel$.subscribe(planModel => this.planModel = planModel);
+    //}
+
     public getNodes(): WorkflowNode[] {
-        return this.nodes;
+        return this.planModel.nodes;
     }
 
     public addNode(name: string, type: string, left: number, top: number) {
-        this.nodes.push(new WorkflowNode({
+        this.planModel.nodes.push(new WorkflowNode({
             id: this.createId(),
             name,
             type,
@@ -47,24 +58,24 @@ export class ModelService {
 
     public deleteNode(nodeId: string) {
         // delete related connections
-        this.nodes.forEach(node => node.deleteConnection(nodeId));
+        this.planModel.nodes.forEach(node => node.deleteConnection(nodeId));
 
         // delete current node
-        const index = this.nodes.findIndex(node => node.id === nodeId);
+        const index = this.planModel.nodes.findIndex(node => node.id === nodeId);
         if (index !== -1) {
-            this.nodes.splice(index, 1);
+            this.planModel.nodes.splice(index, 1);
         }
     }
 
     public addConnection(sourceId: string, targetId: string) {
-        const node = this.nodes.find(tmpNode => tmpNode.id === sourceId);
+        const node = this.planModel.nodes.find(tmpNode => tmpNode.id === sourceId);
         if (!isNullOrUndefined(node)) {
             node.addConnection(targetId);
         }
     }
 
     public deleteConnection(sourceId: string, targetId: string) {
-        const node = this.nodes.find(tmpNode => tmpNode.id === sourceId);
+        const node = this.planModel.nodes.find(tmpNode => tmpNode.id === sourceId);
         if (!isNullOrUndefined(node)) {
             node.deleteConnection(targetId);
         }
@@ -72,14 +83,14 @@ export class ModelService {
 
     public save() {
         console.log('****************** save data *********************');
-        console.log(this.nodes);
+        console.log(this.planModel);
 
-        this.broadcastService.broadcast(this.broadcastService.saveEvent, JSON.stringify(this.nodes));
+        this.broadcastService.broadcast(this.broadcastService.saveEvent, JSON.stringify(this.planModel));
     }
 
     private createId() {
         const idSet = new Set();
-        this.nodes.forEach(node => idSet.add(node.id));
+        this.planModel.nodes.forEach(node => idSet.add(node.id));
 
         for (let i = 0; i < idSet.size; i++) {
             if (!idSet.has('node' + i)) {

@@ -18,6 +18,7 @@ import {Operation} from '../model/operation';
 import {HttpService} from '../util/http.service';
 import {BroadcastService} from './broadcast.service';
 import {NotifyService} from './notify.service';
+import {PlanModel} from '../model/plan-model';
 
 /**
  * WineryService
@@ -30,11 +31,13 @@ export class WineryService {
     private serviceTemplateId: string;
     private plan: string;
 
+    private planModel: PlanModel;
+
     constructor(
         private broadcastService: BroadcastService,
         private httpService: HttpService,
         private notifyService: NotifyService) {
-        this.broadcastService.saveEvent$.subscribe(data => this.save(data));
+        this.broadcastService.saveEvent$.subscribe(data => this.save());
     }
 
     public setRequestParam(queryParams: any) {
@@ -115,14 +118,14 @@ export class WineryService {
         });
     }
 
-    public save(data: string) {
+    public save() {
         const url = 'servicetemplates/' + this.encode(this.namespace)
             + '/' + this.encode(this.serviceTemplateId) + '/plans/' + this.encode(this.plan) + '/file';
 
         const requestData = '-----------------------------7da24f2e50046\r\n'
             + 'Content-Disposition: form-data; name=\"file\"; filename=\"file.json\"\r\n'
             + 'Content-type: plain/text\r\n\r\n'
-            + data + '\r\n-----------------------------7da24f2e50046--\r\n';
+            + JSON.stringify(this.planModel) + '\r\n-----------------------------7da24f2e50046--\r\n';
 
         const options: any = {
             headers: {
@@ -137,11 +140,25 @@ export class WineryService {
     public loadPlan() {
         const url = 'servicetemplates/' + this.encode(this.namespace)
             + '/' + this.encode(this.serviceTemplateId) + '/plans/' + this.encode(this.plan) + '/file';
+        //this.httpService.get(this.getFullUrl(url)).subscribe( response => {
+        //    const nodes = JSON.stringify(response) === '{}' ? [] : response;
+        //    console.log('load plan success');
+        //    console.log(nodes);
+        //    this.broadcastService.broadcast(this.broadcastService.planModel, nodes);
+        //});
+
         this.httpService.get(this.getFullUrl(url)).subscribe( response => {
-            const nodes = JSON.stringify(response) === '{}' ? [] : response;
+            //const nodes = JSON.stringify(response) === '{}' ? [] : response;
             console.log('load plan success');
-            console.log(nodes);
-            this.broadcastService.broadcast(this.broadcastService.planModel, nodes);
+            console.log(response);
+            if(!response.nodes) {
+                response.nodes = [];
+            }
+            if(!response.configs) {
+                response.configs = {};
+            }
+            this.planModel = response;
+            this.broadcastService.broadcast(this.broadcastService.planModel, this.planModel);
         });
     }
 
