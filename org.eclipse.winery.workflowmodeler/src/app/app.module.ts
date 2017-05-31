@@ -18,7 +18,7 @@ import { AppComponent } from './app.component';
 
 import { WmContainerComponent } from './components/container/container.component';
 import { WmNodeComponent } from './components/node/node.component';
-import { WmNodeTemplateComponent } from './components/nodetemplate/node-template.component';
+import { WmNodeTemplateComponent } from './components/property/node-template/node-template.component';
 import { WmParameterComponent } from './components/parameter/parameter.component';
 import { WmPropertiesComponent } from './components/property/properties.component';
 import { WmToolbarComponent } from './components/toolbar/toolbar.component';
@@ -32,7 +32,7 @@ import { SharedModule } from './shared/shared.module';
 import {HttpService} from './util/http.service';
 import {AlertModule} from 'ngx-bootstrap/index';
 import {ModalModule} from 'ngx-bootstrap/index';
-import {WmRestTaskComponent} from './components/property/resttask/rest-task.component';
+import {WmRestTaskComponent} from './components/property/rest-task/rest-task.component';
 import {RestService} from './services/rest.service';
 import {WmRestConfigComponent} from './components/toolbar/restconfig/rest-config.component';
 import {WmRestConfigDetailComponent} from './components/toolbar/restconfig/restconfigdetail/rest-config-detail.component';
