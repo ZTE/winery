@@ -12,8 +12,8 @@
 
 import { Component, Input, OnChanges, ViewChild } from '@angular/core';
 import { ModalDirective } from 'ngx-bootstrap/modal';
-import {RestService} from '../../../../services/rest.service';
-import {Swagger} from '../../../../model/swagger';
+import { RestService } from '../../../../services/rest.service';
+import { Swagger } from '../../../../model/swagger';
 
 /**
  * toolbar component contains some basic operations(save) and all of the supported workflow nodes.
@@ -23,21 +23,26 @@ import {Swagger} from '../../../../model/swagger';
     selector: 'b4t-rest-config-detail',
     templateUrl: 'rest-config-detail.component.html',
 })
-export class WmRestConfigDetailComponent implements OnChanges{
+export class WmRestConfigDetailComponent implements OnChanges {
     @Input() restConfig: {
         name: string,
         baseUrl: string,
+        dynamic: boolean,
         swagger: Swagger,
     };
 
     public detail: string;
 
-    constructor() {
+    constructor(private restService: RestService) {
 
     }
 
     public ngOnChanges() {
-        if(this.restConfig.swagger) {
+        this.parseSwagger2String();
+    }
+
+    private parseSwagger2String() {
+        if (this.restConfig.swagger) {
             this.detail = JSON.stringify(this.restConfig.swagger);
         } else {
             this.detail = '';
@@ -51,12 +56,23 @@ export class WmRestConfigDetailComponent implements OnChanges{
         try {
             swagger = new Swagger(JSON.parse(detail));
             console.log(swagger);
-        } catch(e) {
+        } catch (e) {
             console.log("detail transfer error");
             console.error(e);
         }
         this.restConfig.swagger = swagger;
     }
 
+    public toggleDynamic(dynamic: boolean) {
+        this.restConfig.dynamic = dynamic;
+
+        if (this.restConfig.dynamic && this.restConfig.baseUrl) {
+            this.restService.getDynamicSwaggerInfo(this.restConfig.baseUrl)
+                .subscribe(response => {
+                    this.restConfig.swagger = new Swagger(response);
+                    this.parseSwagger2String();
+                });
+        }
+    }
 
 }

@@ -14,12 +14,16 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { RouterModule } from '@angular/router';
+import { RadioButtonModule } from 'primeng/primeng';
+import { TreeModule } from 'primeng/primeng';
 
 const module = [
     CommonModule,
     FormsModule,
     HttpModule,
     RouterModule,
+    RadioButtonModule,
+    TreeModule,
 ];
 
 @NgModule({

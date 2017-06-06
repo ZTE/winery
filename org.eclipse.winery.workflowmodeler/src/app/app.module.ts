@@ -38,7 +38,6 @@ import {WmRestConfigComponent} from './components/toolbar/restconfig/rest-config
 import {WmRestConfigDetailComponent} from './components/toolbar/restconfig/restconfigdetail/rest-config-detail.component';
 import {WmRestConfigListComponent} from './components/toolbar/restconfig/restconfiglist/rest-config-list.component';
 import {NotifyService} from './services/notify.service';
-import {TreeModule } from 'primeng/primeng';
 import {WmEditablePropertyComponent} from './components/editable-property/editable-property.component';
 import {WmNodeParametersComponent} from './components/node-parameters/node-parameters.component';
 import {Swagger} from './model/swagger';
@@ -78,7 +77,6 @@ import {WmParameterTreeComponent} from './components/node-parameters/parameter-t
         ModalModule.forRoot(),
         RouterModule.forRoot([]),
         SharedModule,
-        TreeModule,
     ],
     bootstrap: [
         AppComponent,

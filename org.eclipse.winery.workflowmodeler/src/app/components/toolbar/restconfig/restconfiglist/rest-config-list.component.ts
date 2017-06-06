@@ -12,8 +12,8 @@
 
 import { AfterViewInit, Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { ModalDirective } from 'ngx-bootstrap/modal';
-import {RestService} from '../../../../services/rest.service';
-import {Swagger} from '../../../../model/swagger';
+import { RestService } from '../../../../services/rest.service';
+import { Swagger } from '../../../../model/swagger';
 
 /**
  * toolbar component contains some basic operations(save) and all of the supported workflow nodes.
@@ -33,13 +33,14 @@ export class WmRestConfigListComponent implements AfterViewInit {
     }
 
     public onConfigSelected(restConfig: any) {
-
         this.configSelected.emit(restConfig);
     }
+
     public addRestConfig() {
         let restConfig = {
             name: 'new Rest Config',
             baseUrl: '',
+            dynamic: false,
         };
         this.restService.getRestConfigs().push(restConfig);
 
@@ -50,8 +51,8 @@ export class WmRestConfigListComponent implements AfterViewInit {
         this.restService.getRestConfigs().splice(index, 1);
 
         let restConfig = {};
-        if(this.restService.getRestConfigs().length > 0) {
-            if(this.restService.getRestConfigs()[index]) {
+        if (this.restService.getRestConfigs().length > 0) {
+            if (this.restService.getRestConfigs()[index]) {
                 restConfig = this.restService.getRestConfigs()[index];
             } else {
                 restConfig = this.restService.getRestConfigs()[index - 1];
