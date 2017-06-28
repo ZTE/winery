@@ -17,6 +17,7 @@ export const WorkflowNodeType = [
     'RestTask',
     'ExclusiveGateway',
     'ParallelGateway',
+    'SubProcess',
 ];
 
 export class WorkflowNode {
@@ -33,6 +34,8 @@ export class WorkflowNode {
     public nodeTemplate: string;
     public nodeOperation: string;
 
+    public children: WorkflowNode[] = [];
+
     constructor({
         id, name, type,
         position = {},
@@ -40,6 +43,7 @@ export class WorkflowNode {
         connection = [],
         output = [],
         template = {},
+        children = [],
         interface: nodeInterface = '',
         node_operation: nodeOperation = '',
         node_template: nodeTemplate = '',
@@ -52,6 +56,10 @@ export class WorkflowNode {
         this.connection = connection;
         this.output = output;
         this.template = template;
+
+        this.children = [];
+        children.forEach(child => this.children.push(new WorkflowNode(child)));
+
         this.nodeInterface = nodeInterface;
         this.nodeOperation = nodeOperation;
         this.nodeTemplate = nodeTemplate;
@@ -68,6 +76,26 @@ export class WorkflowNode {
         if (index !== -1) {
             this.connection.splice(index, 1);
         }
+    }
+
+    public canHaveChildren() {
+        return this.type === 'SubProcess';
+    }
+
+    public addChild(child: WorkflowNode) {
+        if(this.canHaveChildren()) {
+            this.children.push(child);
+        }
+    }
+
+    public deleteChild(id: string): WorkflowNode {
+        let index = this.children.findIndex(child => child.id === id);
+        if(index != -1) {
+            const deletedNode = this.children.splice(index, 1);
+            return deletedNode[0];
+        }
+
+        return null;
     }
 
     public toJSON() {

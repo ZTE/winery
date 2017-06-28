@@ -12,14 +12,9 @@
 
 import { AfterViewInit, Component, ViewChild } from '@angular/core';
 import { WorkflowNodeType } from '../../model/workflow.node';
-import { BroadcastService } from '../../services/broadcast.service';
 import { JsPlumbService } from '../../services/jsplumb.service';
 import { ModelService } from '../../services/model.service';
-import { WineryService } from '../../services/winery.service';
-import { ModalDirective } from 'ngx-bootstrap/modal';
-import {RestService} from '../../services/rest.service';
-import {WmRestConfigComponent} from './restconfig/rest-config.component';
-import {NotifyService} from '../../services/notify.service';
+import { WmRestConfigComponent } from './rest-config/rest-config.component';
 
 /**
  * toolbar component contains some basic operations(save) and all of the supported workflow nodes.
@@ -36,14 +31,11 @@ export class WmToolbarComponent implements AfterViewInit {
     @ViewChild(WmRestConfigComponent) public restConfigComponent: WmRestConfigComponent;
 
     constructor(private jsPlumbService: JsPlumbService,
-                private modelService: ModelService,
-                private notifyService: NotifyService,
-                private broadcastService: BroadcastService) {
-        this.broadcastService.jsPlumbInstance$
-            .subscribe(instance => this.jsPlumbService.buttonDraggable());
+                private modelService: ModelService) {
     }
 
     public ngAfterViewInit() {
+        this.jsPlumbService.buttonDraggable();
     }
 
     public save() {
@@ -55,9 +47,5 @@ export class WmToolbarComponent implements AfterViewInit {
     }
 
     public test() {
-        this.notifyService.success("success info");
-        this.notifyService.info("info ddddd");
-        this.notifyService.warn("warn ssss");
-        this.notifyService.error("error ddd");
     }
 }

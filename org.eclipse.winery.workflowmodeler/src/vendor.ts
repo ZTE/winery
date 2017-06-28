@@ -36,3 +36,7 @@ import 'pnotify/dist/pnotify.buttons.css';
 // primeng
 import 'primeng/resources/primeng.min.css';
 import 'primeng/resources/themes/bootstrap/theme.css';
+
+// jquery-ui
+import 'jqueryui/jquery-ui.min.css';
+import 'jqueryui/jquery-ui.min.js';

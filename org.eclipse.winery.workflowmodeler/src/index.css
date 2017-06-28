@@ -14,26 +14,6 @@ body, html {
     height: 100%;
 }
 
-.canvas svg path {
-    fill: #000;
-    stroke: #000;
-    stroke-width: 1;
-}
-
-.canvas svg > * {
-    fill: none;
-    stroke: #000;
-    stroke-linejoin: miter;
-    stroke-location: inside;
-    stroke-width: 1px;
-}
-
-.canvas .guide {
-    background-color: rgba(0, 255, 255, 0);
-    position: absolute;
-    z-index: 1
-}
-
 .ui-tree {
     margin-bottom: 10px;
 }

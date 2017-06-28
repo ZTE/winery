@@ -12,6 +12,7 @@
 
 import { Component, Input, OnChanges, ViewChild } from '@angular/core';
 import { ModalDirective } from 'ngx-bootstrap/modal';
+
 import { RestService } from '../../../../services/rest.service';
 import { Swagger } from '../../../../model/swagger';
 
@@ -34,7 +35,6 @@ export class WmRestConfigDetailComponent implements OnChanges {
     public detail: string;
 
     constructor(private restService: RestService) {
-
     }
 
     public ngOnChanges() {
@@ -49,7 +49,7 @@ export class WmRestConfigDetailComponent implements OnChanges {
         }
     }
 
-    public onDetailChanged(detail: any) {
+    public onDetailChanged(detail: string) {
         this.detail = detail;
 
         let swagger: Swagger = null;

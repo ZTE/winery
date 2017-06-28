@@ -1,4 +1,4 @@
-import {WorkflowNode} from './workflow.node';
+import { WorkflowNode } from './workflow.node';
 /**
  * Copyright (c) 2017 ZTE Corporation.
  * All rights reserved. This program and the accompanying materials
@@ -19,4 +19,18 @@ export class PlanModel {
         this.nodes = nodes;
         this.configs = configs;
     }
+
+    public addNode(node: WorkflowNode) {
+        this.nodes.push(node);
+    }
+
+    public deleteNode(id: string): WorkflowNode {
+        let index = this.nodes.findIndex(node => node.id === id);
+        if (index != -1) {
+            const deletedNode = this.nodes.splice(index, 1);
+            return deletedNode[0];
+        }
+        return null;
+    }
+
 }

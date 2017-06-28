@@ -13,7 +13,7 @@
 -->
 
 <div id="canvas" class="canvas" (click)="canvasClick()">
-    <b4t-node *ngFor="let node of modelService.getNodes(); let last = last;" [node]="node" [last]="last"></b4t-node>
+    <b4t-node *ngFor="let node of modelService.getNodes()" [node]="node" [rank]="10"></b4t-node>
 </div>
 
 <b4t-properties></b4t-properties>

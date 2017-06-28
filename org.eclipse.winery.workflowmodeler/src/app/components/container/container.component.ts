@@ -13,7 +13,7 @@
 import { AfterViewInit, Component } from '@angular/core';
 import { BroadcastService } from '../../services/broadcast.service';
 import { JsPlumbService } from '../../services/jsplumb.service';
-import {ModelService} from '../../services/model.service';
+import { ModelService } from '../../services/model.service';
 
 /**
  * main canvas, it contains two parts: canvas and node property component
@@ -29,16 +29,15 @@ export class WmContainerComponent implements AfterViewInit {
     constructor(private broadcastService: BroadcastService,
                 private jsPlumbService: JsPlumbService,
                 private modelService: ModelService) {
-
-        this.broadcastService.jsPlumbInstance$.subscribe(instance => this.jsPlumbService.buttonDroppable());
     }
 
     public ngAfterViewInit() {
-        setTimeout(() => this.jsPlumbService.initJsPlumbInstance(), 0);
+        this.jsPlumbService.buttonDroppable();
+        this.jsPlumbService.canvasDroppable();
+        this.jsPlumbService.connectNode(this.modelService.getNodes());
     }
 
     public canvasClick() {
         this.broadcastService.broadcast(this.broadcastService.showProperty, false);
     }
-
 }

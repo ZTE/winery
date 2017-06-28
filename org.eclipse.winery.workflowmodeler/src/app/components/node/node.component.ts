@@ -9,8 +9,7 @@
  * Contributors:
  *     ZTE - initial API and implementation and/or initial documentation
  */
-import { AfterViewInit, Component, Input, OnDestroy } from '@angular/core';
-import { Subscription } from 'rxjs/Subscription';
+import { AfterViewInit, Component, Input } from '@angular/core';
 import { WorkflowNode } from '../../model/workflow.node';
 import { BroadcastService } from '../../services/broadcast.service';
 import { JsPlumbService } from '../../services/jsplumb.service';
@@ -24,50 +23,36 @@ import { JsPlumbService } from '../../services/jsplumb.service';
     styleUrls: ['./node.component.css'],
     templateUrl: 'node.component.html',
 })
-export class WmNodeComponent implements AfterViewInit, OnDestroy {
-    @Input()
-    public node: WorkflowNode;
-    @Input()
-    private last: boolean;
-
-    private selected = false;
-
-    private jsPlumbInstanceSubscription: Subscription;
-    private nfForJsPlumbInstanceSubscription: Subscription;
+export class WmNodeComponent implements AfterViewInit {
+    @Input() public node: WorkflowNode;
+    @Input() public rank: number;
 
     constructor(private jsPlumbService: JsPlumbService,
                 private broadcastService: BroadcastService) {
     }
 
     public ngAfterViewInit() {
-        if (this.jsPlumbService.jsplumbInstance) {
-            this.jsPlumbService.initNode(this.node);
-        } else {
-            this.jsPlumbInstanceSubscription = this.broadcastService.jsPlumbInstance$
-                .subscribe(instance => this.jsPlumbService.initNode(this.node));
-        }
+        this.jsPlumbService.initNode(this.node);
 
-        if (this.last) {
-            if (this.jsPlumbService.jsplumbInstance) {
-                this.jsPlumbService.connectNode();
-            } else {
-                this.nfForJsPlumbInstanceSubscription = this.broadcastService.jsPlumbInstance$
-                    .subscribe(instance => this.jsPlumbService.connectNode());
-            }
+        if (this.node.canHaveChildren()) {
+            this.jsPlumbService.nodeDroppable(this.node, this.rank);
+            this.jsPlumbService.initJsPlumbInstance(this.node.id);
+            this.jsPlumbService.connectNode(this.node.children);
         }
     }
 
-    public ngOnDestroy() {
-        if (this.jsPlumbInstanceSubscription) {
-            this.jsPlumbInstanceSubscription.unsubscribe();
-        }
-
-        if (this.nfForJsPlumbInstanceSubscription) {
-            this.nfForJsPlumbInstanceSubscription.unsubscribe();
-        }
+    public onMouseOut(event, target) {
+        event.stopPropagation();
+        target.classList.remove('active');
     }
 
-    public showProperties() {
+    public onMouseOver(event, target) {
+        event.stopPropagation();
+        target.classList.add('active');
+    }
+
+    public showProperties(event) {
+        event.stopPropagation();
         this.broadcastService.broadcast(this.broadcastService.nodeProperty, this.node);
         this.broadcastService.broadcast(this.broadcastService.showProperty, true);
     }

@@ -11,36 +11,56 @@
  *     ZTE - initial API and implementation and/or initial documentation
  */
 -->
-
-<div (dblclick)="showProperties()" class="node" id="{{node.id}}" [style.top]="node.position.top + 'px'"
-     [style.left]="node.position.left + 'px'">
-    <div [class]="node.type">
-        <div class="name">
-            {{node.name}}
-        </div>
+<div *ngIf="node.canHaveChildren()" b4tResizable
+     [id]="node.id"
+     (mouseover)="onMouseOver($event, $event.target)"
+     (mouseout)="onMouseOut($event, $event.target)"
+     (dblclick)="showProperties($event)"
+     class="node {{node.type}}"
+     [style.top]="node.position.top + 'px'"
+     [style.left]="node.position.left + 'px'"
+     [style.width]="node.position.width + 'px'"
+     [style.height]="node.position.height + 'px'">
+    <div *ngIf="!node.canHaveChildren()" class="name">
+        {{node.name}}
     </div>
+
+    <b4t-node *ngFor="let child of node.children" [node]="child" [rank]="rank + 10"></b4t-node>
+
     <div class="anchor anchors anchor-left">
-        <span class="left">
-            <i class="left-arrow1"></i>
-            <i class="left-arrow2"></i>
-        </span>
+        <span class="left"><i class="left-arrow1"></i><i class="left-arrow2"></i></span>
     </div>
     <div class="anchor anchors anchor-right">
-        <span class="right">
-            <i class="right-arrow1"></i>
-            <i class="right-arrow2"></i>
-        </span>
+        <span class="right"><i class="right-arrow1"></i><i class="right-arrow2"></i></span>
     </div>
     <div class="anchor anchors anchor-top">
-        <span class="top">
-            <i class="top-arrow1"></i>
-            <i class="top-arrow2"></i>
-        </span>
+        <span class="top"><i class="top-arrow1"></i><i class="top-arrow2"></i></span>
     </div>
     <div class="anchor anchors anchor-bottom">
-        <span class="bottom">
-            <i class="bottom-arrow1"></i>
-            <i class="bottom-arrow2"></i>
-        </span>
+        <span class="bottom"><i class="bottom-arrow1"></i><i class="bottom-arrow2"></i></span>
+    </div>
+</div>
+
+<div *ngIf="!node.canHaveChildren()" (dblclick)="showProperties()" class="node {{node.type}}"
+     id="{{node.id}}"
+     [style.top]="node.position.top + 'px'"
+     [style.left]="node.position.left + 'px'">
+    <div class="name"
+         (mouseover)="onMouseOver($event, $event.target.parentNode)"
+         (mouseout)="onMouseOut($event, $event.target.parentNode)">
+        {{node.name}}
+    </div>
+
+    <div class="anchor anchors anchor-left">
+        <span class="left"><i class="left-arrow1"></i><i class="left-arrow2"></i></span>
+    </div>
+    <div class="anchor anchors anchor-right">
+        <span class="right"><i class="right-arrow1"></i><i class="right-arrow2"></i></span>
+    </div>
+    <div class="anchor anchors anchor-top">
+        <span class="top"><i class="top-arrow1"></i><i class="top-arrow2"></i></span>
+    </div>
+    <div class="anchor anchors anchor-bottom">
+        <span class="bottom"><i class="bottom-arrow1"></i><i class="bottom-arrow2"></i></span>
     </div>
 </div>

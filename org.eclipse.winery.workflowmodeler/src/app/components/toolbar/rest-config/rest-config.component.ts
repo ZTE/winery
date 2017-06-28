@@ -12,8 +12,9 @@
 
 import { AfterViewInit, Component, ViewChild } from '@angular/core';
 import { ModalDirective } from 'ngx-bootstrap/modal';
-import {RestService} from '../../../services/rest.service';
-import {WmRestConfigListComponent} from './restconfiglist/rest-config-list.component';
+
+import { RestService } from '../../../services/rest.service';
+import { WmRestConfigListComponent } from './rest-config-list/rest-config-list.component';
 
 /**
  * toolbar component contains some basic operations(save) and all of the supported workflow nodes.

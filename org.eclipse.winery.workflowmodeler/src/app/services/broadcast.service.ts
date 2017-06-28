@@ -9,12 +9,12 @@
  * Contributors:
  *     ZTE - initial API and implementation and/or initial documentation
  */
-import {Injectable} from '@angular/core';
-import {Subject} from 'rxjs/Subject';
-import {Operation} from '../model/operation';
-import {WorkflowNode} from '../model/workflow.node';
-import {Swagger} from '../model/swagger';
-import {PlanModel} from '../model/plan-model';
+import { Injectable } from '@angular/core';
+import { Subject } from 'rxjs/Subject';
+import { Operation } from '../model/operation';
+import { WorkflowNode } from '../model/workflow.node';
+import { Swagger } from '../model/swagger';
+import { PlanModel } from '../model/plan-model';
 
 /**
  * BroadcastService
@@ -23,9 +23,6 @@ import {PlanModel} from '../model/plan-model';
  */
 @Injectable()
 export class BroadcastService {
-
-    public jsPlumbInstance = new Subject<any>();
-    public jsPlumbInstance$ = this.jsPlumbInstance.asObservable();
 
     public showProperty = new Subject<boolean>();
     public showProperty$ = this.showProperty.asObservable();
@@ -40,7 +37,7 @@ export class BroadcastService {
     public nodeProperty$ = this.nodeProperty.asObservable();
 
     /**
-     * this should be uesd while the source of rest interfaces changed.
+     * this should be used while the source of rest interfaces changed.
      * @type {Subject<>}
      */
     public serviceSource = new Subject<any>();
@@ -56,7 +53,7 @@ export class BroadcastService {
      * broadcast datas
      * this method will catch the exceptions for the broadcast
      * @param subject will broadcast data
-     * @param data will be broadcated
+     * @param data will be broadcasted
      */
     public broadcast(subject: Subject<any>, data: any) {
         try {

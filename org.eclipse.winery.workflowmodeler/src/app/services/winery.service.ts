@@ -10,15 +10,16 @@
  *     ZTE - initial API and implementation and/or initial documentation
  */
 
-import {Injectable} from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Rx';
-import {isNullOrUndefined} from 'util';
-import {NodeTemplate} from '../model/nodetemplate';
-import {Operation} from '../model/operation';
-import {HttpService} from '../util/http.service';
-import {BroadcastService} from './broadcast.service';
-import {NotifyService} from './notify.service';
-import {PlanModel} from '../model/plan-model';
+import { isNullOrUndefined } from 'util';
+import { NodeTemplate } from '../model/nodetemplate';
+import { Operation } from '../model/operation';
+import { HttpService } from '../util/http.service';
+import { BroadcastService } from './broadcast.service';
+import { NotifyService } from './notify.service';
+import { PlanModel } from '../model/plan-model';
+import { WorkflowNode } from '../model/workflow.node';
 
 /**
  * WineryService
@@ -157,7 +158,8 @@ export class WineryService {
             if(!response.configs) {
                 response.configs = {};
             }
-            this.planModel = response;
+            response.nodes = response.nodes.map(node => new WorkflowNode(node));
+            this.planModel = new PlanModel(response);
             this.broadcastService.broadcast(this.broadcastService.planModel, this.planModel);
         });
     }

@@ -11,11 +11,11 @@
  */
 
 import { Injectable } from '@angular/core';
-import {isNullOrUndefined} from 'util';
+import { isNullOrUndefined } from 'util';
 import { WorkflowNode } from '../model/workflow.node';
 import { BroadcastService } from './broadcast.service';
-import {SwaggerTreeConverterService} from './swagger-tree-converter.service';
-import {PlanModel} from '../model/plan-model';
+import { SwaggerTreeConverterService } from './swagger-tree-converter.service';
+import { PlanModel } from '../model/plan-model';
 
 /**
  * ModelService
@@ -24,61 +24,144 @@ import {PlanModel} from '../model/plan-model';
 @Injectable()
 export class ModelService {
     private planModel: PlanModel = new PlanModel({
-        nodes: [],
-        configs:{}
+        configs: {},
+        nodes: []
     });
 
     constructor(private broadcastService: BroadcastService) {
-        this.broadcastService.planModel$.subscribe(planModel =>{
-            planModel.nodes = planModel.nodes.map(node => new WorkflowNode(node));
-            this.planModel = planModel;
-        }
-        );
+        this.broadcastService.planModel$.subscribe(plan => this.planModel = plan);
     }
-
-    //constructor(private broadcastService: BroadcastService) {
-    //    this.broadcastService.planModel$.subscribe(planModel => this.planModel = planModel);
-    //}
 
     public getNodes(): WorkflowNode[] {
         return this.planModel.nodes;
     }
 
     public addNode(name: string, type: string, left: number, top: number) {
-        this.planModel.nodes.push(new WorkflowNode({
+        let node = new WorkflowNode({
             id: this.createId(),
             name,
             type,
             position: {
                 left,
                 top,
+                "width": 200,
+                "height": 100,
             },
-        }));
+        });
+
+        this.planModel.nodes.push(node);
     }
 
-    public deleteNode(nodeId: string) {
-        // delete related connections
-        this.planModel.nodes.forEach(node => node.deleteConnection(nodeId));
+    public changeParent(id: string, originalParentId: string, targetParentId: string) {
+        if(originalParentId === targetParentId) {
+            return;
+        }
 
-        // delete current node
-        const index = this.planModel.nodes.findIndex(node => node.id === nodeId);
-        if (index !== -1) {
-            this.planModel.nodes.splice(index, 1);
+        const nodeMap = this.getNodeMap();
+
+        let node: WorkflowNode = this.deleteNode(originalParentId, id);
+
+        if(targetParentId) {
+            nodeMap.get(targetParentId).addChild(node);
+        } else {
+            this.planModel.addNode(node);
         }
     }
 
-    public addConnection(sourceId: string, targetId: string) {
-        const node = this.planModel.nodes.find(tmpNode => tmpNode.id === sourceId);
-        if (!isNullOrUndefined(node)) {
+    public updatePosition(id: string, left: number, top: number, width: number, height: number) {
+        let node = this.getNodeMap().get(id);
+
+        node.position.left = left;
+        node.position.top = top;
+        node.position.width = width;
+        node.position.height = height;
+    }
+
+    public getNodeMap(): Map<string, WorkflowNode> {
+        let map = new Map<string, WorkflowNode>();
+        this.toNodeMap(this.planModel.nodes, map);
+        return map;
+    }
+
+    public getAncestors(id: string): WorkflowNode[] {
+        const nodeMap = this.getNodeMap();
+        let ancestors = [];
+
+        let ancestor = nodeMap.get(id);
+        do{
+            ancestor = this.getParentNode(ancestor.id, nodeMap);
+            if(ancestor && ancestor.id !== id) {
+                ancestors.push(ancestor);
+            }
+        } while(ancestor);
+
+        return ancestors;
+    }
+
+    private getParentNode(id: string, nodeMap: Map<string, WorkflowNode>): WorkflowNode {
+        let parentNode;
+        nodeMap.forEach((node, key) => {
+            const childNode = node.children.find(child => child.id === id);
+            if(childNode) {
+                parentNode = node;
+            }
+        })
+
+        return parentNode;
+    }
+
+    public isDescendantNode(node: WorkflowNode, descendantId: string): boolean {
+        const tmp = node.children.find(child => {
+            return child.id === descendantId || this.isDescendantNode(child, descendantId);
+        });
+
+        return tmp !== undefined;
+    }
+
+    private toNodeMap(nodes: WorkflowNode[], map: Map<string, WorkflowNode>) {
+        nodes.forEach(node => {
+            this.toNodeMap(node.children, map);
+            map.set(node.id, node);
+        });
+    }
+
+    public addConnection(parentId: string, sourceId: string, targetId: string) {
+        const nodeMap = this.getNodeMap();
+        let nodes = parentId ? nodeMap.get(parentId).children : this.planModel.nodes;
+
+        const node = nodes.find(tmpNode => tmpNode.id === sourceId);
+        if(!isNullOrUndefined(node)) {
             node.addConnection(targetId);
         }
     }
 
-    public deleteConnection(sourceId: string, targetId: string) {
-        const node = this.planModel.nodes.find(tmpNode => tmpNode.id === sourceId);
-        if (!isNullOrUndefined(node)) {
+    public deleteConnection(parentId: string, sourceId: string, targetId: string) {
+        const nodeMap = this.getNodeMap();
+        let nodes = parentId ? nodeMap.get(parentId).children : this.planModel.nodes;
+
+        const node = nodes.find(tmpNode => tmpNode.id === sourceId);
+        if(!isNullOrUndefined(node)) {
             node.deleteConnection(targetId);
         }
+    }
+
+    public deleteNode(parentId: string, nodeId: string): WorkflowNode {
+        const nodeMap = this.getNodeMap();
+
+        let nodes = parentId ? nodeMap.get(parentId).children : this.planModel.nodes;
+
+        // delete related connections
+        nodes.forEach(node => node.deleteConnection(nodeId));
+
+        // delete current node
+        const index = nodes.findIndex(node => node.id === nodeId);
+        if(index !== -1) {
+            let node = nodes.splice(index, 1)[0];
+            node.connection = [];
+            return node;
+        }
+
+        return null;
     }
 
     public save() {
@@ -89,15 +172,15 @@ export class ModelService {
     }
 
     private createId() {
-        const idSet = new Set();
-        this.planModel.nodes.forEach(node => idSet.add(node.id));
+        const nodeMap = this.getNodeMap();
 
-        for (let i = 0; i < idSet.size; i++) {
-            if (!idSet.has('node' + i)) {
-                return 'node' + i;
+        for(let i = 0; i < nodeMap.size; i++) {
+            let key = 'node' + i;
+            if(!nodeMap.get(key)) {
+                return key;
             }
         }
 
-        return 'node' + idSet.size;
+        return 'node' + nodeMap.size;
     }
 }

@@ -15,34 +15,33 @@ import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
 
 import { AppComponent } from './app.component';
-
 import { WmContainerComponent } from './components/container/container.component';
+import { WmEditablePropertyComponent } from './components/editable-property/editable-property.component';
 import { WmNodeComponent } from './components/node/node.component';
-import { WmNodeTemplateComponent } from './components/property/node-template/node-template.component';
+import { WmNodeParametersComponent } from './components/node-parameters/node-parameters.component';
+import { WmParameterTreeComponent } from './components/node-parameters/parameter-tree/parameter-tree.component';
 import { WmParameterComponent } from './components/parameter/parameter.component';
+import { WmNodeTemplateComponent } from './components/property/node-template/node-template.component';
 import { WmPropertiesComponent } from './components/property/properties.component';
+import { WmRestTaskComponent } from './components/property/rest-task/rest-task.component';
+import { WmRestConfigComponent } from './components/toolbar/rest-config/rest-config.component';
+import { WmRestConfigDetailComponent } from './components/toolbar/rest-config/rest-config-detail/rest-config-detail.component';
+import { WmRestConfigListComponent } from './components/toolbar/rest-config/rest-config-list/rest-config-list.component';
 import { WmToolbarComponent } from './components/toolbar/toolbar.component';
+
+import { ResizableDirective } from './directive/resizable/resizable.directive';
 
 import { BroadcastService } from './services/broadcast.service';
 import { JsPlumbService } from './services/jsplumb.service';
 import { ModelService } from './services/model.service';
+import { NotifyService } from './services/notify.service';
+import { RestService } from './services/rest.service';
+import { SwaggerTreeConverterService } from './services/swagger-tree-converter.service';
 import { WineryService } from './services/winery.service';
 
 import { SharedModule } from './shared/shared.module';
-import {HttpService} from './util/http.service';
-import {AlertModule} from 'ngx-bootstrap/index';
-import {ModalModule} from 'ngx-bootstrap/index';
-import {WmRestTaskComponent} from './components/property/rest-task/rest-task.component';
-import {RestService} from './services/rest.service';
-import {WmRestConfigComponent} from './components/toolbar/restconfig/rest-config.component';
-import {WmRestConfigDetailComponent} from './components/toolbar/restconfig/restconfigdetail/rest-config-detail.component';
-import {WmRestConfigListComponent} from './components/toolbar/restconfig/restconfiglist/rest-config-list.component';
-import {NotifyService} from './services/notify.service';
-import {WmEditablePropertyComponent} from './components/editable-property/editable-property.component';
-import {WmNodeParametersComponent} from './components/node-parameters/node-parameters.component';
-import {Swagger} from './model/swagger';
-import {SwaggerTreeConverterService} from './services/swagger-tree-converter.service';
-import {WmParameterTreeComponent} from './components/node-parameters/parameter-tree/parameter-tree.component';
+import { HttpService } from './util/http.service';
+import { AlertModule, ModalModule } from 'ngx-bootstrap/index';
 
 @NgModule({
     declarations: [
@@ -60,6 +59,8 @@ import {WmParameterTreeComponent} from './components/node-parameters/parameter-t
         WmToolbarComponent,
         WmRestConfigDetailComponent,
         WmRestConfigListComponent,
+
+        ResizableDirective,
     ],
     providers: [
         BroadcastService,

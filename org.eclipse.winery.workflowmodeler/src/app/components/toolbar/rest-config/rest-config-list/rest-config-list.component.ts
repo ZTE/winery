@@ -10,8 +10,9 @@
  *     ZTE - initial API and implementation and/or initial documentation
  */
 
-import { AfterViewInit, Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { ModalDirective } from 'ngx-bootstrap/modal';
+
 import { RestService } from '../../../../services/rest.service';
 import { Swagger } from '../../../../model/swagger';
 
@@ -23,13 +24,10 @@ import { Swagger } from '../../../../model/swagger';
     selector: 'b4t-rest-config-list',
     templateUrl: 'rest-config-list.component.html',
 })
-export class WmRestConfigListComponent implements AfterViewInit {
+export class WmRestConfigListComponent {
     @Output() configSelected = new EventEmitter<any>();
 
     constructor(public restService: RestService) {
-    }
-
-    public ngAfterViewInit() {
     }
 
     public onConfigSelected(restConfig: any) {
