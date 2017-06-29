@@ -10,27 +10,27 @@
  *     ZTE - initial API and implementation and/or initial documentation
  *******************************************************************************/
 
-import { Injectable } from "@angular/core";
-import { isNullOrUndefined } from "util";
-import { NodeTemplate } from "../model/nodetemplate";
-import { Operation } from "../model/operation";
-import { BroadcastService } from "./broadcast.service";
-import { Swagger } from "../model/swagger";
-import { SwaggerMethod } from "../model/swagger";
-import { SwaggerResponse } from "../model/swagger";
-import { HttpService } from '../util/http.service';
-import { SwaggerSchemaObject } from '../model/swagger';
+import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Rx';
+import { isNullOrUndefined } from 'util';
+
+import { NodeTemplate } from '../model/nodetemplate';
+import { Operation } from '../model/operation';
+import { SwaggerMethod } from '../model/swagger';
+import { SwaggerResponse } from '../model/swagger';
+import { Swagger, SwaggerSchemaObject } from '../model/swagger';
+import { HttpService } from '../util/http.service';
+import { BroadcastService } from './broadcast.service';
 
 @Injectable()
 export class RestService {
 
-    private restConfigs: {
+    private restConfigs: Array<{
         name: string,
         baseUrl: string,
         dynamic: boolean,
-        swagger?: Swagger
-    }[] = [];
+        swagger?: Swagger,
+    }> = new Array();
 
     constructor(private broadcastService: BroadcastService,
                 private httpService: HttpService) {
@@ -50,7 +50,7 @@ export class RestService {
         name: string,
         baseUrl: string,
         dynamic: boolean,
-        swagger?: Swagger
+        swagger?: Swagger,
     }) {
         if (restConfig.dynamic) {
             this.getDynamicSwaggerInfo(restConfig.baseUrl).subscribe(response => restConfig.swagger = new Swagger(response));
@@ -64,26 +64,26 @@ export class RestService {
     }
 
     public getDynamicSwaggerInfo(url: string): Observable<any> {
-        let options: any = {
+        const options: any = {
             headers: {
-                'Accept': 'application/json',
-            }
+                Accept: 'application/json',
+            },
         };
         return this.httpService.get(url, options);
     }
 
     public getSwaggerInfo(baseUrl: string): Swagger {
-        let restConfig = this.restConfigs.find(tmp => tmp.baseUrl == baseUrl);
+        const restConfig = this.restConfigs.find(tmp => tmp.baseUrl === baseUrl);
         return restConfig == null ? null : restConfig.swagger;
     }
 
     public getResponseParameters(swagger: Swagger, interfaceUrl: string, operation: string): any[] {
-        let path = swagger.paths[interfaceUrl];
-        let method: SwaggerMethod = path[operation];
+        const path = swagger.paths[interfaceUrl];
+        const method: SwaggerMethod = path[operation];
         let response: SwaggerResponse = null;
 
-        for (let key of Object.keys(method.responses)) {
-            if (key.startsWith("20")) {
+        for (const key of Object.keys(method.responses)) {
+            if (key.startsWith('20')) {
                 response = method.responses[key];
             }
         }
@@ -92,22 +92,22 @@ export class RestService {
     }
 
     public getDefinition(swagger: Swagger, position: string): SwaggerSchemaObject {
-        let definitionName = position.substring("#/definitions/".length);
+        const definitionName = position.substring('#/definitions/'.length);
 
         return swagger.definitions[definitionName];
     }
 
     public deepClone(source: any) {
-        if (source == null || typeof source != 'object') {
+        if (source === null || typeof source !== 'object') {
             return source;
         } else {
             if (source instanceof Array) {
-                let target = [];
+                const target = [];
                 source.forEach(item => target.push(this.deepClone(item)));
                 return target;
             } else {
-                let target = {};
-                for (let key in source) {
+                const target = {};
+                for (const key in source) {
                     target[key] = this.deepClone(source[key]);
                 }
                 return target;

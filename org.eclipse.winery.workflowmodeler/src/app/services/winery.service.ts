@@ -13,13 +13,14 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Rx';
 import { isNullOrUndefined } from 'util';
+
 import { NodeTemplate } from '../model/nodetemplate';
 import { Operation } from '../model/operation';
+import { PlanModel } from '../model/plan-model';
+import { WorkflowNode } from '../model/workflow.node';
 import { HttpService } from '../util/http.service';
 import { BroadcastService } from './broadcast.service';
 import { NotifyService } from './notify.service';
-import { PlanModel } from '../model/plan-model';
-import { WorkflowNode } from '../model/workflow.node';
 
 /**
  * WineryService
@@ -34,10 +35,9 @@ export class WineryService {
 
     private planModel: PlanModel;
 
-    constructor(
-        private broadcastService: BroadcastService,
-        private httpService: HttpService,
-        private notifyService: NotifyService) {
+    constructor(private broadcastService: BroadcastService,
+                private httpService: HttpService,
+                private notifyService: NotifyService) {
         this.broadcastService.saveEvent$.subscribe(data => this.save());
     }
 
@@ -107,15 +107,18 @@ export class WineryService {
             + '/interfaces/' + this.encode(interfaceName) + '/operations/' + this.encode(operation) + '/';
 
         // input parameters
-        let inputPromise: Promise<any> = this.httpService
+        const inputPromise: Promise<any> = this.httpService
             .get(this.getFullUrl(relativePath + 'inputparameters')).toPromise();
 
         // output parameters
-        let outputPromise: Promise<any> = this.httpService
+        const outputPromise: Promise<any> = this.httpService
             .get(this.getFullUrl(relativePath + 'outputparameters')).toPromise();
 
         return Promise.all([inputPromise, outputPromise]).then(params => {
-            return {"input": params[0], "output": params[1]}
+            return {
+                input: params[0],
+                output: params[1],
+            };
         });
     }
 
@@ -141,21 +144,14 @@ export class WineryService {
     public loadPlan() {
         const url = 'servicetemplates/' + this.encode(this.namespace)
             + '/' + this.encode(this.serviceTemplateId) + '/plans/' + this.encode(this.plan) + '/file';
-        //this.httpService.get(this.getFullUrl(url)).subscribe( response => {
-        //    const nodes = JSON.stringify(response) === '{}' ? [] : response;
-        //    console.log('load plan success');
-        //    console.log(nodes);
-        //    this.broadcastService.broadcast(this.broadcastService.planModel, nodes);
-        //});
 
-        this.httpService.get(this.getFullUrl(url)).subscribe( response => {
-            //const nodes = JSON.stringify(response) === '{}' ? [] : response;
+        this.httpService.get(this.getFullUrl(url)).subscribe(response => {
             console.log('load plan success');
             console.log(response);
-            if(!response.nodes) {
+            if (!response.nodes) {
                 response.nodes = [];
             }
-            if(!response.configs) {
+            if (!response.configs) {
                 response.configs = {};
             }
             response.nodes = response.nodes.map(node => new WorkflowNode(node));

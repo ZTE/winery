@@ -12,10 +12,10 @@
 
 import { Injectable } from '@angular/core';
 import { isNullOrUndefined } from 'util';
+import { PlanModel } from '../model/plan-model';
 import { WorkflowNode } from '../model/workflow.node';
 import { BroadcastService } from './broadcast.service';
 import { SwaggerTreeConverterService } from './swagger-tree-converter.service';
-import { PlanModel } from '../model/plan-model';
 
 /**
  * ModelService
@@ -25,7 +25,7 @@ import { PlanModel } from '../model/plan-model';
 export class ModelService {
     private planModel: PlanModel = new PlanModel({
         configs: {},
-        nodes: []
+        nodes: [],
     });
 
     constructor(private broadcastService: BroadcastService) {
@@ -37,15 +37,15 @@ export class ModelService {
     }
 
     public addNode(name: string, type: string, left: number, top: number) {
-        let node = new WorkflowNode({
+        const node = new WorkflowNode({
             id: this.createId(),
             name,
             type,
             position: {
                 left,
                 top,
-                "width": 200,
-                "height": 100,
+                width: 200,
+                height: 100,
             },
         });
 
@@ -53,15 +53,15 @@ export class ModelService {
     }
 
     public changeParent(id: string, originalParentId: string, targetParentId: string) {
-        if(originalParentId === targetParentId) {
+        if (originalParentId === targetParentId) {
             return;
         }
 
         const nodeMap = this.getNodeMap();
 
-        let node: WorkflowNode = this.deleteNode(originalParentId, id);
+        const node: WorkflowNode = this.deleteNode(originalParentId, id);
 
-        if(targetParentId) {
+        if (targetParentId) {
             nodeMap.get(targetParentId).addChild(node);
         } else {
             this.planModel.addNode(node);
@@ -69,7 +69,7 @@ export class ModelService {
     }
 
     public updatePosition(id: string, left: number, top: number, width: number, height: number) {
-        let node = this.getNodeMap().get(id);
+        const node = this.getNodeMap().get(id);
 
         node.position.left = left;
         node.position.top = top;
@@ -78,22 +78,22 @@ export class ModelService {
     }
 
     public getNodeMap(): Map<string, WorkflowNode> {
-        let map = new Map<string, WorkflowNode>();
+        const map = new Map<string, WorkflowNode>();
         this.toNodeMap(this.planModel.nodes, map);
         return map;
     }
 
     public getAncestors(id: string): WorkflowNode[] {
         const nodeMap = this.getNodeMap();
-        let ancestors = [];
+        const ancestors = [];
 
         let ancestor = nodeMap.get(id);
-        do{
+        do {
             ancestor = this.getParentNode(ancestor.id, nodeMap);
-            if(ancestor && ancestor.id !== id) {
+            if (ancestor && ancestor.id !== id) {
                 ancestors.push(ancestor);
             }
-        } while(ancestor);
+        } while (ancestor);
 
         return ancestors;
     }
@@ -102,10 +102,10 @@ export class ModelService {
         let parentNode;
         nodeMap.forEach((node, key) => {
             const childNode = node.children.find(child => child.id === id);
-            if(childNode) {
+            if (childNode) {
                 parentNode = node;
             }
-        })
+        });
 
         return parentNode;
     }
@@ -127,20 +127,20 @@ export class ModelService {
 
     public addConnection(parentId: string, sourceId: string, targetId: string) {
         const nodeMap = this.getNodeMap();
-        let nodes = parentId ? nodeMap.get(parentId).children : this.planModel.nodes;
+        const nodes = parentId ? nodeMap.get(parentId).children : this.planModel.nodes;
 
         const node = nodes.find(tmpNode => tmpNode.id === sourceId);
-        if(!isNullOrUndefined(node)) {
+        if (!isNullOrUndefined(node)) {
             node.addConnection(targetId);
         }
     }
 
     public deleteConnection(parentId: string, sourceId: string, targetId: string) {
         const nodeMap = this.getNodeMap();
-        let nodes = parentId ? nodeMap.get(parentId).children : this.planModel.nodes;
+        const nodes = parentId ? nodeMap.get(parentId).children : this.planModel.nodes;
 
         const node = nodes.find(tmpNode => tmpNode.id === sourceId);
-        if(!isNullOrUndefined(node)) {
+        if (!isNullOrUndefined(node)) {
             node.deleteConnection(targetId);
         }
     }
@@ -148,15 +148,15 @@ export class ModelService {
     public deleteNode(parentId: string, nodeId: string): WorkflowNode {
         const nodeMap = this.getNodeMap();
 
-        let nodes = parentId ? nodeMap.get(parentId).children : this.planModel.nodes;
+        const nodes = parentId ? nodeMap.get(parentId).children : this.planModel.nodes;
 
         // delete related connections
         nodes.forEach(node => node.deleteConnection(nodeId));
 
         // delete current node
         const index = nodes.findIndex(node => node.id === nodeId);
-        if(index !== -1) {
-            let node = nodes.splice(index, 1)[0];
+        if (index !== -1) {
+            const node = nodes.splice(index, 1)[0];
             node.connection = [];
             return node;
         }
@@ -174,9 +174,9 @@ export class ModelService {
     private createId() {
         const nodeMap = this.getNodeMap();
 
-        for(let i = 0; i < nodeMap.size; i++) {
-            let key = 'node' + i;
-            if(!nodeMap.get(key)) {
+        for (let i = 0; i < nodeMap.size; i++) {
+            const key = 'node' + i;
+            if (!nodeMap.get(key)) {
                 return key;
             }
         }

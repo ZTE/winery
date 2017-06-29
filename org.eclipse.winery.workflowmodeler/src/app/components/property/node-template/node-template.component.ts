@@ -11,10 +11,10 @@
  */
 import { AfterViewInit, Component, Input  } from '@angular/core';
 import { Subscription } from '../../../../../node_modules/rxjs/Subscription.d';
+import {Operation} from '../../../model/operation';
 import { WorkflowNode } from '../../../model/workflow.node';
 import { BroadcastService } from '../../../services/broadcast.service';
 import { WineryService } from '../../../services/winery.service';
-import {Operation} from '../../../model/operation';
 
 /**
  * node template component provides operations about tosca modules which saved in winery.

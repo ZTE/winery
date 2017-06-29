@@ -13,8 +13,8 @@
 import { Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { ModalDirective } from 'ngx-bootstrap/modal';
 
-import { RestService } from '../../../../services/rest.service';
 import { Swagger } from '../../../../model/swagger';
+import { RestService } from '../../../../services/rest.service';
 
 /**
  * toolbar component contains some basic operations(save) and all of the supported workflow nodes.
@@ -35,7 +35,7 @@ export class WmRestConfigListComponent {
     }
 
     public addRestConfig() {
-        let restConfig = {
+        const restConfig = {
             name: 'new Rest Config',
             baseUrl: '',
             dynamic: false,

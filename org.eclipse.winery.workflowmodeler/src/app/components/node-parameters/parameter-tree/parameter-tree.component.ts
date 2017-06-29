@@ -12,8 +12,9 @@
 
 import { Component, Input, Output } from '@angular/core';
 import {TreeNode} from 'primeng/primeng';
-import {SwaggerTreeConverterService} from '../../../services/swagger-tree-converter.service';
+
 import {RestService} from '../../../services/rest.service';
+import {SwaggerTreeConverterService} from '../../../services/swagger-tree-converter.service';
 
 /**
  * parameter tree presents parameter of task node's input and output parameters.
@@ -36,9 +37,9 @@ export class WmParameterTreeComponent {
     }
 
     public addChildNode4DynamicObject(node: any) {
-        let copyItem = this.restService.deepClone(node.parameter.additionalProperties);
+        const copyItem = this.restService.deepClone(node.parameter.additionalProperties);
         const key = Object.keys(node.parameter.value).length;
-        let childrenNode = this.swaggerTreeConverterService
+        const childrenNode = this.swaggerTreeConverterService
             .schema2TreeNode(key, this.task.nodeTemplate, copyItem);
 
         childrenNode.keyEditable = true;
@@ -48,7 +49,7 @@ export class WmParameterTreeComponent {
     }
 
     public propertyKeyChanged(node: any, newKey: string) {
-        let value = node.parent.parameter.value[node.label];
+        const value = node.parent.parameter.value[node.label];
         node.parent.parameter.value[newKey] = value;
         delete node.parent.parameter.value[node.label];
 
@@ -56,8 +57,8 @@ export class WmParameterTreeComponent {
     }
 
     public addChildNode4ObjectArray(node: any) {
-        let copyItem = this.restService.deepClone(node.parameter.items);
-        let childrenNode = this.swaggerTreeConverterService
+        const copyItem = this.restService.deepClone(node.parameter.items);
+        const childrenNode = this.swaggerTreeConverterService
             .schema2TreeNode(
                 node.children.length,
                 this.task.nodeTemplate,
@@ -78,12 +79,12 @@ export class WmParameterTreeComponent {
     }
 
     public canEditValue(node: any): boolean {
-        return node.children.length == 0;
+        return node.children.length === 0;
     }
 
     public canDelete(node: any) {
         const parent = node.parent;
-        if(parent &&
+        if (parent &&
             (this.isArrayObject(parent) || this.isDynamicObject(parent))) {
             return true;
         } else {
@@ -91,13 +92,13 @@ export class WmParameterTreeComponent {
         }
     }
 
-    public updateObjectValue(node: any,  value: string) {
-        let newValueObj = JSON.parse(value);
-        for(let key in node.parameter.value) {
+    public updateObjectValue(node: any, value: string) {
+        const newValueObj = JSON.parse(value);
+        for (const key in node.parameter.value) {
             delete node.parameter.value[key];
         }
 
-        for(let key in newValueObj) {
+        for (const key in newValueObj) {
             node.parameter.value[key] = newValueObj[key];
         }
     }

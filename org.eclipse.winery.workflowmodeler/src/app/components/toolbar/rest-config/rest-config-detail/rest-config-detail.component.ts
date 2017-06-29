@@ -13,8 +13,8 @@
 import { Component, Input, OnChanges, ViewChild } from '@angular/core';
 import { ModalDirective } from 'ngx-bootstrap/modal';
 
-import { RestService } from '../../../../services/rest.service';
 import { Swagger } from '../../../../model/swagger';
+import { RestService } from '../../../../services/rest.service';
 
 /**
  * toolbar component contains some basic operations(save) and all of the supported workflow nodes.
@@ -57,7 +57,7 @@ export class WmRestConfigDetailComponent implements OnChanges {
             swagger = new Swagger(JSON.parse(detail));
             console.log(swagger);
         } catch (e) {
-            console.log("detail transfer error");
+            console.log('detail transfer error');
             console.error(e);
         }
         this.restConfig.swagger = swagger;

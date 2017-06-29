@@ -17,7 +17,7 @@ import { JsPlumbService } from '../../services/jsplumb.service';
 import { ModelService } from '../../services/model.service';
 
 @Directive({ selector: '[b4tResizable]' })
-export class ResizableDirective implements AfterViewInit{
+export class ResizableDirective implements AfterViewInit {
 
     constructor(private el: ElementRef,
                 private jsPlumbService: JsPlumbService,
@@ -26,10 +26,11 @@ export class ResizableDirective implements AfterViewInit{
 
     public ngAfterViewInit() {
         $(this.el.nativeElement).resizable({
-            handles: "all",
+            handles: 'all',
             resize: (event, ui) => {
                 const element = ui.helper[0];
-                this.planModelService.updatePosition(element.id, element.offsetLeft, element.offsetTop, element.offsetWidth, element.offsetHeight);
+                this.planModelService.updatePosition(element.id,
+                    element.offsetLeft, element.offsetTop, element.offsetWidth, element.offsetHeight);
                 this.jsPlumbService.resizeParent(element, element.parentNode);
                 this.jsPlumbService.getJsplumbInstance(element.id).revalidate(element.id);
             },

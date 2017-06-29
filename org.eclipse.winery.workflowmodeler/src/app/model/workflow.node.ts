@@ -83,14 +83,14 @@ export class WorkflowNode {
     }
 
     public addChild(child: WorkflowNode) {
-        if(this.canHaveChildren()) {
+        if (this.canHaveChildren()) {
             this.children.push(child);
         }
     }
 
     public deleteChild(id: string): WorkflowNode {
-        let index = this.children.findIndex(child => child.id === id);
-        if(index != -1) {
+        const index = this.children.findIndex(child => child.id === id);
+        if (index !== -1) {
             const deletedNode = this.children.splice(index, 1);
             return deletedNode[0];
         }
@@ -99,7 +99,7 @@ export class WorkflowNode {
     }
 
     public toJSON() {
-        const target = Object.assign({node_template: '', node_operation: '', interface: ''}, this);
+        const target = Object.assign({ node_template: '', node_operation: '', interface: '' }, this);
 
         target.node_template = this.nodeTemplate;
         target.node_operation = this.nodeOperation;

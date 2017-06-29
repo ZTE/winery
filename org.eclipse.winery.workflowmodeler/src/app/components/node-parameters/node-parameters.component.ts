@@ -11,11 +11,12 @@
  */
 
 import { AfterViewInit, Component, EventEmitter, Input, Output } from '@angular/core';
-import {TreeNode} from 'primeng/primeng';
-import {BroadcastService} from '../../services/broadcast.service';
-import {RestService} from '../../services/rest.service';
-import {Swagger} from '../../model/swagger';
-import {SwaggerTreeConverterService} from '../../services/swagger-tree-converter.service';
+import { TreeNode } from 'primeng/primeng';
+
+import { Swagger } from '../../model/swagger';
+import { BroadcastService } from '../../services/broadcast.service';
+import { RestService } from '../../services/rest.service';
+import { SwaggerTreeConverterService } from '../../services/swagger-tree-converter.service';
 
 /**
  * property component presents information of a workflow node.
@@ -27,14 +28,15 @@ import {SwaggerTreeConverterService} from '../../services/swagger-tree-converter
     styleUrls: ['./node-parameters.component.css'],
     templateUrl: 'node-parameters.component.html',
 })
-export class WmNodeParametersComponent implements AfterViewInit{
+export class WmNodeParametersComponent implements AfterViewInit {
     @Input() public task: any;
     private index = 1;
 
-    private inputParams: TreeNode[] = [];
-    private pathParams: any[] = [];
+    public inputParams: TreeNode[] = [];
+    public outputParams: TreeNode[] = [];
+    public pathParams: any[] = [];
+
     private queryParams: any[] = [];
-    private outputParams: TreeNode[] = [];
 
     constructor(private broadcastService: BroadcastService,
                 private restService: RestService,
@@ -55,12 +57,13 @@ export class WmNodeParametersComponent implements AfterViewInit{
         this.inputParams = [];
 
         this.task.input.forEach(param => {
-            if(param.position === 'path') {
+            if (param.position === 'path') {
                 this.pathParams.push(param);
-            } else if(param.position === 'query') {
+            } else if (param.position === 'query') {
                 this.queryParams.push(param);
-            } else if(param.position === 'body') {
-                let requestTreeNode = this.swaggerTreeConverterService.schema2TreeNode('Request Param', this.task.nodeTemplate, param.schema);
+            } else if (param.position === 'body') {
+                const requestTreeNode = this.swaggerTreeConverterService
+                    .schema2TreeNode('Request Param', this.task.nodeTemplate, param.schema);
                 this.inputParams.push(requestTreeNode);
             } else {
                 // TODO others param types not supported
@@ -70,8 +73,9 @@ export class WmNodeParametersComponent implements AfterViewInit{
 
     public resetResponseParams() {
         this.outputParams = [];
-        if(this.task.nodeOperation && this.task.output[0] && this.task.output[0].schema) {
-            let treeNode = this.swaggerTreeConverterService.schema2TreeNode('Response Params', this.task.nodeTemplate, this.task.output[0].schema);
+        if (this.task.nodeOperation && this.task.output[0] && this.task.output[0].schema) {
+            const treeNode = this.swaggerTreeConverterService
+                .schema2TreeNode('Response Params', this.task.nodeTemplate, this.task.output[0].schema);
             this.outputParams.push(treeNode);
         }
     }

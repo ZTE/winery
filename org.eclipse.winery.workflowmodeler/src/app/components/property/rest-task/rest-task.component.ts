@@ -9,25 +9,23 @@
  * Contributors:
  *     ZTE - initial API and implementation and/or initial documentation
  *******************************************************************************/
-import { AfterViewInit, Component, Input } from "@angular/core";
-import { Subscription } from "rxjs/Subscription";
-import { WorkflowNode } from "../../../model/workflow.node";
-import { BroadcastService } from "../../../services/broadcast.service";
-import { WineryService } from "../../../services/winery.service";
-import { RestService } from "../../../services/rest.service";
-import { Swagger } from "../../../model/swagger";
-import { SwaggerMethod } from "../../../model/swagger";
-import { SwaggerParameter } from "../../../model/swagger";
-import { SwaggerResponse } from "../../../model/swagger";
+import { AfterViewInit, Component, Input } from '@angular/core';
+import { Subscription } from 'rxjs/Subscription';
+
+import { Swagger, SwaggerMethod, SwaggerParameter, SwaggerResponse } from '../../../model/swagger';
+import { WorkflowNode } from '../../../model/workflow.node';
+import { BroadcastService } from '../../../services/broadcast.service';
 import { NotifyService } from '../../../services/notify.service';
+import { RestService } from '../../../services/rest.service';
+import { WineryService } from '../../../services/winery.service';
 
 @Component({
-    selector: "b4t-rest-task",
-    templateUrl: "rest-task.component.html",
+    selector: 'b4t-rest-task',
+    templateUrl: 'rest-task.component.html',
 })
 export class WmRestTaskComponent implements AfterViewInit {
     @Input()
-    private node: WorkflowNode;
+    public node: WorkflowNode;
 
     private swaggerJson: any = {};
     private restInterfaces: any[];
@@ -47,24 +45,24 @@ export class WmRestTaskComponent implements AfterViewInit {
         }, 0);
     }
 
-    private serviceChanged() {
+    public serviceChanged() {
         this.node.nodeTemplate = this.node.template.id;
 
-        this.node.template.interface = "";
+        this.node.template.interface = '';
         this.interfaceChanged();
 
         this.loadInterfaces();
     }
 
-    private interfaceChanged() {
+    public interfaceChanged() {
         this.node.nodeInterface = this.node.template.interface;
-        this.node.template.operation = "";
+        this.node.template.operation = '';
         this.operationChanged();
 
         this.loadOperations();
     }
 
-    private operationChanged() {
+    public operationChanged() {
         this.node.nodeOperation = this.node.template.operation;
         this.node.input = [];
         this.node.output = [];
@@ -84,7 +82,7 @@ export class WmRestTaskComponent implements AfterViewInit {
 
             if (this.swagger) {
                 this.restInterfaces = [];
-                for (let key of Object.keys(this.swagger.paths)) {
+                for (const key of Object.keys(this.swagger.paths)) {
                     this.restInterfaces.push(key);
                 }
                 this.loadOperations();
@@ -96,23 +94,23 @@ export class WmRestTaskComponent implements AfterViewInit {
 
     private loadOperations() {
         if (this.node.nodeInterface) {
-            let swaggerPath: any = this.swagger.paths[this.node.nodeInterface];
+            const swaggerPath: any = this.swagger.paths[this.node.nodeInterface];
 
             this.restOperations = [];
-            for (let key of Object.keys(swaggerPath)) {
-                this.restOperations.push(key)
+            for (const key of Object.keys(swaggerPath)) {
+                this.restOperations.push(key);
             }
         }
     }
 
     private loadParameters() {
         if (this.node.nodeOperation) {
-            let path: any = this.swagger.paths[this.node.nodeInterface];
-            let method: SwaggerMethod = path[this.node.nodeOperation];
+            const path: any = this.swagger.paths[this.node.nodeInterface];
+            const method: SwaggerMethod = path[this.node.nodeOperation];
 
             this.node.input = method.parameters.map(param => this.restService.deepClone(param));
 
-            let responseParams = this.restService.getResponseParameters(
+            const responseParams = this.restService.getResponseParameters(
                 this.swagger, this.node.nodeInterface, this.node.nodeOperation);
             this.node.output = responseParams.map(param => this.restService.deepClone(param));
 

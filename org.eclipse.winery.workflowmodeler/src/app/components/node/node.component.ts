@@ -57,4 +57,12 @@ export class WmNodeComponent implements AfterViewInit {
         this.broadcastService.broadcast(this.broadcastService.showProperty, true);
     }
 
+    public getDisplayName(): string {
+        if (this.node.type === 'RestTask' || this.node.type === 'ToscaNodeManagementTask') {
+            return this.node.name;
+        } else {
+            return '     ';
+        }
+    }
+
 }

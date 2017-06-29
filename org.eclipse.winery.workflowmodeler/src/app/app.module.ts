@@ -13,20 +13,21 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
+import { AlertModule, ModalModule } from 'ngx-bootstrap/index';
 
 import { AppComponent } from './app.component';
 import { WmContainerComponent } from './components/container/container.component';
 import { WmEditablePropertyComponent } from './components/editable-property/editable-property.component';
-import { WmNodeComponent } from './components/node/node.component';
 import { WmNodeParametersComponent } from './components/node-parameters/node-parameters.component';
 import { WmParameterTreeComponent } from './components/node-parameters/parameter-tree/parameter-tree.component';
+import { WmNodeComponent } from './components/node/node.component';
 import { WmParameterComponent } from './components/parameter/parameter.component';
 import { WmNodeTemplateComponent } from './components/property/node-template/node-template.component';
 import { WmPropertiesComponent } from './components/property/properties.component';
 import { WmRestTaskComponent } from './components/property/rest-task/rest-task.component';
-import { WmRestConfigComponent } from './components/toolbar/rest-config/rest-config.component';
 import { WmRestConfigDetailComponent } from './components/toolbar/rest-config/rest-config-detail/rest-config-detail.component';
 import { WmRestConfigListComponent } from './components/toolbar/rest-config/rest-config-list/rest-config-list.component';
+import { WmRestConfigComponent } from './components/toolbar/rest-config/rest-config.component';
 import { WmToolbarComponent } from './components/toolbar/toolbar.component';
 
 import { ResizableDirective } from './directive/resizable/resizable.directive';
@@ -41,7 +42,6 @@ import { WineryService } from './services/winery.service';
 
 import { SharedModule } from './shared/shared.module';
 import { HttpService } from './util/http.service';
-import { AlertModule, ModalModule } from 'ngx-bootstrap/index';
 
 @NgModule({
     declarations: [

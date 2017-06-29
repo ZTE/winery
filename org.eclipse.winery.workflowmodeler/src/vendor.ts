@@ -29,9 +29,9 @@ import 'font-awesome/less/font-awesome.less';
 import 'rxjs';
 
 // pnotify
-import 'pnotify/dist/pnotify.css';
-import 'pnotify/dist/pnotify.buttons.js';
 import 'pnotify/dist/pnotify.buttons.css';
+import 'pnotify/dist/pnotify.buttons.js';
+import 'pnotify/dist/pnotify.css';
 
 // primeng
 import 'primeng/resources/primeng.min.css';

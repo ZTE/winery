@@ -21,7 +21,7 @@ import * as PNotify from 'pnotify/dist/pnotify';
 export class NotifyService {
 
     constructor() {
-        PNotify.prototype.options.styling = "fontawesome";
+        PNotify.prototype.options.styling = 'fontawesome';
     }
 
     public success(text: string) {

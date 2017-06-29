@@ -11,10 +11,11 @@
  */
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs/Subject';
+
 import { Operation } from '../model/operation';
-import { WorkflowNode } from '../model/workflow.node';
-import { Swagger } from '../model/swagger';
 import { PlanModel } from '../model/plan-model';
+import { Swagger } from '../model/swagger';
+import { WorkflowNode } from '../model/workflow.node';
 
 /**
  * BroadcastService

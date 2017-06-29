@@ -10,258 +10,6 @@
  *     ZTE - initial API and implementation and/or initial documentation
  *******************************************************************************/
 
-//export class SwaggerReference {
-//	public $ref: string;
-//
-//	constructor({ $ref }) {
-//		this.$ref = $ref;
-//	}
-//}
-//
-//export class SwaggerItems {
-//	public collectionFormat: string;
-//	public defaultValue:  any;
-//	public enumValues: any[];
-//	public exclusiveMaximum: boolean;
-//	public exclusiveMinimum: boolean;
-//	public format: string;
-//	public items: SwaggerSchema; // Required if type is "array". Describes the type of items in the array.
-//	public maximum: number;
-//	public maxItems: number;
-//	public maxLength: number;
-//	public minimum: number;
-//	public minItems: number;
-//	public minLength:number;
-//	public multipleOf: number;
-//	public pattern: string;
-//	public type: string;
-//	public uniqueItems: number;
-//
-//	constructor(options: any) {
-//		this.collectionFormat = options.collectionFormat;
-//		this.defaultValue = options.default;
-//		this.enumValues = options.enum;
-//		this.exclusiveMaximum = options.exclusiveMaximum;
-//		this.exclusiveMinimum = options.exclusiveMinimum;
-//		this.format = options.format;
-//		if(options.type === "array") {
-//			this.items = new SwaggerSchema(options.items);
-//		}
-//		this.maximum = options.maximum;
-//		this.maxItems = options.maxItems;
-//		this.maxLength = options.maxLength;
-//		this.minimum = options.minimum;
-//		this.minItems = options.minItems;
-//		this.minLength = options.minLength;
-//		this.multipleOf = options.multipleOf;
-//		this.pattern = options.pattern;
-//		this.type = options.type;
-//		this.uniqueItems = options.uniqueItems;
-//	}
-//}
-//
-//export class SwaggerParameter extends SwaggerItems {
-//	public description: string;
-//	public position: string;  // in path, query, header, body, form
-//	public name: string;
-//	public required: boolean;
-//
-//	// if position is body
-//	public schema: SwaggerSchema;
-//
-//	constructor(options:any) {
-//		super(options);
-//
-//		this.description = options.description;
-//		this.position = options.in;
-//		this.name = options.name;
-//		this.required = options.required;
-//		if(this.position === "body") {
-//			this.schema = new SwaggerSchema(options.schema);
-//		}
-//	}
-//}
-//export class SwaggerSchema {
-//	public type: string;
-//	public items: SwaggerSchema;
-//    public additionalProperties: SwaggerSchema;
-//	public $ref: string;
-//
-//	constructor({ type, $ref, items, additionalProperties }) {
-//		this.type = type;
-//		this.$ref = $ref;
-//		if(items) {
-//			this.items = new SwaggerSchema(items);
-//		}
-//
-//        if(additionalProperties) {
-//            this.additionalProperties = new SwaggerSchema(additionalProperties);
-//        }
-//	}
-//}
-//
-//export class SwaggerHeader extends SwaggerItems {
-//	public description: string;
-//
-//	constructor(options: any) {
-//		super(options);
-//		this.description = options.description;
-//	}
-//}
-//
-//export class SwaggerHeaders  {
-//	public headerObj: any = {};
-//
-//	constructor(options: Object) {
-//		for(let key in options) {
-//			this.headerObj[key] = new SwaggerHeader(options[key]);
-//		}
-//	}
-//
-//}
-//
-//export class SwaggerResponse {
-//	public description: string;
-//	public schema: SwaggerSchema;
-//	public headers: SwaggerHeaders;
-//
-//	constructor({description, schema, headers}) {
-//		this.description = description;
-//
-//		if(schema) {
-//			this.schema = new SwaggerSchema(schema);
-//		}
-//
-//		if(headers) {
-//			this.headers = new SwaggerHeaders(headers);
-//		}
-//	}
-//}
-//
-//export class SwaggerResponses {
-//	public responseObj: any = {};
-//
-//	constructor(options: any) {
-//		for(let key in options) {
-//			this.responseObj[key] = new SwaggerResponse(options[key]);
-//		}
-//	}
-//}
-//
-//
-//export class SwaggerMethod {
-//	public consumes: string[];
-//	public description: string;
-//	public operationId: string;
-//	public parameters: SwaggerParameter[];
-//	public produces: string[];
-//	public responses: SwaggerResponses;
-//	public summary: string;
-//	public tags: string[];
-//
-//	constructor({consumes, description, operationId, parameters, produces, responses, summary, tags,}) {
-//		this.consumes = consumes;
-//		this.description = description;
-//		this.operationId = operationId;
-//		this.parameters = parameters.map(param => new SwaggerParameter(param));
-//		this.produces = produces;
-//		this.responses = new SwaggerResponses(responses);
-//		this.summary = summary;
-//		this.tags = tags;
-//	}
-//}
-//
-//export class SwaggerPath {
-//	public methodObj: any = {};
-//
-//	constructor(options:any) {
-//		for(let key in options) {
-//			this.methodObj[key] = new SwaggerMethod(options[key]);
-//		}
-//	}
-//}
-//
-//export class SwaggerInfo {
-//	public title: string;
-//	public version: string;
-//
-//	constructor({ title, version, }) {
-//		this.title = title;
-//		this.version = version;
-//	}
-//}
-//
-//export class SwaggerTag {
-//	public name: string;
-//
-//	constructor({name}) {
-//		this.name = name;
-//	}
-//}
-//
-//export class SwaggerPaths {
-//	public paths: any = {};
-//
-//	constructor(options: any) {
-//		for(let key in options) {
-//			this.paths[key] = new SwaggerPath(options[key]);
-//		}
-//
-//	}
-//
-//}
-//
-//export class SwaggerDefinitionProperties {
-//	public propertiesObj = {};
-//
-//	constructor(options: any) {
-//		for(let key in options) {
-//			this.propertiesObj[key] = new SwaggerItems(options[key]);
-//		}
-//	}
-//}
-//
-//export class SwaggerDefinition {
-//	public type: string;
-//	public properties: SwaggerDefinitionProperties;
-//	public required: string[];
-//
-//	constructor({ type, properties, required}) {
-//		this.type = type;
-//		this.properties = new SwaggerDefinitionProperties(properties);
-//		this.required = required;
-//	}
-//}
-//
-//
-//export class SwaggerDefinitions {
-//	public definitionObj: any = {};
-//
-//	constructor (options: Object) {
-//		for(let key in options) {
-//			this.definitionObj[key] = new SwaggerDefinition(options[key]);
-//		}
-//	}
-//}
-//
-//export class Swagger {
-//	public basePath: string;
-//	public definitions: SwaggerDefinitions;
-//	public info: SwaggerInfo;
-//	public paths: SwaggerPaths;
-//	public swagger: string;
-//	public tags: SwaggerTag[];
-//
-//	constructor({basePath, definitions, info, paths, swagger, tags}) {
-//		this.basePath = basePath;
-//		this.definitions = new SwaggerDefinitions(definitions);
-//		this.info = new SwaggerInfo(info);
-//		this.paths = new SwaggerPaths(paths);
-//		this.swagger = swagger;
-//		this.tags = tags.map(tag => new SwaggerTag(tag));
-//	}
-//}
-
 export class SwaggerParameter {
     public description: string;
     public position: string;  // in path, query, header, body, form
@@ -278,7 +26,7 @@ export class SwaggerParameter {
         this.name = options.name;
         this.required = options.required;
         this.type = options.type;
-        if (this.position === "body") {
+        if (this.position === 'body') {
             this.schema = getSchemaObject(options.schema);
         }
     }
@@ -306,7 +54,7 @@ export class SwaggerResponse {
 
         if (headers) {
             this.headers = {};
-            for (let key in headers) {
+            for (const key in headers) {
                 this.headers[key] = new SwaggerHeader(headers[key]);
             }
         }
@@ -323,7 +71,7 @@ export class SwaggerMethod {
     public summary: string;
     public tags: string[];
 
-    constructor({consumes, description, operationId, parameters, produces, responses, summary, tags,}) {
+    constructor({ consumes, description, operationId, parameters, produces, responses, summary, tags }) {
         this.consumes = consumes;
         this.description = description;
         this.operationId = operationId;
@@ -335,8 +83,8 @@ export class SwaggerMethod {
     }
 
     private initResponses(responses: any): any {
-        let responseObjs = {};
-        for (let key in responses) {
+        const responseObjs = {};
+        for (const key in responses) {
             responseObjs[key] = new SwaggerResponse(responses[key]);
         }
 
@@ -348,7 +96,7 @@ export class SwaggerInfo {
     public title: string;
     public version: string;
 
-    constructor({ title, version, }) {
+    constructor({ title, version }) {
         this.title = title;
         this.version = version;
     }
@@ -380,17 +128,17 @@ export class Swagger {
     }
 
     private initPaths(paths: any): any {
-        let pathObjs = {};
-        for (let key in paths) {
+        const pathObjs = {};
+        for (const key in paths) {
             pathObjs[key] = this.initPath(paths[key]);
         }
         return pathObjs;
     }
 
     private initPath(path: any): any {
-        let pathObj = {};
+        const pathObj = {};
 
-        for (let key in path) {
+        for (const key in path) {
             pathObj[key] = new SwaggerMethod(path[key]);
         }
 
@@ -398,8 +146,8 @@ export class Swagger {
     }
 
     private initDefinitions(definitions: any): any {
-        let definitionObjs = {};
-        for (let key in definitions) {
+        const definitionObjs = {};
+        for (const key in definitions) {
             definitionObjs[key] = getSchemaObject(definitions[key]);
         }
         return definitionObjs;
@@ -414,7 +162,7 @@ export function getSchemaObject(definition: any) {
     } else if (definition.type === 'object') {
         if (definition.properties) {
             return new SwaggerModelSimple(definition);
-        } else if(definition.additionalProperties) {
+        } else if (definition.additionalProperties) {
             return new SwaggerModelMap(definition);
         } else {
             return new SwaggerModel();
@@ -481,7 +229,7 @@ export class SwaggerModelSimple extends SwaggerModel {
     constructor(options: any) {
         super();
         this.required = options.required;
-        for (let key in options.properties) {
+        for (const key in options.properties) {
             this.properties[key] = getSchemaObject(options.properties[key]);
         }
     }
@@ -505,11 +253,3 @@ export class SwaggerModelArray extends SwaggerSchemaObject {
         this.items = getSchemaObject(options.items);
     }
 }
-
-
-
-
-
-
-
-

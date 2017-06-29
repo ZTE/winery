@@ -12,8 +12,9 @@
 
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { WineryService } from './services/winery.service';
+
 import { JsPlumbService } from './services/jsplumb.service';
+import { WineryService } from './services/winery.service';
 
 /**
  * main component

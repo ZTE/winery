@@ -31,38 +31,38 @@ export class JsPlumbService {
     }
 
     public connectNode(nodes: WorkflowNode[]) {
-        if(nodes && (nodes.length > 0)) {
+        if (nodes && (nodes.length > 0)) {
             const jsplumbInstance = this.getJsplumbInstance(nodes[0].id);
             nodes.forEach(node =>
                 node.connection.forEach(target =>
-                    jsplumbInstance.connect({source: node.id, target})));
+                    jsplumbInstance.connect({ source: node.id, target })));
         }
     }
 
     public initJsPlumbInstance(id: string) {
-        let jsplumbInstance = jsp.jsPlumb.getInstance();
+        const jsplumbInstance = jsp.jsPlumb.getInstance();
 
         jsplumbInstance.importDefaults({
             Anchor: ['Top', 'RightMiddle', 'LeftMiddle', 'Bottom'],
             Connector: [
                 'Flowchart',
-                {cornerRadius: 0, stub: 0, gap: 3},
+                { cornerRadius: 0, stub: 0, gap: 3 },
             ],
             ConnectionOverlays: [
                 [
                     'Arrow',
-                    {direction: 1, foldback: 1, location: 1, width: 10, length: 10},
+                    { direction: 1, foldback: 1, location: 1, width: 10, length: 10 },
                 ],
-                ['Label', {label: '', id: 'label', cssClass: 'aLabel'}],
+                ['Label', { label: '', id: 'label', cssClass: 'aLabel' }],
             ],
             Endpoint: 'Blank',
             PaintStyle: {
                 strokeWidth: 4,
-                stroke: "black",
+                stroke: 'black',
             },
             HoverPaintStyle: {
                 strokeWidth: 4,
-                stroke: "blue",
+                stroke: 'blue',
             },
         });
 
@@ -80,7 +80,7 @@ export class JsPlumbService {
     }
 
     public getJsplumbInstance(id: string) {
-        if(id === 'canvas' || !id) {
+        if (id === 'canvas' || !id) {
             return this.jsplumbInstanceMap.get('canvas');
         }
         let parentId = this.getParentNodeId(id);
@@ -103,12 +103,12 @@ export class JsPlumbService {
             scope: 'node',
             filter: '.ui-resizable-handle',
             classes: {
-                "ui-draggable": "dragging"
+                'ui-draggable': 'dragging',
             },
-            drag: (event) => {
+            drag: event => {
                 this.getJsplumbInstance(node.id).revalidate(node.id);
             },
-            stop: (event) => {
+            stop: event => {
                 event.el.classList.remove('dragging');
                 node.position.left = event.pos[0];
                 node.position.top = event.pos[1];
@@ -136,28 +136,28 @@ export class JsPlumbService {
         this.jsplumbInstanceMap.get('canvas').droppable(selector, {
             scope: 'node',
             rank,
-            tolerance: "pointer",
-            hoverClass: "drop-target",
-            drop: (event) => {
-                if(!this.isChildNode(event.drop.el, event.drag.el)) {
+            tolerance: 'pointer',
+            hoverClass: 'drop-target',
+            drop: event => {
+                if (!this.isChildNode(event.drop.el, event.drag.el)) {
                     this.drop(event);
                 }
                 return true;
             },
-            canDrop: (drag) => {
+            canDrop: drag => {
                 const nodeMap = this.modelService.getNodeMap();
                 const ancestorNode = nodeMap.get(drag.el.id);
 
                 const isAncestor = this.modelService.isDescendantNode(ancestorNode, node.id);
                 return !isAncestor;
-            }
+            },
         });
     }
 
     private isChildNode(childElement, parentElement) {
-        while(childElement !== parentElement) {
+        while (childElement !== parentElement) {
             childElement = childElement.parentNode;
-            if(childElement.classList.contains('canvas')) {
+            if (childElement.classList.contains('canvas')) {
                 return false;
             }
         }
@@ -166,17 +166,17 @@ export class JsPlumbService {
     }
 
     private drop(event) {
-        let dragEl = event.drag.el;
-        let dropEl = event.drop.el;
+        const dragEl = event.drag.el;
+        const dropEl = event.drop.el;
 
         this.resizeParent(dragEl, dropEl);
 
-        let nodeLeft = dragEl.getBoundingClientRect().left;
-        let nodeTop = dragEl.getBoundingClientRect().top;
-        let parentLeft = dropEl.getBoundingClientRect().left;
-        let parentTop = dropEl.getBoundingClientRect().top;
-        let left = nodeLeft - parentLeft;
-        let top = nodeTop - parentTop;
+        const nodeLeft = dragEl.getBoundingClientRect().left;
+        const nodeTop = dragEl.getBoundingClientRect().top;
+        const parentLeft = dropEl.getBoundingClientRect().left;
+        const parentTop = dropEl.getBoundingClientRect().top;
+        const left = nodeLeft - parentLeft;
+        const top = nodeTop - parentTop;
         dragEl.style.top = top + 'px';
         dragEl.style.left = left + 'px';
 
@@ -190,18 +190,18 @@ export class JsPlumbService {
     }
 
     private changeParent(id: string, originalParentNodeId: string, targetParentNodeId: string) {
-        if(originalParentNodeId !== targetParentNodeId) {
+        if (originalParentNodeId !== targetParentNodeId) {
             this.getJsplumbInstance(id).removeAllEndpoints(id);
             this.modelService.changeParent(id, originalParentNodeId, targetParentNodeId);
         }
     }
 
     private getParentNodeEl(element) {
-        while(!(element.parentNode.classList.contains('node') || element.parentNode.classList.contains('canvas'))) {
+        while (!(element.parentNode.classList.contains('node') || element.parentNode.classList.contains('canvas'))) {
             element = element.parentNode;
         }
 
-        if(element.parentNode.classList.contains('canvas')) { // top level node
+        if (element.parentNode.classList.contains('canvas')) { // top level node
             return null;
         } else {
             return element.parentNode;
@@ -215,9 +215,7 @@ export class JsPlumbService {
         jsplumbInstance.droppable(canvasSelector, {
             scope: 'node',
             rank: 0,
-            drop: (event) => {
-                this.drop(event);
-            },
+            drop: event => this.drop(event),
         });
     }
 
@@ -236,7 +234,7 @@ export class JsPlumbService {
         const selector = jsplumbInstance.getSelector('.canvas');
         jsplumbInstance.droppable(selector, {
             scope: 'btn',
-            drop: (event) => {
+            drop: event => {
                 const el = jsplumbInstance.getSelector(event.drag.el);
                 const type = el.attributes.nodeType.value;
                 const left = event.e.clientX - event.drop.position[0];
@@ -252,24 +250,27 @@ export class JsPlumbService {
     }
 
     public resizeParent(element: any, parentElement: any) {
-        if(parentElement.classList.contains(this.rootClass)) {
+        if (parentElement.classList.contains(this.rootClass)) {
             return;
         }
 
-        if(!parentElement.classList.contains('node')) {
+        if (!parentElement.classList.contains('node')) {
             this.resizeParent(element, parentElement.parentNode);
             return;
         }
 
-        let leftResized = this.resizeParentLeft(element, parentElement);
-        let rightResized = this.resizeParentRight(element, parentElement)
-        let topResized = this.resizeParentTop(element, parentElement)
-        let bottomResized = this.resizeParentBottom(element, parentElement);
+        const leftResized = this.resizeParentLeft(element, parentElement);
+        const rightResized = this.resizeParentRight(element, parentElement);
+        const topResized = this.resizeParentTop(element, parentElement);
+        const bottomResized = this.resizeParentBottom(element, parentElement);
 
-        if(leftResized || rightResized || topResized || bottomResized) {
-            if(parentElement.classList.contains('node')) {
+        if (leftResized || rightResized || topResized || bottomResized) {
+            if (parentElement.classList.contains('node')) {
                 const rect = parentElement.getBoundingClientRect();
-                this.modelService.updatePosition(parentElement.id, parentElement.offsetLeft, parentElement.offsetTop, rect.width, rect.height);
+                this.modelService.updatePosition(parentElement.id,
+                    parentElement.offsetLeft,
+                    parentElement.offsetTop,
+                    rect.width, rect.height);
             }
             this.resizeParent(parentElement, parentElement.parentNode);
         }
@@ -278,10 +279,10 @@ export class JsPlumbService {
     private resizeParentLeft(element: any, parentElement: any): boolean {
         let resized = false;
 
-        let actualLeft = element.getBoundingClientRect().left;
-        let actualParentLeft = parentElement.getBoundingClientRect().left;
+        const actualLeft = element.getBoundingClientRect().left;
+        const actualParentLeft = parentElement.getBoundingClientRect().left;
 
-        if(actualLeft - this.padding < actualParentLeft) {
+        if (actualLeft - this.padding < actualParentLeft) {
             const width = actualParentLeft - actualLeft + this.padding;
 
             this.translateElement(parentElement, -width, 0, width, 0);
@@ -295,12 +296,12 @@ export class JsPlumbService {
     private resizeParentRight(element: any, parentElement: any): boolean {
         let resized = false;
 
-        let actualLeft = element.getBoundingClientRect().left;
-        let actualRight = actualLeft + element.offsetWidth;
+        const actualLeft = element.getBoundingClientRect().left;
+        const actualRight = actualLeft + element.offsetWidth;
 
-        let actualParentLeft = parentElement.getBoundingClientRect().left;
+        const actualParentLeft = parentElement.getBoundingClientRect().left;
 
-        if((actualParentLeft + parentElement.offsetWidth) < actualRight + this.padding) {
+        if ((actualParentLeft + parentElement.offsetWidth) < actualRight + this.padding) {
             this.setElementWidth(parentElement, actualRight + this.padding - actualParentLeft);
             resized = true;
         }
@@ -311,13 +312,13 @@ export class JsPlumbService {
     private resizeParentBottom(element: any, parentElement: any): boolean {
         let resized = false;
 
-        let actualTop = element.getBoundingClientRect().top;
-        let actualBottom = actualTop + element.offsetHeight;
+        const actualTop = element.getBoundingClientRect().top;
+        const actualBottom = actualTop + element.offsetHeight;
 
-        let actualParentTop = parentElement.getBoundingClientRect().top;
-        let actualParentBottom = actualParentTop + parentElement.offsetHeight;
+        const actualParentTop = parentElement.getBoundingClientRect().top;
+        const actualParentBottom = actualParentTop + parentElement.offsetHeight;
 
-        if(actualParentBottom < actualBottom + this.padding) {
+        if (actualParentBottom < actualBottom + this.padding) {
             this.setElementHeight(parentElement, actualBottom + this.padding - actualParentTop);
             resized = true;
         }
@@ -328,10 +329,10 @@ export class JsPlumbService {
     private resizeParentTop(element: any, parentElement: any): boolean {
         let resized = false;
 
-        let actualTop = element.getBoundingClientRect().top;
-        let actualParentTop = parentElement.getBoundingClientRect().top;
+        const actualTop = element.getBoundingClientRect().top;
+        const actualParentTop = parentElement.getBoundingClientRect().top;
 
-        if(actualTop - this.padding < actualParentTop) {
+        if (actualTop - this.padding < actualParentTop) {
             const height = actualParentTop - actualTop + this.padding;
 
             this.translateElement(parentElement, 0, -height, 0, height);
@@ -342,7 +343,7 @@ export class JsPlumbService {
         return resized;
     }
 
-    private translateElement(element, left: number, top: number, width: number,  height: number) {
+    private translateElement(element, left: number, top: number, width: number, height: number) {
         const offsetLeft = element.offsetLeft + left;
         element.style.left = offsetLeft + 'px';
 
@@ -355,16 +356,16 @@ export class JsPlumbService {
         const offsetHeight = element.offsetHeight + height;
         element.style.height = offsetHeight + 'px';
 
-        if(element.classList.contains('node')) {
+        if (element.classList.contains('node')) {
             this.getJsplumbInstance(element.id).revalidate(element.id);
         }
     }
 
     private translateChildren(parentElment, excludeElement, left: number, top: number) {
-        for(let i=0, len=parentElment.children.length; i<len; i++) {
-            let childElment = parentElment.children[i];
-            if(childElment.localName === 'b4t-node') {
-                this.translateElement(childElment.children[0], left, top, 0, 0)
+        for (let i = 0, len = parentElment.children.length; i < len; i++) {
+            const childElment = parentElment.children[i];
+            if (childElment.localName === 'b4t-node') {
+                this.translateElement(childElment.children[0], left, top, 0, 0);
             }
         }
     }
@@ -378,8 +379,8 @@ export class JsPlumbService {
     }
 
     private getActualPosition(element, offset: string) {
-        var actualPosition = element[offset];
-        var current = element.offsetParent;
+        let actualPosition = element[offset];
+        let current = element.offsetParent;
         while (current !== null) {
             actualPosition += element[offset];
             current = current.offsetParent;

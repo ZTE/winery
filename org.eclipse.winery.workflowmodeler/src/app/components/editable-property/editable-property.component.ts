@@ -19,7 +19,6 @@ import { AfterViewInit, Component, EventEmitter, Input, Output } from '@angular/
  */
 @Component({
     selector: 'b4t-editable-property',
-    //styleUrls: ['./editable-property.component.css'],
     templateUrl: 'editable-property.component.html',
 })
 export class WmEditablePropertyComponent {

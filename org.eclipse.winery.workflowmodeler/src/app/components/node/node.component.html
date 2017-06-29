@@ -41,14 +41,14 @@
     </div>
 </div>
 
-<div *ngIf="!node.canHaveChildren()" (dblclick)="showProperties()" class="node {{node.type}}"
+<div *ngIf="!node.canHaveChildren()" (dblclick)="showProperties($event)" class="node {{node.type}}"
      id="{{node.id}}"
      [style.top]="node.position.top + 'px'"
      [style.left]="node.position.left + 'px'">
     <div class="name"
          (mouseover)="onMouseOver($event, $event.target.parentNode)"
          (mouseout)="onMouseOut($event, $event.target.parentNode)">
-        {{node.name}}
+        {{getDisplayName()}}
     </div>
 
     <div class="anchor anchors anchor-left">

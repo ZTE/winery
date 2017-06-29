@@ -25,8 +25,8 @@ export class PlanModel {
     }
 
     public deleteNode(id: string): WorkflowNode {
-        let index = this.nodes.findIndex(node => node.id === id);
-        if (index != -1) {
+        const index = this.nodes.findIndex(node => node.id === id);
+        if (index !== -1) {
             const deletedNode = this.nodes.splice(index, 1);
             return deletedNode[0];
         }
