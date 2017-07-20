@@ -13,7 +13,7 @@
 import { Injectable } from '@angular/core';
 import * as jsp from 'jsplumb';
 
-import { WorkflowNode } from '../model/workflow.node';
+import { WorkflowNode } from '../model/workflow/workflow-node';
 import { BroadcastService } from './broadcast.service';
 import { ModelService } from './model.service';
 
@@ -23,16 +23,19 @@ import { ModelService } from './model.service';
  */
 @Injectable()
 export class JsPlumbService {
+    public jsplumbInstanceMap = new Map<string, any>();
+
     private padding = 20;
     private rootClass = 'canvas';
-    private jsplumbInstanceMap = new Map<string, any>();
 
     constructor(private modelService: ModelService) {
     }
 
-    public connectNode(nodes: WorkflowNode[]) {
+    public connectChildrenNodes(parentNodeId: string) {
+        const nodes: WorkflowNode[] = this.modelService.getChildrenNodes(parentNodeId);
+
         if (nodes && (nodes.length > 0)) {
-            const jsplumbInstance = this.getJsplumbInstance(nodes[0].id);
+            const jsplumbInstance = this.jsplumbInstanceMap.get(parentNodeId);
             nodes.forEach(node =>
                 node.connection.forEach(target =>
                     jsplumbInstance.connect({ source: node.id, target })));
@@ -40,6 +43,9 @@ export class JsPlumbService {
     }
 
     public initJsPlumbInstance(id: string) {
+        if (this.jsplumbInstanceMap.get(id)) {
+            return;
+        }
         const jsplumbInstance = jsp.jsPlumb.getInstance();
 
         jsplumbInstance.importDefaults({
@@ -68,25 +74,15 @@ export class JsPlumbService {
 
         // add connection to model data while a new connection is build
         jsplumbInstance.bind('connection', info => {
-            this.modelService.addConnection(id, info.connection.sourceId, info.connection.targetId);
+            this.modelService.addConnection(info.connection.sourceId, info.connection.targetId);
 
             info.connection.bind('click', connection => {
-                this.modelService.deleteConnection(id, connection.sourceId, connection.targetId);
-                jsplumbInstance.detach(connection);
+                this.modelService.deleteConnection(connection.sourceId, connection.targetId);
+                jsplumbInstance.select({ connections: [connection] }).delete();
             });
         });
 
         this.jsplumbInstanceMap.set(id, jsplumbInstance);
-    }
-
-    public getJsplumbInstance(id: string) {
-        if (id === 'canvas' || !id) {
-            return this.jsplumbInstanceMap.get('canvas');
-        }
-        let parentId = this.getParentNodeId(id);
-
-        parentId = parentId ? parentId : 'canvas';
-        return this.jsplumbInstanceMap.get(parentId);
     }
 
     public getParentNodeId(id: string): string {
@@ -97,16 +93,16 @@ export class JsPlumbService {
     }
 
     public initNode(node: WorkflowNode) {
-        const jsplumbInstance = this.getJsplumbInstance(node.id);
+        const jsplumbInstance = this.jsplumbInstanceMap.get(node.parentId);
 
-        this.jsplumbInstanceMap.get('canvas').draggable(node.id, {
+        this.jsplumbInstanceMap.get(this.modelService.rootNodeId).draggable(node.id, {
             scope: 'node',
             filter: '.ui-resizable-handle',
             classes: {
                 'ui-draggable': 'dragging',
             },
             drag: event => {
-                this.getJsplumbInstance(node.id).revalidate(node.id);
+                this.jsplumbInstanceMap.get(node.parentId).revalidate(node.id);
             },
             stop: event => {
                 event.el.classList.remove('dragging');
@@ -130,10 +126,10 @@ export class JsPlumbService {
     }
 
     public nodeDroppable(node: WorkflowNode, rank: number) {
-        const jsplumbInstance = this.getJsplumbInstance(node.id);
+        const jsplumbInstance = this.jsplumbInstanceMap.get(node.parentId);
 
         const selector = jsplumbInstance.getSelector('#' + node.id);
-        this.jsplumbInstanceMap.get('canvas').droppable(selector, {
+        this.jsplumbInstanceMap.get(this.modelService.rootNodeId).droppable(selector, {
             scope: 'node',
             rank,
             tolerance: 'pointer',
@@ -183,15 +179,15 @@ export class JsPlumbService {
         this.modelService.updatePosition(dragEl.id, left, top, dragEl.getBoundingClientRect().width, dragEl.getBoundingClientRect().height);
 
         const originalParentNode = this.getParentNodeEl(dragEl);
-        const originalParentNodeId = originalParentNode ? originalParentNode.id : null;
+        const originalParentNodeId = originalParentNode ? originalParentNode.id : this.modelService.rootNodeId;
 
-        const targetParentNodeId = dropEl.classList.contains('node') ? dropEl.id : null;
+        const targetParentNodeId = dropEl.classList.contains('node') ? dropEl.id : this.modelService.rootNodeId;
         this.changeParent(dragEl.id, originalParentNodeId, targetParentNodeId);
     }
 
     private changeParent(id: string, originalParentNodeId: string, targetParentNodeId: string) {
         if (originalParentNodeId !== targetParentNodeId) {
-            this.getJsplumbInstance(id).removeAllEndpoints(id);
+            this.jsplumbInstanceMap.get(originalParentNodeId).removeAllEndpoints(id);
             this.modelService.changeParent(id, originalParentNodeId, targetParentNodeId);
         }
     }
@@ -209,7 +205,7 @@ export class JsPlumbService {
     }
 
     public canvasDroppable() {
-        const jsplumbInstance = this.jsplumbInstanceMap.get('canvas');
+        const jsplumbInstance = this.jsplumbInstanceMap.get(this.modelService.rootNodeId);
         const canvasSelector = jsplumbInstance.getSelector('.canvas');
         console.log(canvasSelector);
         jsplumbInstance.droppable(canvasSelector, {
@@ -220,7 +216,7 @@ export class JsPlumbService {
     }
 
     public buttonDraggable() {
-        const jsplumbInstance = this.jsplumbInstanceMap.get('canvas');
+        const jsplumbInstance = this.jsplumbInstanceMap.get(this.modelService.rootNodeId);
         const selector = jsplumbInstance.getSelector('.toolbar .item');
         jsplumbInstance.draggable(selector,
             {
@@ -230,7 +226,7 @@ export class JsPlumbService {
     }
 
     public buttonDroppable() {
-        const jsplumbInstance = this.jsplumbInstanceMap.get('canvas');
+        const jsplumbInstance = this.jsplumbInstanceMap.get(this.modelService.rootNodeId);
         const selector = jsplumbInstance.getSelector('.canvas');
         jsplumbInstance.droppable(selector, {
             scope: 'btn',
@@ -245,8 +241,8 @@ export class JsPlumbService {
         });
     }
 
-    public remove(nodeId: string) {
-        this.getJsplumbInstance(nodeId).remove(nodeId);
+    public remove(node: WorkflowNode) {
+        this.jsplumbInstanceMap.get(node.parentId).remove(node.id);
     }
 
     public resizeParent(element: any, parentElement: any) {
@@ -357,7 +353,8 @@ export class JsPlumbService {
         element.style.height = offsetHeight + 'px';
 
         if (element.classList.contains('node')) {
-            this.getJsplumbInstance(element.id).revalidate(element.id);
+            const node = this.modelService.getNodeMap().get(element.id);
+            this.jsplumbInstanceMap.get(node.parentId).revalidate(element.id);
         }
     }
 

@@ -11,7 +11,7 @@
  *     ZTE - initial API and implementation and/or initial documentation
  */
 -->
-<div *ngIf="node.canHaveChildren()" b4tResizable
+<div *ngIf="canHaveChildren()" b4tResizable
      [id]="node.id"
      (mouseover)="onMouseOver($event, $event.target)"
      (mouseout)="onMouseOut($event, $event.target)"
@@ -21,11 +21,11 @@
      [style.left]="node.position.left + 'px'"
      [style.width]="node.position.width + 'px'"
      [style.height]="node.position.height + 'px'">
-    <div *ngIf="!node.canHaveChildren()" class="name">
+    <div *ngIf="!canHaveChildren()" class="name">
         {{node.name}}
     </div>
 
-    <b4t-node *ngFor="let child of node.children" [node]="child" [rank]="rank + 10"></b4t-node>
+    <b4t-node *ngFor="let child of node.children; let lastChild = last;" [last]="lastChild" [node]="child" [rank]="rank + 10"></b4t-node>
 
     <div class="anchor anchors anchor-left">
         <span class="left"><i class="left-arrow1"></i><i class="left-arrow2"></i></span>
@@ -41,7 +41,7 @@
     </div>
 </div>
 
-<div *ngIf="!node.canHaveChildren()" (dblclick)="showProperties($event)" class="node {{node.type}}"
+<div *ngIf="!canHaveChildren()" (dblclick)="showProperties($event)" class="node {{node.type}}"
      id="{{node.id}}"
      [style.top]="node.position.top + 'px'"
      [style.left]="node.position.left + 'px'">

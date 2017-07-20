@@ -10,7 +10,8 @@
  *     ZTE - initial API and implementation and/or initial documentation
  */
 
-import { AfterViewInit, Component } from '@angular/core';
+import { AfterViewInit, Component, OnInit } from '@angular/core';
+
 import { BroadcastService } from '../../services/broadcast.service';
 import { JsPlumbService } from '../../services/jsplumb.service';
 import { ModelService } from '../../services/model.service';
@@ -24,17 +25,20 @@ import { ModelService } from '../../services/model.service';
     styleUrls: ['./container.component.css'],
     templateUrl: 'container.component.html',
 })
-export class WmContainerComponent implements AfterViewInit {
+export class WmContainerComponent implements AfterViewInit, OnInit {
 
     constructor(private broadcastService: BroadcastService,
                 private jsPlumbService: JsPlumbService,
                 private modelService: ModelService) {
     }
 
+    public ngOnInit() {
+        this.jsPlumbService.initJsPlumbInstance(this.modelService.rootNodeId);
+    }
+
     public ngAfterViewInit() {
         this.jsPlumbService.buttonDroppable();
         this.jsPlumbService.canvasDroppable();
-        this.jsPlumbService.connectNode(this.modelService.getNodes());
     }
 
     public canvasClick() {

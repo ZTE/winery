@@ -14,10 +14,9 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Rx';
 import { isNullOrUndefined } from 'util';
 
-import { NodeTemplate } from '../model/nodetemplate';
+import { NodeTemplate } from '../model/node-template';
 import { Operation } from '../model/operation';
 import { PlanModel } from '../model/plan-model';
-import { WorkflowNode } from '../model/workflow.node';
 import { HttpService } from '../util/http.service';
 import { BroadcastService } from './broadcast.service';
 import { NotifyService } from './notify.service';
@@ -154,8 +153,8 @@ export class WineryService {
             if (!response.configs) {
                 response.configs = {};
             }
-            response.nodes = response.nodes.map(node => new WorkflowNode(node));
-            this.planModel = new PlanModel(response);
+            console.log(response);
+            this.planModel = response;
             this.broadcastService.broadcast(this.broadcastService.planModel, this.planModel);
         });
     }

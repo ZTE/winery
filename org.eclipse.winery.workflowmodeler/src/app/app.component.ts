@@ -13,7 +13,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
-import { JsPlumbService } from './services/jsplumb.service';
 import { WineryService } from './services/winery.service';
 
 /**
@@ -25,13 +24,10 @@ import { WineryService } from './services/winery.service';
 })
 export class AppComponent implements OnInit {
     constructor(private route: ActivatedRoute,
-                private jsPlumbService: JsPlumbService,
                 private wineryService: WineryService) {
-
     }
 
     public ngOnInit() {
         this.route.queryParams.subscribe(params => this.wineryService.setRequestParam(params));
-        this.jsPlumbService.initJsPlumbInstance('canvas');
     }
 }

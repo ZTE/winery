@@ -14,7 +14,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Rx';
 import { isNullOrUndefined } from 'util';
 
-import { NodeTemplate } from '../model/nodetemplate';
+import { NodeTemplate } from '../model/node-template';
 import { Operation } from '../model/operation';
 import { SwaggerMethod } from '../model/swagger';
 import { SwaggerResponse } from '../model/swagger';

@@ -9,11 +9,16 @@
  * Contributors:
  *     ZTE - initial API and implementation and/or initial documentation
  */
-
 import { Injectable } from '@angular/core';
 import { isNullOrUndefined } from 'util';
+
 import { PlanModel } from '../model/plan-model';
-import { WorkflowNode } from '../model/workflow.node';
+import { Position } from '../model/workflow/position';
+import { RestTask } from '../model/workflow/rest-task';
+import { StartEvent } from '../model/workflow/start-event';
+import { SubProcess } from '../model/workflow/sub-process';
+import { ToscaNodeTask } from '../model/workflow/tosca-node-task';
+import { WorkflowNode } from '../model/workflow/workflow-node';
 import { BroadcastService } from './broadcast.service';
 import { SwaggerTreeConverterService } from './swagger-tree-converter.service';
 
@@ -23,6 +28,8 @@ import { SwaggerTreeConverterService } from './swagger-tree-converter.service';
  */
 @Injectable()
 export class ModelService {
+    public rootNodeId = 'root';
+
     private planModel: PlanModel = new PlanModel({
         configs: {},
         nodes: [],
@@ -32,24 +39,51 @@ export class ModelService {
         this.broadcastService.planModel$.subscribe(plan => this.planModel = plan);
     }
 
+    public getChildrenNodes(parentId: string): WorkflowNode[] {
+        if (!parentId || parentId === this.rootNodeId) {
+            return this.planModel.nodes;
+        } else {
+            const node = this.getNodeMap().get(parentId);
+            if (node.type === 'subProcess') {
+                return (<SubProcess>node).children;
+            } else {
+                return [];
+            }
+        }
+    }
+
     public getNodes(): WorkflowNode[] {
         return this.planModel.nodes;
     }
 
     public addNode(name: string, type: string, left: number, top: number) {
-        const node = new WorkflowNode({
-            id: this.createId(),
-            name,
-            type,
-            position: {
-                left,
-                top,
-                width: 200,
-                height: 100,
-            },
-        });
+
+        const node = this.createNodeByType(type);
+
+        node.id = this.createId();
+        node.name = name;
+        node.type = type;
+        node.parentId = this.rootNodeId;
+
+        const workflowPos = new Position();
+        workflowPos.left = left;
+        workflowPos.top = top;
+
+        node.position = workflowPos;
 
         this.planModel.nodes.push(node);
+    }
+
+    private createNodeByType(type: string): WorkflowNode {
+        if (type === 'restTask') {
+            return new RestTask();
+        } else if (type === 'toscaNodeManagementTask') {
+            return new ToscaNodeTask();
+        } else if (type === 'subProcess') {
+            return new SubProcess();
+        } else {
+            return new WorkflowNode();
+        }
     }
 
     public changeParent(id: string, originalParentId: string, targetParentId: string) {
@@ -57,12 +91,11 @@ export class ModelService {
             return;
         }
 
-        const nodeMap = this.getNodeMap();
-
         const node: WorkflowNode = this.deleteNode(originalParentId, id);
+        node.parentId = targetParentId;
 
         if (targetParentId) {
-            nodeMap.get(targetParentId).addChild(node);
+            this.addChild(targetParentId, node);
         } else {
             this.planModel.addNode(node);
         }
@@ -101,18 +134,24 @@ export class ModelService {
     private getParentNode(id: string, nodeMap: Map<string, WorkflowNode>): WorkflowNode {
         let parentNode;
         nodeMap.forEach((node, key) => {
-            const childNode = node.children.find(child => child.id === id);
-            if (childNode) {
-                parentNode = node;
+            if (node instanceof SubProcess) {
+                const childNode = <SubProcess>node.children.find(child => child.id === id);
+                if (childNode) {
+                    parentNode = node;
+                }
             }
+
         });
 
         return parentNode;
     }
 
     public isDescendantNode(node: WorkflowNode, descendantId: string): boolean {
-        const tmp = node.children.find(child => {
-            return child.id === descendantId || this.isDescendantNode(child, descendantId);
+        if (!(node instanceof SubProcess)) {
+            return false;
+        }
+        const tmp = (<SubProcess>node).children.find(child => {
+            return child.id === descendantId || (child instanceof SubProcess && this.isDescendantNode(<SubProcess>child, descendantId));
         });
 
         return tmp !== undefined;
@@ -120,38 +159,39 @@ export class ModelService {
 
     private toNodeMap(nodes: WorkflowNode[], map: Map<string, WorkflowNode>) {
         nodes.forEach(node => {
-            this.toNodeMap(node.children, map);
+            if (node.type === 'subProcess') {
+                this.toNodeMap((<SubProcess>node).children, map);
+            }
             map.set(node.id, node);
         });
     }
 
-    public addConnection(parentId: string, sourceId: string, targetId: string) {
-        const nodeMap = this.getNodeMap();
-        const nodes = parentId ? nodeMap.get(parentId).children : this.planModel.nodes;
-
-        const node = nodes.find(tmpNode => tmpNode.id === sourceId);
-        if (!isNullOrUndefined(node)) {
-            node.addConnection(targetId);
+    public addConnection(sourceId: string, targetId: string) {
+        const node = this.getNodeMap().get(sourceId);
+        if (node) {
+            if (!node.connection.includes(targetId)) {
+                node.connection.push(targetId);
+            }
         }
     }
 
-    public deleteConnection(parentId: string, sourceId: string, targetId: string) {
-        const nodeMap = this.getNodeMap();
-        const nodes = parentId ? nodeMap.get(parentId).children : this.planModel.nodes;
-
-        const node = nodes.find(tmpNode => tmpNode.id === sourceId);
-        if (!isNullOrUndefined(node)) {
-            node.deleteConnection(targetId);
+    public deleteConnection(sourceId: string, targetId: string) {
+        const node = this.getNodeMap().get(sourceId);
+        if (node) {
+            const index = node.connection.findIndex(target => target === targetId);
+            if (index !== -1) {
+                node.connection.splice(index, 1);
+            }
         }
     }
 
     public deleteNode(parentId: string, nodeId: string): WorkflowNode {
         const nodeMap = this.getNodeMap();
 
-        const nodes = parentId ? nodeMap.get(parentId).children : this.planModel.nodes;
+        const nodes = this.getChildrenNodes(parentId);
 
         // delete related connections
-        nodes.forEach(node => node.deleteConnection(nodeId));
+        nodes.forEach(node => this.deleteConnection(node.id, nodeId));
 
         // delete current node
         const index = nodes.findIndex(node => node.id === nodeId);
@@ -159,6 +199,20 @@ export class ModelService {
             const node = nodes.splice(index, 1)[0];
             node.connection = [];
             return node;
+        }
+
+        return null;
+    }
+
+    public addChild(parentId: string, child: WorkflowNode) {
+        this.getChildrenNodes(parentId).push(child);
+    }
+
+    public deleteChild(node: SubProcess, id: string): WorkflowNode {
+        const index = node.children.findIndex(child => child.id === id);
+        if (index !== -1) {
+            const deletedNode = node.children.splice(index, 1);
+            return deletedNode[0];
         }
 
         return null;

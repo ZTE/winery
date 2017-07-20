@@ -11,10 +11,11 @@
  */
 
 import { Component, Input, Output } from '@angular/core';
-import {TreeNode} from 'primeng/primeng';
+import { TreeNode } from 'primeng/primeng';
 
-import {RestService} from '../../../services/rest.service';
-import {SwaggerTreeConverterService} from '../../../services/swagger-tree-converter.service';
+import { RestTask } from '../../../model/workflow/rest-task';
+import { RestService } from '../../../services/rest.service';
+import { SwaggerTreeConverterService } from '../../../services/swagger-tree-converter.service';
 
 /**
  * parameter tree presents parameter of task node's input and output parameters.
@@ -24,11 +25,10 @@ import {SwaggerTreeConverterService} from '../../../services/swagger-tree-conver
     templateUrl: 'parameter-tree.component.html',
 })
 export class WmParameterTreeComponent {
-    @Input() public task: any;
     @Input() public parameters: any;
+    @Input() public task: RestTask;
 
     private restService: RestService;
-
     private swaggerTreeConverterService: SwaggerTreeConverterService;
 
     constructor(swaggerTreeConverterService: SwaggerTreeConverterService, restService: RestService) {
@@ -40,7 +40,7 @@ export class WmParameterTreeComponent {
         const copyItem = this.restService.deepClone(node.parameter.additionalProperties);
         const key = Object.keys(node.parameter.value).length;
         const childrenNode = this.swaggerTreeConverterService
-            .schema2TreeNode(key, this.task.nodeTemplate, copyItem);
+            .schema2TreeNode(key, this.task.swagger, copyItem);
 
         childrenNode.keyEditable = true;
         node.parameter.value[key] = childrenNode.parameter.value;
@@ -61,7 +61,7 @@ export class WmParameterTreeComponent {
         const childrenNode = this.swaggerTreeConverterService
             .schema2TreeNode(
                 node.children.length,
-                this.task.nodeTemplate,
+                this.task.swagger,
                 copyItem);
 
         node.parameter.value.push(childrenNode.parameter.value);

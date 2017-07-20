@@ -10,9 +10,12 @@
  *     ZTE - initial API and implementation and/or initial documentation
  */
 import { AfterViewInit, Component, Input } from '@angular/core';
-import { WorkflowNode } from '../../model/workflow.node';
+
+import { SubProcess } from '../../model/workflow/sub-process';
+import { WorkflowNode } from '../../model/workflow/workflow-node';
 import { BroadcastService } from '../../services/broadcast.service';
 import { JsPlumbService } from '../../services/jsplumb.service';
+import { ModelService } from '../../services/model.service';
 
 /**
  * node component represent a single workflow node.
@@ -24,21 +27,30 @@ import { JsPlumbService } from '../../services/jsplumb.service';
     templateUrl: 'node.component.html',
 })
 export class WmNodeComponent implements AfterViewInit {
+    @Input() public last: boolean;
     @Input() public node: WorkflowNode;
     @Input() public rank: number;
 
     constructor(private jsPlumbService: JsPlumbService,
+                private modelService: ModelService,
                 private broadcastService: BroadcastService) {
     }
 
     public ngAfterViewInit() {
+        this.jsPlumbService.initJsPlumbInstance(this.node.parentId);
         this.jsPlumbService.initNode(this.node);
 
-        if (this.node.canHaveChildren()) {
+        if (this.canHaveChildren()) {
             this.jsPlumbService.nodeDroppable(this.node, this.rank);
-            this.jsPlumbService.initJsPlumbInstance(this.node.id);
-            this.jsPlumbService.connectNode(this.node.children);
+            this.jsPlumbService.connectChildrenNodes(this.node.id);
         }
+        if (this.last && this.node.parentId === this.modelService.rootNodeId) {
+            this.jsPlumbService.connectChildrenNodes(this.modelService.rootNodeId);
+        }
+    }
+
+    public canHaveChildren(): boolean {
+        return this.node.type === 'subProcess';
     }
 
     public onMouseOut(event, target) {
@@ -58,7 +70,7 @@ export class WmNodeComponent implements AfterViewInit {
     }
 
     public getDisplayName(): string {
-        if (this.node.type === 'RestTask' || this.node.type === 'ToscaNodeManagementTask') {
+        if (this.node.type === 'restTask' || this.node.type === 'toscaNodeManagementTask') {
             return this.node.name;
         } else {
             return '     ';

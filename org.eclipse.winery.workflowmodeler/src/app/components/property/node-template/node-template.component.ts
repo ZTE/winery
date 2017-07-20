@@ -11,8 +11,10 @@
  */
 import { AfterViewInit, Component, Input  } from '@angular/core';
 import { Subscription } from '../../../../../node_modules/rxjs/Subscription.d';
-import {Operation} from '../../../model/operation';
-import { WorkflowNode } from '../../../model/workflow.node';
+
+import { NodeTemplate } from '../../../model/node-template';
+import { Operation } from '../../../model/operation';
+import { ToscaNodeTask } from '../../../model/workflow/tosca-node-task';
 import { BroadcastService } from '../../../services/broadcast.service';
 import { WineryService } from '../../../services/winery.service';
 
@@ -25,14 +27,12 @@ import { WineryService } from '../../../services/winery.service';
     templateUrl: 'node-template.component.html',
 })
 export class WmNodeTemplateComponent implements AfterViewInit {
-    @Input()
-    public node: WorkflowNode;
-    private nodeTemplates: any[] = [];
+    @Input() public node: ToscaNodeTask;
     private nodeInterfaces: any[] = [];
     private nodeOperations: any[] = [];
+    private nodeTemplates: NodeTemplate[] = [];
 
-    constructor(private broadcastService: BroadcastService,
-                private wineryService: WineryService) {
+    constructor(private wineryService: WineryService) {
     }
 
     public ngAfterViewInit() {
@@ -44,17 +44,16 @@ export class WmNodeTemplateComponent implements AfterViewInit {
     }
 
     public nodeTemplateChanged() {
-        this.node.nodeTemplate = this.node.template.id;
         this.setTemplateNamespace();
 
-        this.node.template.interface = '';
+        this.node.template.nodeInterface = '';
         this.nodeInterfaceChanged();
 
         this.loadInterfaces();
     }
 
     public nodeInterfaceChanged() {
-        this.node.nodeInterface = this.node.template.interface;
+
         this.node.template.operation = '';
         this.nodeOperationChanged();
 
@@ -62,17 +61,10 @@ export class WmNodeTemplateComponent implements AfterViewInit {
     }
 
     public nodeOperationChanged() {
-        this.node.nodeOperation = this.node.template.operation;
         this.node.input = [];
         this.node.output = [];
 
-        this.notifyTaskChanged();
-
         this.loadParameters();
-    }
-
-    private notifyTaskChanged() {
-        this.broadcastService.broadcast(this.broadcastService.nodeTaskChange, null);
     }
 
     private setTemplateNamespace() {
@@ -94,12 +86,12 @@ export class WmNodeTemplateComponent implements AfterViewInit {
     }
 
     private loadOperations() {
-        if (this.node.template.interface) {
+        if (this.node.template.nodeInterface) {
             this.nodeOperations = [];
             this.wineryService.loadNodeTemplateOperations(
                 this.node.template.namespace,
                 this.node.template.type,
-                this.node.template.interface)
+                this.node.template.nodeInterface)
                 .subscribe(operations =>
                     operations.forEach(operation => this.nodeOperations.push(new Operation(operation))));
         }
@@ -107,13 +99,12 @@ export class WmNodeTemplateComponent implements AfterViewInit {
 
     private loadParameters() {
         if (this.node.template.operation) {
-            const template = this.node.template;
             this.wineryService
                 .loadNodeTemplateOperationParameter(
-                    template.namespace,
-                    template.type,
-                    template.interface,
-                    template.operation)
+                    this.node.template.namespace,
+                    this.node.template.type,
+                    this.node.template.nodeInterface,
+                    this.node.template.operation)
                 .then(params => {
                     this.node.input = [];
                     this.node.output = [];
@@ -129,7 +120,6 @@ export class WmNodeTemplateComponent implements AfterViewInit {
                         type: 'string',
                         value: '',
                     }));
-                    this.notifyTaskChanged();
                 });
         }
     }

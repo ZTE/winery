@@ -11,7 +11,8 @@
  */
 
 import { AfterViewInit, Component, ViewChild } from '@angular/core';
-import { WorkflowNodeType } from '../../model/workflow.node';
+
+import { WorkflowNodeType } from '../../model/workflow/workflow-node-type';
 import { JsPlumbService } from '../../services/jsplumb.service';
 import { ModelService } from '../../services/model.service';
 import { WmRestConfigComponent } from './rest-config/rest-config.component';
@@ -27,7 +28,6 @@ import { WmRestConfigComponent } from './rest-config/rest-config.component';
 })
 export class WmToolbarComponent implements AfterViewInit {
     public nodeTypes = WorkflowNodeType;
-
     @ViewChild(WmRestConfigComponent) public restConfigComponent: WmRestConfigComponent;
 
     constructor(private jsPlumbService: JsPlumbService,

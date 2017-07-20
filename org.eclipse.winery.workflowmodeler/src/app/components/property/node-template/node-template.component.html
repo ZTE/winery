@@ -25,8 +25,8 @@
 <div class="form-group row">
     <label class="col-md-3 form-control-label text-md-right">Interface</label>
     <div class="col-md-9">
-        <select class="form-control" [ngModel]="node.template.interface"
-                (ngModelChange)="node.template.interface=$event; nodeInterfaceChanged();">
+        <select class="form-control" [ngModel]="node.template.nodeInterface"
+                (ngModelChange)="node.template.nodeInterface=$event; nodeInterfaceChanged();">
             <option *ngFor="let interface of nodeInterfaces" value="{{interface}}">{{interface}}</option>
         </select>
     </div>

@@ -13,7 +13,8 @@
 import { AfterViewInit, Component } from '@angular/core';
 import { TreeNode } from 'primeng/primeng';
 
-import { WorkflowNodeType } from '../../model/workflow.node';
+import { WorkflowNode } from '../../model/workflow/workflow-node';
+import { WorkflowNodeType } from '../../model/workflow/workflow-node-type';
 import { BroadcastService } from '../../services/broadcast.service';
 import { JsPlumbService } from '../../services/jsplumb.service';
 import { ModelService } from '../../services/model.service';
@@ -29,8 +30,8 @@ import { ModelService } from '../../services/model.service';
     templateUrl: 'properties.component.html',
 })
 export class WmPropertiesComponent implements AfterViewInit {
-    public node: any;
-    private nodeTypes: string[] = WorkflowNodeType;
+    public node: WorkflowNode;
+    public nodeTypes: string[] = WorkflowNodeType;
     public show = false;
     public titleEditing = false;
 
@@ -47,14 +48,14 @@ export class WmPropertiesComponent implements AfterViewInit {
 
     public nodeNameChanged() {
         this.titleEditing = !this.titleEditing;
-        this.jsPlumbService.getJsplumbInstance(this.node.id).repaintEverything();
+        this.jsPlumbService.jsplumbInstanceMap.get(this.node.parentId).repaintEverything();
     }
 
     public deleteNode() {
         this.show = false;
 
         const parentId = this.jsPlumbService.getParentNodeId(this.node.id);
-        this.jsPlumbService.remove(this.node.id);
+        this.jsPlumbService.remove(this.node);
         this.modelService.deleteNode(parentId, this.node.id);
     }
 }

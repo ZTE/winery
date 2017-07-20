@@ -32,7 +32,8 @@ export class ResizableDirective implements AfterViewInit {
                 this.planModelService.updatePosition(element.id,
                     element.offsetLeft, element.offsetTop, element.offsetWidth, element.offsetHeight);
                 this.jsPlumbService.resizeParent(element, element.parentNode);
-                this.jsPlumbService.getJsplumbInstance(element.id).revalidate(element.id);
+                const node = this.planModelService.getNodeMap().get(element.id);
+                this.jsPlumbService.jsplumbInstanceMap.get(node.parentId).revalidate(element.id);
             },
         });
     }

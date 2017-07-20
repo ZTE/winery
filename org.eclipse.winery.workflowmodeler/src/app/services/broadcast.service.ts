@@ -15,7 +15,7 @@ import { Subject } from 'rxjs/Subject';
 import { Operation } from '../model/operation';
 import { PlanModel } from '../model/plan-model';
 import { Swagger } from '../model/swagger';
-import { WorkflowNode } from '../model/workflow.node';
+import { WorkflowNode } from '../model/workflow/workflow-node';
 
 /**
  * BroadcastService

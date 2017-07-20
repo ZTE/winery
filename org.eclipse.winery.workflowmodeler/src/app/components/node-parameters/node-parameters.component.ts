@@ -14,6 +14,7 @@ import { AfterViewInit, Component, EventEmitter, Input, Output } from '@angular/
 import { TreeNode } from 'primeng/primeng';
 
 import { Swagger } from '../../model/swagger';
+import { RestTask } from '../../model/workflow/rest-task';
 import { BroadcastService } from '../../services/broadcast.service';
 import { RestService } from '../../services/rest.service';
 import { SwaggerTreeConverterService } from '../../services/swagger-tree-converter.service';
@@ -29,13 +30,13 @@ import { SwaggerTreeConverterService } from '../../services/swagger-tree-convert
     templateUrl: 'node-parameters.component.html',
 })
 export class WmNodeParametersComponent implements AfterViewInit {
-    @Input() public task: any;
-    private index = 1;
+    @Input() public task: RestTask;
 
     public inputParams: TreeNode[] = [];
     public outputParams: TreeNode[] = [];
     public pathParams: any[] = [];
 
+    private index = 1;
     private queryParams: any[] = [];
 
     constructor(private broadcastService: BroadcastService,
@@ -44,7 +45,6 @@ export class WmNodeParametersComponent implements AfterViewInit {
     }
 
     public ngAfterViewInit() {
-
         this.broadcastService.nodeTaskChange$.subscribe(() => {
             this.resetRequestParams();
             this.resetResponseParams();
@@ -56,14 +56,14 @@ export class WmNodeParametersComponent implements AfterViewInit {
         this.queryParams = [];
         this.inputParams = [];
 
-        this.task.input.forEach(param => {
+        this.task.parameters.forEach(param => {
             if (param.position === 'path') {
                 this.pathParams.push(param);
             } else if (param.position === 'query') {
                 this.queryParams.push(param);
             } else if (param.position === 'body') {
                 const requestTreeNode = this.swaggerTreeConverterService
-                    .schema2TreeNode('Request Param', this.task.nodeTemplate, param.schema);
+                    .schema2TreeNode('Request Param', this.task.swagger, param.schema);
                 this.inputParams.push(requestTreeNode);
             } else {
                 // TODO others param types not supported
@@ -73,9 +73,9 @@ export class WmNodeParametersComponent implements AfterViewInit {
 
     public resetResponseParams() {
         this.outputParams = [];
-        if (this.task.nodeOperation && this.task.output[0] && this.task.output[0].schema) {
+        if (this.task.method && this.task.responses[0] && this.task.responses[0].schema) {
             const treeNode = this.swaggerTreeConverterService
-                .schema2TreeNode('Response Params', this.task.nodeTemplate, this.task.output[0].schema);
+                .schema2TreeNode('Response Params', this.task.swagger, this.task.responses[0].schema);
             this.outputParams.push(treeNode);
         }
     }
