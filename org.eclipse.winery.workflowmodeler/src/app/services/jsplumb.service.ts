@@ -359,7 +359,7 @@ export class JsPlumbService {
     }
 
     private translateChildren(parentElment, excludeElement, left: number, top: number) {
-        for (let i = 0, len = parentElment.children.length; i < len; i++) {
+        for (const i = 0, len = parentElment.children.length; i < len; i++) {
             const childElment = parentElment.children[i];
             if (childElment.localName === 'b4t-node') {
                 this.translateElement(childElment.children[0], left, top, 0, 0);

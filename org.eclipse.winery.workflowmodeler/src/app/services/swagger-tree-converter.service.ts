@@ -10,9 +10,10 @@
  *     ZTE - initial API and implementation and/or initial documentation
  *******************************************************************************/
 
-import {Injectable} from '@angular/core';
-import {TreeNode} from 'primeng/primeng';
-import {RestService} from './rest.service';
+import { Injectable } from '@angular/core';
+import { TreeNode } from 'primeng/primeng';
+import { ApdsUtil } from '../util/apds-util';
+import { RestService } from './rest.service';
 
 @Injectable()
 export class SwaggerTreeConverterService {
@@ -39,7 +40,7 @@ export class SwaggerTreeConverterService {
         const swagger = this.restService.getSwaggerInfo(this.swaggerUrl);
         const swaggerDefinition = this.restService.getDefinition(swagger, schema.$ref);
 
-        const definitionCopy = this.restService.deepClone(swaggerDefinition);
+        const definitionCopy = ApdsUtil.DeepClone(swaggerDefinition);
 
         this.setInitValue4Param(schema.value, definitionCopy);
         if (schema.value !== definitionCopy.value) {
@@ -96,7 +97,7 @@ export class SwaggerTreeConverterService {
 
     private setChildrenForArray(node: any, param: any) {
         param.value.forEach((itemValue, index) => {
-            const itemCopy = this.restService.deepClone(param.items);
+            const itemCopy = ApdsUtil.DeepClone(param.items);
             itemCopy.value = itemValue;
             node.children.push(this.schema2TreeNode(index, this.swaggerUrl, itemCopy));
         });
@@ -131,7 +132,7 @@ export class SwaggerTreeConverterService {
     private getPropertyFromMapOrDictionary(mapOrDictionary: any, additionalProperties: any): TreeNode[] {
         const treeNodes: TreeNode[] = [];
         for (const key in mapOrDictionary) {
-            const propertyCopy = this.restService.deepClone(additionalProperties);
+            const propertyCopy = ApdsUtil.DeepClone(additionalProperties);
             propertyCopy.value = mapOrDictionary[key];
 
             const treeNode = this.schema2TreeNode(key, this.swaggerUrl, propertyCopy);

@@ -97,22 +97,4 @@ export class RestService {
         return swagger.definitions[definitionName];
     }
 
-    public deepClone(source: any) {
-        if (source === null || typeof source !== 'object') {
-            return source;
-        } else {
-            if (source instanceof Array) {
-                const target = [];
-                source.forEach(item => target.push(this.deepClone(item)));
-                return target;
-            } else {
-                const target = {};
-                for (const key in source) {
-                    target[key] = this.deepClone(source[key]);
-                }
-                return target;
-            }
-        }
-    }
-
 }
