@@ -16,7 +16,7 @@ import { TreeNode } from 'primeng/primeng';
 import { RestTask } from '../../../model/workflow/rest-task';
 import { RestService } from '../../../services/rest.service';
 import { SwaggerTreeConverterService } from '../../../services/swagger-tree-converter.service';
-import { ApdsUtil } from '../../../util/apds-util';
+import { WorkflowUtil } from '../../../util/workflow-util';
 
 /**
  * parameter tree presents parameter of task node's input and output parameters.
@@ -37,7 +37,7 @@ export class WmParameterTreeComponent {
     }
 
     public addChildNode4DynamicObject(node: any) {
-        const copyItem = ApdsUtil.DeepClone(node.parameter.additionalProperties);
+        const copyItem = WorkflowUtil.deepClone(node.parameter.additionalProperties);
         const key = Object.keys(node.parameter.value).length;
         const childrenNode = this.swaggerTreeConverterService
             .schema2TreeNode(key, this.task.swagger, copyItem);
@@ -57,7 +57,7 @@ export class WmParameterTreeComponent {
     }
 
     public addChildNode4ObjectArray(node: any) {
-        const copyItem = ApdsUtil.DeepClone(node.parameter.items);
+        const copyItem = WorkflowUtil.deepClone(node.parameter.items);
         const childrenNode = this.swaggerTreeConverterService
             .schema2TreeNode(
                 node.children.length,

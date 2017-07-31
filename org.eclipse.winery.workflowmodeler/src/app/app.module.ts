@@ -18,14 +18,15 @@ import { AlertModule, ModalModule } from 'ngx-bootstrap/index';
 import { AppComponent } from './app.component';
 import { WmContainerComponent } from './components/container/container.component';
 import { WmEditablePropertyComponent } from './components/editable-property/editable-property.component';
+import { CustomParameterComponent } from './components/node-parameters/custom-parameter/custom-parameter.component';
 import { WmNodeParametersComponent } from './components/node-parameters/node-parameters.component';
 import { WmParameterTreeComponent } from './components/node-parameters/parameter-tree/parameter-tree.component';
 import { WmNodeComponent } from './components/node/node.component';
-import { CustomParameterComponent } from './components/node-parameters/custom-parameter/custom-parameter.component';
 import { WmParameterComponent } from './components/parameter/parameter.component';
 import { WmNodeTemplateComponent } from './components/property/node-template/node-template.component';
 import { WmPropertiesComponent } from './components/property/properties.component';
 import { WmRestTaskComponent } from './components/property/rest-task/rest-task.component';
+import { StartEventParametersComponent } from './components/property/start-event-parameters/start-event-parameters.component';
 import { WmSequenceFlowComponent } from './components/sequence-flow/sequence-flow.component';
 import { WmRestConfigDetailComponent } from './components/toolbar/rest-config/rest-config-detail/rest-config-detail.component';
 import { WmRestConfigListComponent } from './components/toolbar/rest-config/rest-config-list/rest-config-list.component';
@@ -49,6 +50,7 @@ import { HttpService } from './util/http.service';
     declarations: [
         AppComponent,
         WmContainerComponent,
+        CustomParameterComponent,
         WmEditablePropertyComponent,
         WmNodeComponent,
         WmNodeParametersComponent,
@@ -59,11 +61,11 @@ import { HttpService } from './util/http.service';
         WmRestConfigComponent,
         WmRestTaskComponent,
         WmSequenceFlowComponent,
+        StartEventParametersComponent,
         WmToolbarComponent,
         WmRestConfigDetailComponent,
         WmRestConfigListComponent,
         ResizableDirective,
-        CustomParameterComponent,
     ],
     providers: [
         BroadcastService,
