@@ -10,17 +10,14 @@
  *     ZTE - initial API and implementation and/or initial documentation
  */
 
-import { AfterViewInit, Component, ViewChild } from '@angular/core';
+import { AfterViewInit, Component } from '@angular/core';
 import { TreeNode } from 'primeng/primeng';
 
-import { CustomParameterComponent } from '../node-parameters/custom-parameter/custom-parameter.component';
-import { Parameter } from '../../model/workflow/parameter';
 import { WorkflowNode } from '../../model/workflow/workflow-node';
 import { WorkflowNodeType } from '../../model/workflow/workflow-node-type';
 import { BroadcastService } from '../../services/broadcast.service';
 import { JsPlumbService } from '../../services/jsplumb.service';
 import { ModelService } from '../../services/model.service';
-import { StartEvent } from '../../model/workflow/start-event';
 
 /**
  * property component presents information of a workflow node.
@@ -33,29 +30,20 @@ import { StartEvent } from '../../model/workflow/start-event';
     templateUrl: 'properties.component.html',
 })
 export class WmPropertiesComponent implements AfterViewInit {
-    @ViewChild('customParameterComponent') public customParameterComponent: CustomParameterComponent;
     public node: WorkflowNode;
     public nodeTypes: string[] = WorkflowNodeType;
-    public customParams: Parameter[] = [];
     public show = false;
     public titleEditing = false;
 
     constructor(private broadcastService: BroadcastService,
-        private modelService: ModelService,
-        private jsPlumbService: JsPlumbService) {
+                private modelService: ModelService,
+                private jsPlumbService: JsPlumbService) {
 
     }
 
     public ngAfterViewInit() {
         this.broadcastService.showProperty$.subscribe(show => this.show = show);
-        this.broadcastService.nodeProperty$.subscribe(node => {
-            this.node = node;
-            if ('startEvent' === node.type) {
-                this.customParams = (node as StartEvent).customParams;
-            } else {
-                this.customParams = [];
-            }
-        });
+        this.broadcastService.nodeProperty$.subscribe(node => this.node = node);
     }
 
     public nodeNameChanged() {
@@ -69,10 +57,5 @@ export class WmPropertiesComponent implements AfterViewInit {
         const parentId = this.jsPlumbService.getParentNodeId(this.node.id);
         this.jsPlumbService.remove(this.node);
         this.modelService.deleteNode(parentId, this.node.id);
-    }
-
-    public updateParams(parameters: Parameter[]): void {
-        this.customParams = parameters;
-        (this.node as StartEvent).customParams = this.customParams;
     }
 }

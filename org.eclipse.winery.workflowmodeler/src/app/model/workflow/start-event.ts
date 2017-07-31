@@ -13,5 +13,5 @@ import { Parameter } from './parameter';
 import { WorkflowNode } from './workflow-node';
 
 export class StartEvent extends WorkflowNode {
-    public customParams: Parameter[] = [];
+    public parameters: Parameter[] = [];
 }

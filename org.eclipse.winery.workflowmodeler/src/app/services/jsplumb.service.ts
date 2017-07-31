@@ -13,6 +13,7 @@
 import { Injectable } from '@angular/core';
 import * as jsp from 'jsplumb';
 
+import { Subscription } from 'rxjs/Subscription';
 import { WorkflowNode } from '../model/workflow/workflow-node';
 import { BroadcastService } from './broadcast.service';
 import { ModelService } from './model.service';
@@ -24,22 +25,31 @@ import { ModelService } from './model.service';
 @Injectable()
 export class JsPlumbService {
     public jsplumbInstanceMap = new Map<string, any>();
+    public subscriptionMap = new Map<string, Subscription>();
 
     private padding = 20;
     private rootClass = 'canvas';
 
-    constructor(private modelService: ModelService) {
+    constructor(private modelService: ModelService, private broadcastService: BroadcastService) {
     }
 
     public connectChildrenNodes(parentNodeId: string) {
-        const nodes: WorkflowNode[] = this.modelService.getChildrenNodes(parentNodeId);
+        const jsplumbInstance = this.jsplumbInstanceMap.get(parentNodeId);
 
-        if (nodes && (nodes.length > 0)) {
-            const jsplumbInstance = this.jsplumbInstanceMap.get(parentNodeId);
-            nodes.forEach(node =>
-                node.connection.forEach(target =>
-                    jsplumbInstance.connect({ source: node.id, target })));
-        }
+        const nodes: WorkflowNode[] = this.modelService.getChildrenNodes(parentNodeId);
+        nodes.forEach(node => this.connect4OneNode(node, jsplumbInstance));
+    }
+
+    public connect4OneNode(node: WorkflowNode, jsplumbInstance: any) {
+        node.connection.forEach(sequenceFlow => {
+            const connection = jsplumbInstance.connect({
+                source: sequenceFlow.sourceRef,
+                target: sequenceFlow.targetRef,
+            });
+            if (sequenceFlow.condition) {
+                connection.setLabel(sequenceFlow.condition);
+            }
+        });
     }
 
     public initJsPlumbInstance(id: string) {
@@ -75,14 +85,54 @@ export class JsPlumbService {
         // add connection to model data while a new connection is build
         jsplumbInstance.bind('connection', info => {
             this.modelService.addConnection(info.connection.sourceId, info.connection.targetId);
+            const sequenceFlowSubscription = this.broadcastService.currentSequenceFlow$.subscribe(currentSequenceFlow => {
+                if (currentSequenceFlow.sourceRef === info.connection.sourceId
+                    && currentSequenceFlow.targetRef === info.connection.targetId) {
+                    info.connection.setPaintStyle({ stroke: 'red' });
+                } else {
+                    info.connection.setPaintStyle({ stroke: 'black' });
+                }
+            });
+            const pre = info.connection.sourceId + info.connection.targetId;
+            this.subscriptionMap.set(pre + 'sequenceFlowSubscription', sequenceFlowSubscription);
+            const typeSubscription = this.broadcastService.currentType$.subscribe(type => {
+                if (type === 'WorkflowNode') {
+                    info.connection.setPaintStyle({ stroke: 'black' });
+                }
+            });
+            this.subscriptionMap.set(pre + 'typeSubscription', typeSubscription);
 
             info.connection.bind('click', connection => {
-                this.modelService.deleteConnection(connection.sourceId, connection.targetId);
-                jsplumbInstance.select({ connections: [connection] }).delete();
+                const sequenceFlow = this.modelService.getSequenceFlow(connection.sourceId, connection.targetId);
+                this.broadcastService.broadcast(this.broadcastService.currentSequenceFlow, sequenceFlow);
+                this.broadcastService.broadcast(this.broadcastService.currentType, 'SequenceFlow');
+            });
+
+            info.connection.bind('dblclick', connection => {
+                const sequenceFlow = this.modelService.getSequenceFlow(connection.sourceId, connection.targetId);
+                this.broadcastService.broadcast(this.broadcastService.sequenceFlow, sequenceFlow);
+                this.broadcastService.broadcast(this.broadcastService.showSequenceFlow, true);
             });
         });
 
         this.jsplumbInstanceMap.set(id, jsplumbInstance);
+    }
+
+    public deleteConnect(sourceId: string, targetId: string) {
+        const sourceNode = this.modelService.getNodeMap().get(sourceId);
+        const jsplumbInstance = this.jsplumbInstanceMap.get(sourceNode.parentId);
+        const connections = jsplumbInstance.select({ source: sourceId, target: targetId });
+        const pre = sourceId + targetId;
+        this.subscriptionMap.get(pre + 'sequenceFlowSubscription').unsubscribe();
+        this.subscriptionMap.get(pre + 'typeSubscription').unsubscribe();
+        connections.delete();
+    }
+
+    public setLabel(sourceId: string, targetId: string, label: string) {
+        const sourceNode = this.modelService.getNodeMap().get(sourceId);
+        const jsplumbInstance = this.jsplumbInstanceMap.get(sourceNode.parentId);
+        const connections = jsplumbInstance.select({ source: sourceId, target: targetId });
+        connections.setLabel(label);
     }
 
     public getParentNodeId(id: string): string {
@@ -359,7 +409,8 @@ export class JsPlumbService {
     }
 
     private translateChildren(parentElment, excludeElement, left: number, top: number) {
-        for (const i = 0, len = parentElment.children.length; i < len; i++) {
+        const len = parentElment.children.length;
+        for (let i = 0; i < len; i++) {
             const childElment = parentElment.children[i];
             if (childElment.localName === 'b4t-node') {
                 this.translateElement(childElment.children[0], left, top, 0, 0);

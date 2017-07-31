@@ -1,4 +1,5 @@
 import {Position} from './position';
+import {SequenceFlow} from './sequence-flow';
 /**
  * Copyright (c) 2017 ZTE Corporation.
  * All rights reserved. This program and the accompanying materials
@@ -12,7 +13,7 @@ import {Position} from './position';
  */
 
 export class WorkflowNode {
-    public connection: string[] = [];
+    public connection: SequenceFlow[] = [];
     public id: string;
     public name: string;
     public parentId: string;

@@ -18,7 +18,7 @@ import { BroadcastService } from '../../../services/broadcast.service';
 import { NotifyService } from '../../../services/notify.service';
 import { RestService } from '../../../services/rest.service';
 import { WineryService } from '../../../services/winery.service';
-import { ApdsUtil } from '../../../util/apds-util';
+import { WorkflowUtil } from '../../../util/workflow-util';
 
 @Component({
     selector: 'b4t-rest-task',
@@ -105,14 +105,14 @@ export class WmRestTaskComponent implements AfterViewInit {
             const path: any = this.swagger.paths[this.node.url];
             const method: SwaggerMethod = path[this.node.method];
 
-            this.node.consumes = ApdsUtil.DeepClone(method.consumes);
-            this.node.produces = ApdsUtil.DeepClone(method.produces);
+            this.node.consumes = WorkflowUtil.deepClone(method.consumes);
+            this.node.produces = WorkflowUtil.deepClone(method.produces);
 
-            this.node.parameters = method.parameters.map(param => ApdsUtil.DeepClone(param));
+            this.node.parameters = method.parameters.map(param => WorkflowUtil.deepClone(param));
 
             const responseParams = this.restService.getResponseParameters(
                 this.swagger, this.node.url, this.node.method);
-            this.node.responses = responseParams.map(param => ApdsUtil.DeepClone(param));
+            this.node.responses = responseParams.map(param => WorkflowUtil.deepClone(param));
 
             this.notifyTaskChanged();
         }

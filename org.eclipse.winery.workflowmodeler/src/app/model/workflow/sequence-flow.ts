@@ -9,7 +9,10 @@
  * Contributors:
  *     ZTE - initial API and implementation and/or initial documentation
  */
-.errorInfo {
-    font-size: 0.5rem;
-    color: red;
+
+export class SequenceFlow {
+    public condition = '';
+    public name: string;
+    public sourceRef: string;
+    public targetRef: string;
 }

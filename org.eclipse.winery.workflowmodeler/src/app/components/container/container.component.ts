@@ -10,8 +10,10 @@
  *     ZTE - initial API and implementation and/or initial documentation
  */
 
-import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, HostListener, OnInit } from '@angular/core';
 
+import { SequenceFlow } from '../../model/workflow/sequence-flow';
+import { WorkflowNode } from '../../model/workflow/workflow-node';
 import { BroadcastService } from '../../services/broadcast.service';
 import { JsPlumbService } from '../../services/jsplumb.service';
 import { ModelService } from '../../services/model.service';
@@ -26,10 +28,26 @@ import { ModelService } from '../../services/model.service';
     templateUrl: 'container.component.html',
 })
 export class WmContainerComponent implements AfterViewInit, OnInit {
+    public currentWorkflowNode: WorkflowNode;
+    public currentSequenceFlow: SequenceFlow;
+    public currentType: string;
 
     constructor(private broadcastService: BroadcastService,
                 private jsPlumbService: JsPlumbService,
                 private modelService: ModelService) {
+    }
+
+    @HostListener('window:keyup.delete', ['$event']) ondelete(event: KeyboardEvent) {
+        if (this.currentType === 'WorkflowNode') {
+            console.log(`delete node ${this.currentWorkflowNode.id}`);
+            const parentId = this.jsPlumbService.getParentNodeId(this.currentWorkflowNode.id);
+            this.jsPlumbService.remove(this.currentWorkflowNode);
+            this.modelService.deleteNode(parentId, this.currentWorkflowNode.id);
+        } else if (this.currentType === 'SequenceFlow') {
+            console.log(`delete SequenceFlow ${this.currentSequenceFlow.sourceRef} ${this.currentSequenceFlow.targetRef}`);
+            this.modelService.deleteConnection(this.currentSequenceFlow.sourceRef, this.currentSequenceFlow.targetRef);
+            this.jsPlumbService.deleteConnect(this.currentSequenceFlow.sourceRef, this.currentSequenceFlow.targetRef);
+        }
     }
 
     public ngOnInit() {
@@ -39,9 +57,13 @@ export class WmContainerComponent implements AfterViewInit, OnInit {
     public ngAfterViewInit() {
         this.jsPlumbService.buttonDroppable();
         this.jsPlumbService.canvasDroppable();
+        this.broadcastService.currentSequenceFlow$.subscribe(sequenceFlow => this.currentSequenceFlow = sequenceFlow);
+        this.broadcastService.currentWorkflowNode$.subscribe(workflowNode => this.currentWorkflowNode = workflowNode);
+        this.broadcastService.currentType$.subscribe(type => this.currentType = type);
     }
 
     public canvasClick() {
         this.broadcastService.broadcast(this.broadcastService.showProperty, false);
+        this.broadcastService.broadcast(this.broadcastService.showSequenceFlow, false);
     }
 }

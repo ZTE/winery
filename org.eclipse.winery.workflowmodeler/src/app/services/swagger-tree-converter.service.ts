@@ -12,7 +12,7 @@
 
 import { Injectable } from '@angular/core';
 import { TreeNode } from 'primeng/primeng';
-import { ApdsUtil } from '../util/apds-util';
+import { WorkflowUtil } from '../util/workflow-util';
 import { RestService } from './rest.service';
 
 @Injectable()
@@ -40,7 +40,7 @@ export class SwaggerTreeConverterService {
         const swagger = this.restService.getSwaggerInfo(this.swaggerUrl);
         const swaggerDefinition = this.restService.getDefinition(swagger, schema.$ref);
 
-        const definitionCopy = ApdsUtil.DeepClone(swaggerDefinition);
+        const definitionCopy = WorkflowUtil.deepClone(swaggerDefinition);
 
         this.setInitValue4Param(schema.value, definitionCopy);
         if (schema.value !== definitionCopy.value) {
@@ -97,7 +97,7 @@ export class SwaggerTreeConverterService {
 
     private setChildrenForArray(node: any, param: any) {
         param.value.forEach((itemValue, index) => {
-            const itemCopy = ApdsUtil.DeepClone(param.items);
+            const itemCopy = WorkflowUtil.deepClone(param.items);
             itemCopy.value = itemValue;
             node.children.push(this.schema2TreeNode(index, this.swaggerUrl, itemCopy));
         });
@@ -132,7 +132,7 @@ export class SwaggerTreeConverterService {
     private getPropertyFromMapOrDictionary(mapOrDictionary: any, additionalProperties: any): TreeNode[] {
         const treeNodes: TreeNode[] = [];
         for (const key in mapOrDictionary) {
-            const propertyCopy = ApdsUtil.DeepClone(additionalProperties);
+            const propertyCopy = WorkflowUtil.deepClone(additionalProperties);
             propertyCopy.value = mapOrDictionary[key];
 
             const treeNode = this.schema2TreeNode(key, this.swaggerUrl, propertyCopy);

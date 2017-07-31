@@ -15,6 +15,7 @@ import { isNullOrUndefined } from 'util';
 import { PlanModel } from '../model/plan-model';
 import { Position } from '../model/workflow/position';
 import { RestTask } from '../model/workflow/rest-task';
+import { SequenceFlow } from '../model/workflow/sequence-flow';
 import { StartEvent } from '../model/workflow/start-event';
 import { SubProcess } from '../model/workflow/sub-process';
 import { ToscaNodeTask } from '../model/workflow/tosca-node-task';
@@ -54,6 +55,16 @@ export class ModelService {
 
     public getNodes(): WorkflowNode[] {
         return this.planModel.nodes;
+    }
+
+    public getSequenceFlow(sourceRef: string, targetRef: string): SequenceFlow {
+        const node = this.getNodeMap().get(sourceRef);
+        if (node) {
+            const sequenceFlow = node.connection.find(tmp => tmp.targetRef === targetRef);
+            return sequenceFlow;
+        } else {
+            return null;
+        }
     }
 
     public addNode(name: string, type: string, left: number, top: number) {
@@ -169,8 +180,13 @@ export class ModelService {
     public addConnection(sourceId: string, targetId: string) {
         const node = this.getNodeMap().get(sourceId);
         if (node) {
-            if (!node.connection.includes(targetId)) {
-                node.connection.push(targetId);
+            const index = node.connection.findIndex(sequenceFlow => sequenceFlow.targetRef === targetId);
+            if (index === -1) {
+                const sequenceFlow = new SequenceFlow();
+                sequenceFlow.sourceRef = sourceId;
+                sequenceFlow.targetRef = targetId;
+
+                node.connection.push(sequenceFlow);
             }
         }
     }
@@ -178,7 +194,7 @@ export class ModelService {
     public deleteConnection(sourceId: string, targetId: string) {
         const node = this.getNodeMap().get(sourceId);
         if (node) {
-            const index = node.connection.findIndex(target => target === targetId);
+            const index = node.connection.findIndex(sequenceFlow => sequenceFlow.targetRef === targetId);
             if (index !== -1) {
                 node.connection.splice(index, 1);
             }
