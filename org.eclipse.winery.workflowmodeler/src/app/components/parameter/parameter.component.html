@@ -13,8 +13,17 @@
 -->
 
 <div class="form-group row">
-    <label class="col-md-3 form-control-label text-md-right">{{param.name}}</label>
-    <div class="col-md-9">
+    <label class="col-md-2 form-control-label text-md-right">{{param.name}}</label>
+    <div class="col-md-6">
         <input class="form-control" type="text" [(ngModel)]="param.value">
+    </div>
+    <div class="col-md-2">
+        <select class="form-control" type="text" [(ngModel)]="param.type">
+        </select>
+    </div>
+    <div class="col-md-2">
+        <button type="button" class="btn btn-danger pull-right" (click)="delete()">
+            <i class="fa fa-trash"></i>
+        </button>
     </div>
 </div>

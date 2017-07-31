@@ -12,6 +12,8 @@
 
 import {Component, Input } from '@angular/core';
 
+import { Parameter } from '../../model/workflow/parameter';
+
 /**
  * this component contains in property component if the corresponding node has parameter properties
  * eg. task node have input and output params, start event node has input param
@@ -23,5 +25,5 @@ import {Component, Input } from '@angular/core';
 })
 export class WmParameterComponent {
     @Input()
-    public param: any;
+    public param: Parameter;
 }

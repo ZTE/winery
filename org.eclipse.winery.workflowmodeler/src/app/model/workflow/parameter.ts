@@ -13,5 +13,7 @@
 export class Parameter {
     public name: string;
     public type: string;
+    public valueSource: string[];
     public value: string;
+    public canDelete: boolean = false;
 }
