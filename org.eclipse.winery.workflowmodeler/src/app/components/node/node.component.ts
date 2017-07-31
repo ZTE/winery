@@ -9,8 +9,9 @@
  * Contributors:
  *     ZTE - initial API and implementation and/or initial documentation
  */
-import { AfterViewInit, Component, Input } from '@angular/core';
+import { AfterViewInit, Component, Input, OnDestroy } from '@angular/core';
 
+import { Subscription } from 'rxjs/Subscription';
 import { SubProcess } from '../../model/workflow/sub-process';
 import { WorkflowNode } from '../../model/workflow/workflow-node';
 import { BroadcastService } from '../../services/broadcast.service';
@@ -26,10 +27,13 @@ import { ModelService } from '../../services/model.service';
     styleUrls: ['./node.component.css'],
     templateUrl: 'node.component.html',
 })
-export class WmNodeComponent implements AfterViewInit {
+export class WmNodeComponent implements AfterViewInit, OnDestroy {
     @Input() public last: boolean;
     @Input() public node: WorkflowNode;
     @Input() public rank: number;
+    public active = false;
+    private currentTypeSubscription: Subscription;
+    private currentWorkflowSubscription: Subscription;
 
     constructor(private jsPlumbService: JsPlumbService,
                 private modelService: ModelService,
@@ -47,6 +51,30 @@ export class WmNodeComponent implements AfterViewInit {
         if (this.last && this.node.parentId === this.modelService.rootNodeId) {
             this.jsPlumbService.connectChildrenNodes(this.modelService.rootNodeId);
         }
+
+        this.currentTypeSubscription = this.broadcastService.currentType$.subscribe(type => {
+            if (type === 'SequenceFlow') {
+                this.active = false;
+            }
+        });
+
+        this.currentWorkflowSubscription = this.broadcastService.currentWorkflowNode$.subscribe(activeNode => {
+            if (activeNode.id === this.node.id) {
+                this.active = true;
+            } else {
+                this.active = false;
+            }
+        });
+    }
+
+    public ngOnDestroy() {
+        this.currentTypeSubscription.unsubscribe();
+        this.currentWorkflowSubscription.unsubscribe();
+    }
+
+    public onSelected() {
+        this.broadcastService.broadcast(this.broadcastService.currentWorkflowNode, this.node);
+        this.broadcastService.broadcast(this.broadcastService.currentType, 'WorkflowNode');
     }
 
     public canHaveChildren(): boolean {
@@ -55,12 +83,12 @@ export class WmNodeComponent implements AfterViewInit {
 
     public onMouseOut(event, target) {
         event.stopPropagation();
-        target.classList.remove('active');
+        target.classList.remove('hover');
     }
 
     public onMouseOver(event, target) {
         event.stopPropagation();
-        target.classList.add('active');
+        target.classList.add('hover');
     }
 
     public showProperties(event) {

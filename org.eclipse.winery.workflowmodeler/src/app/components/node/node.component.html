@@ -16,7 +16,9 @@
      (mouseover)="onMouseOver($event, $event.target)"
      (mouseout)="onMouseOut($event, $event.target)"
      (dblclick)="showProperties($event)"
+     (click)="onSelected()"
      class="node {{node.type}}"
+     [class.active]="active"
      [style.top]="node.position.top + 'px'"
      [style.left]="node.position.left + 'px'"
      [style.width]="node.position.width + 'px'"
@@ -41,8 +43,12 @@
     </div>
 </div>
 
-<div *ngIf="!canHaveChildren()" (dblclick)="showProperties($event)" class="node {{node.type}}"
+<div *ngIf="!canHaveChildren()"
+     (click)="onSelected()"
+     (dblclick)="showProperties($event)"
+     class="node {{node.type}}"
      id="{{node.id}}"
+     [class.active]="active"
      [style.top]="node.position.top + 'px'"
      [style.left]="node.position.left + 'px'">
     <div class="name"

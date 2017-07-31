@@ -15,6 +15,7 @@ import { Subject } from 'rxjs/Subject';
 import { Operation } from '../model/operation';
 import { PlanModel } from '../model/plan-model';
 import { Swagger } from '../model/swagger';
+import { SequenceFlow } from '../model/workflow/sequence-flow';
 import { WorkflowNode } from '../model/workflow/workflow-node';
 
 /**
@@ -37,6 +38,18 @@ export class BroadcastService {
     public nodeProperty = new Subject<WorkflowNode>();
     public nodeProperty$ = this.nodeProperty.asObservable();
 
+    public showSequenceFlow = new Subject<boolean>();
+    public showSequenceFlow$ = this.showSequenceFlow.asObservable();
+
+    public sequenceFlow = new Subject<SequenceFlow>();
+    public sequenceFlow$ = this.sequenceFlow.asObservable();
+
+    public currentSequenceFlow = new Subject<SequenceFlow>();
+    public currentSequenceFlow$ = this.currentSequenceFlow.asObservable();
+    public currentWorkflowNode = new Subject<WorkflowNode>();
+    public currentWorkflowNode$ = this.currentWorkflowNode.asObservable();
+    public currentType = new Subject<string>();
+    public currentType$ = this.currentType.asObservable();
     /**
      * this should be used while the source of rest interfaces changed.
      * @type {Subject<>}

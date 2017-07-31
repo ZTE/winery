@@ -1,5 +1,3 @@
-import {Position} from './position';
-import {SequenceFlow} from './sequence-flow';
 /**
  * Copyright (c) 2017 ZTE Corporation.
  * All rights reserved. This program and the accompanying materials
@@ -12,11 +10,9 @@ import {SequenceFlow} from './sequence-flow';
  *     ZTE - initial API and implementation and/or initial documentation
  */
 
-export class WorkflowNode {
-    public connection: SequenceFlow[] = [];
-    public id: string;
+export class SequenceFlow {
+    public condition = '';
     public name: string;
-    public parentId: string;
-    public position: Position;
-    public type: string;
+    public sourceRef: string;
+    public targetRef: string;
 }
