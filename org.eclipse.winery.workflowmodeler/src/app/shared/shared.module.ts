@@ -11,7 +11,7 @@
  */
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { RouterModule } from '@angular/router';
 import { RadioButtonModule } from 'primeng/primeng';
@@ -20,6 +20,7 @@ import { TreeModule } from 'primeng/primeng';
 const module = [
     CommonModule,
     FormsModule,
+    ReactiveFormsModule,
     HttpModule,
     RouterModule,
     RadioButtonModule,

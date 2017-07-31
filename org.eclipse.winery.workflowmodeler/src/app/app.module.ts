@@ -21,6 +21,7 @@ import { WmEditablePropertyComponent } from './components/editable-property/edit
 import { WmNodeParametersComponent } from './components/node-parameters/node-parameters.component';
 import { WmParameterTreeComponent } from './components/node-parameters/parameter-tree/parameter-tree.component';
 import { WmNodeComponent } from './components/node/node.component';
+import { CustomParameterComponent } from './components/node-parameters/custom-parameter/custom-parameter.component';
 import { WmParameterComponent } from './components/parameter/parameter.component';
 import { WmNodeTemplateComponent } from './components/property/node-template/node-template.component';
 import { WmPropertiesComponent } from './components/property/properties.component';
@@ -61,8 +62,8 @@ import { HttpService } from './util/http.service';
         WmToolbarComponent,
         WmRestConfigDetailComponent,
         WmRestConfigListComponent,
-
         ResizableDirective,
+        CustomParameterComponent,
     ],
     providers: [
         BroadcastService,

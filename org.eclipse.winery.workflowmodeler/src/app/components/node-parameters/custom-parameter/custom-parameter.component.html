@@ -1,0 +1,41 @@
+<div class="modal fade" bsModal #customParameterModal="bs-modal" [config]="{backdrop: 'static'}" tabindex="-1" role="dialog"
+  aria-labelledby="mySmallModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">Custom Parameters Setting</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="close()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div *ngFor="let param of parameters; let i = index;" class="form-group row">
+          <label class="col-md-1 control-label">Name:</label>
+          <div class="col-md-4">
+            <input class="form-control" type="text" [(ngModel)]="param.name">
+              <label *ngIf="isEmpty(param.name)" class="errorInfo">Parameter name should not be NULL</label> 
+              <label *ngIf="hasSame(param)" class="errorInfo">Parameter name should not be the same</label>
+          </div>
+          <label class="col-md-1 control-label">Type:</label>
+          <div class="col-md-4">
+            <select class="form-control" [(ngModel)]="param.type">
+            <option *ngFor="let t of paramTypes" value="{{t}}">{{t}}</option>
+          </select>
+          </div>
+          <div class="col-md-2">
+            <button type="button" class="btn btn-danger pull-right" (click)="delete(i)">
+              <i class="fa fa-trash"></i>
+            </button>
+          </div>
+        </div>
+        <button type="button" class="btn btn-primary pull-right" (click)="create()">
+          <i class="fa fa-plus"></i>
+        </button>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" (click)="ok()">OK</button>
+        <button type="button" class="btn btn-danger" (click)="close()">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>

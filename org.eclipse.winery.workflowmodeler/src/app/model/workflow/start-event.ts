@@ -1,4 +1,3 @@
-import {WorkflowNode} from './workflow-node';
 /**
  * Copyright (c) 2017 ZTE Corporation.
  * All rights reserved. This program and the accompanying materials
@@ -10,6 +9,9 @@ import {WorkflowNode} from './workflow-node';
  * Contributors:
  *     ZTE - initial API and implementation and/or initial documentation
  */
+import { Parameter } from './parameter';
+import { WorkflowNode } from './workflow-node';
 
 export class StartEvent extends WorkflowNode {
+    public customParams: Parameter[] = [];
 }
