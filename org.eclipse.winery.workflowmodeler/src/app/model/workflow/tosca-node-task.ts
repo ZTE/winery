@@ -11,12 +11,15 @@
  */
 import { Parameter } from './parameter';
 import { RestParameter } from './rest-parameter';
-import { Template } from './template';
 import { WorkflowNode } from './workflow-node';
+import {NodeTemplate} from '../topology/node-template';
 
 export class ToscaNodeTask extends WorkflowNode {
     public input: Parameter[] = [];
     public output: Parameter[] = [];
 
-    public template: Template = new Template();
+    public nodeInterface: string;
+    public operation: string;
+
+    public template: NodeTemplate = new NodeTemplate();
 }

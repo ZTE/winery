@@ -12,7 +12,6 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs/Subject';
 
-import { Operation } from '../model/operation';
 import { PlanModel } from '../model/plan-model';
 import { Swagger } from '../model/swagger';
 import { SequenceFlow } from '../model/workflow/sequence-flow';
@@ -32,7 +31,7 @@ export class BroadcastService {
     public planModel = new Subject<PlanModel>();
     public planModel$ = this.planModel.asObservable();
 
-    public saveEvent = new Subject<string>();
+    public saveEvent = new Subject<PlanModel>();
     public saveEvent$ = this.saveEvent.asObservable();
 
     public nodeProperty = new Subject<WorkflowNode>();

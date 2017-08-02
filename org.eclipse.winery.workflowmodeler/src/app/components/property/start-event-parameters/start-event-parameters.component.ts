@@ -10,18 +10,10 @@
  *     ZTE - initial API and implementation and/or initial documentation
  *******************************************************************************/
 import { Component, Input, ViewChild } from '@angular/core';
-import { Subscription } from 'rxjs/Subscription';
 
-import { Swagger, SwaggerMethod, SwaggerParameter, SwaggerResponse } from '../../../model/swagger';
-import { Parameter } from '../../../model/workflow/parameter';
-import { RestTask } from '../../../model/workflow/rest-task';
 import { StartEvent } from '../../../model/workflow/start-event';
-import { BroadcastService } from '../../../services/broadcast.service';
-import { NotifyService } from '../../../services/notify.service';
-import { RestService } from '../../../services/rest.service';
-import { WineryService } from '../../../services/winery.service';
-import { WorkflowUtil } from '../../../util/workflow-util';
 import { CustomParameterComponent } from '../../node-parameters/custom-parameter/custom-parameter.component';
+import {Parameter} from '../../../model/workflow/parameter';
 
 @Component({
     selector: 'b4t-start-event-parameters',

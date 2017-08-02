@@ -41,7 +41,7 @@ import { ModelService } from './services/model.service';
 import { NotifyService } from './services/notify.service';
 import { RestService } from './services/rest.service';
 import { SwaggerTreeConverterService } from './services/swagger-tree-converter.service';
-import { WineryService } from './services/winery.service';
+import { DataService } from './services/data/data.service';
 
 import { SharedModule } from './shared/shared.module';
 import { HttpService } from './util/http.service';
@@ -75,7 +75,7 @@ import { HttpService } from './util/http.service';
         NotifyService,
         RestService,
         SwaggerTreeConverterService,
-        WineryService,
+        DataService,
     ],
     imports: [
         AlertModule.forRoot(),

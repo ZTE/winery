@@ -25,8 +25,8 @@
 <div class="form-group row">
     <label class="col-md-3 form-control-label text-md-right">Interface</label>
     <div class="col-md-9">
-        <select class="form-control" [ngModel]="node.template.nodeInterface"
-                (ngModelChange)="node.template.nodeInterface=$event; nodeInterfaceChanged();">
+        <select class="form-control" [ngModel]="node.nodeInterface"
+                (ngModelChange)="nodeInterfaceChanged($event);">
             <option *ngFor="let interface of nodeInterfaces" value="{{interface}}">{{interface}}</option>
         </select>
     </div>
@@ -35,9 +35,9 @@
 <div class="form-group row">
     <label class="col-md-3 form-control-label text-md-right">Operation</label>
     <div class="col-md-9">
-        <select class="form-control" [ngModel]="node.template.operation"
-                (ngModelChange)="node.template.operation=$event; nodeOperationChanged();">
-            <option *ngFor="let operation of nodeOperations" value="{{operation.name}}">{{operation.name}}</option>
+        <select class="form-control" [ngModel]="node.operation"
+                (ngModelChange)="nodeOperationChanged($event)">
+            <option *ngFor="let operation of nodeOperations" value="{{operation}}">{{operation}}</option>
         </select>
     </div>
 </div>

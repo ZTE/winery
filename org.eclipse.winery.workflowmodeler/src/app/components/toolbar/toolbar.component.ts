@@ -16,6 +16,7 @@ import { WorkflowNodeType } from '../../model/workflow/workflow-node-type';
 import { JsPlumbService } from '../../services/jsplumb.service';
 import { ModelService } from '../../services/model.service';
 import { WmRestConfigComponent } from './rest-config/rest-config.component';
+import {DataService} from '../../services/data/data.service';
 
 /**
  * toolbar component contains some basic operations(save) and all of the supported workflow nodes.
@@ -31,6 +32,7 @@ export class WmToolbarComponent implements AfterViewInit {
     @ViewChild(WmRestConfigComponent) public restConfigComponent: WmRestConfigComponent;
 
     constructor(private jsPlumbService: JsPlumbService,
+                private dataService: DataService,
                 private modelService: ModelService) {
     }
 
@@ -47,5 +49,11 @@ export class WmToolbarComponent implements AfterViewInit {
     }
 
     public test() {
+        this.dataService.service.loadNodeTemplates().subscribe(nodeTemplates => nodeTemplates.forEach(nodeTemplate => {
+            console.log(nodeTemplate);
+            this.dataService.service.loadTopologyProperties(nodeTemplate).subscribe(properties => {
+                console.log(properties);
+            });
+        }));
     }
 }
