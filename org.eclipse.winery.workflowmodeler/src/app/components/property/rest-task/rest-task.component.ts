@@ -18,6 +18,7 @@ import { BroadcastService } from '../../../services/broadcast.service';
 import { NotifyService } from '../../../services/notify.service';
 import { RestService } from '../../../services/rest.service';
 import { WorkflowUtil } from '../../../util/workflow-util';
+import {ValueSource} from '../../../model/value-source.enum';
 
 @Component({
     selector: 'b4t-rest-task',

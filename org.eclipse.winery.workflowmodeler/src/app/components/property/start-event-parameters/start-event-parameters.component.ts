@@ -10,10 +10,14 @@
  *     ZTE - initial API and implementation and/or initial documentation
  *******************************************************************************/
 import { Component, Input, ViewChild } from '@angular/core';
+import { Subscription } from 'rxjs/Subscription';
 
+import { ValueSource } from '../../../model/value-source.enum';
+import { Parameter } from '../../../model/workflow/parameter';
 import { StartEvent } from '../../../model/workflow/start-event';
-import { CustomParameterComponent } from '../../node-parameters/custom-parameter/custom-parameter.component';
-import {Parameter} from '../../../model/workflow/parameter';
+import { BroadcastService } from '../../../services/broadcast.service';
+import { NotifyService } from '../../../services/notify.service';
+import { WorkflowUtil } from '../../../util/workflow-util';
 
 @Component({
     selector: 'b4t-start-event-parameters',
@@ -21,9 +25,13 @@ import {Parameter} from '../../../model/workflow/parameter';
 })
 export class StartEventParametersComponent {
     @Input() public node: StartEvent;
-    @ViewChild('customParameterComponent') public customParameterComponent: CustomParameterComponent;
+    public sources: ValueSource[] = [ValueSource.String];
 
-    public parameterChanges(parameters: Parameter[]): void {
-        this.node.parameters = parameters;
+    public create(): void {
+        this.node.parameters.push(new Parameter());
+    }
+
+    public delete(index: number): void {
+        this.node.parameters.splice(index, 1);
     }
 }

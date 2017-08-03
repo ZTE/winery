@@ -34,10 +34,7 @@ export class ModelService {
     private planModel: PlanModel = new PlanModel();
 
     constructor(private broadcastService: BroadcastService) {
-        this.broadcastService.planModel$.subscribe(plan => {
-            this.planModel = plan;
-            console.log(this.planModel);
-        });
+        this.broadcastService.planModel$.subscribe(plan => this.planModel = plan);
     }
 
     public getChildrenNodes(parentId: string): WorkflowNode[] {
@@ -86,7 +83,9 @@ export class ModelService {
     }
 
     private createNodeByType(type: string): WorkflowNode {
-        if (type === 'restTask') {
+        if (type === 'startEvent') {
+            return new StartEvent();
+        }else if (type === 'restTask') {
             return new RestTask();
         } else if (type === 'toscaNodeManagementTask') {
             return new ToscaNodeTask();

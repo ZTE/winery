@@ -12,13 +12,14 @@
 
 import { Injectable } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Observable } from '../../../../node_modules/rxjs/Rx.d';
+import { Observable } from 'rxjs/Observable';
 
 import { PlanModel } from '../../model/plan-model';
 import {NodeTemplate} from '../../model/topology/node-template';
 import {BroadcastService} from '../broadcast.service';
 import {HttpService} from '../../util/http.service';
 import {NotifyService} from '../notify.service';
+import '../../util/rxjs-operators';
 
 /**
  * BackendService
@@ -26,6 +27,7 @@ import {NotifyService} from '../notify.service';
  */
 @Injectable()
 export abstract class BackendService {
+    private allNodesProperties: string[] = [];
 
     constructor(protected broadcastService: BroadcastService,
                 private notifyService: NotifyService,
@@ -53,4 +55,30 @@ export abstract class BackendService {
     public abstract save(planModel: PlanModel): Observable<any>;
 
     public abstract loadPlan(): Observable<PlanModel>;
+
+    public getAllNodesProperties(): string[] {
+        return this.allNodesProperties;
+    }
+
+    protected refreshAllNodesProperties(): void {
+        this.loadNodeTemplates().subscribe(nodes => {
+            if (0 === nodes.length) {
+                console.warn('Nodes length is 0!');
+                return;
+            }
+
+            let subscribes = nodes.map(node => this.loadTopologyProperties(node));
+            Observable.forkJoin(subscribes).map(nodesProperties => {
+                let allProperties: string[] = [];
+                nodesProperties.forEach((properties, index) => {
+                    properties.forEach(property => {
+                        allProperties.push(nodes[index].name + '.' + property);
+                    });
+                });
+                return allProperties;
+            }).subscribe(allProperties => {
+                this.allNodesProperties = allProperties;
+            });
+        })
+    }
 }

@@ -39,6 +39,7 @@ export class WineryService extends BackendService {
         this.plan = queryParams.plan;
 
         if(this.repositoryURL) {
+            this.refreshAllNodesProperties();
             this.loadPlan().subscribe(planModel => {
                 if(!planModel.nodes) {
                     planModel.nodes = [];
@@ -74,12 +75,10 @@ export class WineryService extends BackendService {
 
     public loadTopologyProperties(nodeTemplate: NodeTemplate): Observable<string[]> {
         const url = 'nodetypes/' + this.encode(nodeTemplate.namespace)
-            + '/' + this.encode(nodeTemplate.id) + '/propertiesdefinition/winery/list/';
+            + '/' + this.encode(nodeTemplate.type) + '/propertiesdefinition/winery/list/';
 
-        return this.httpService.get(this.getFullUrl(url)).map(properties => {
-            return properties.map(property => property.key);
-        });
-
+        return this.httpService.get(this.getFullUrl(url)).map(properties =>
+            properties.map(property => property.key));
     }
 
     public loadNodeTemplateInterfaces(nodeTemplate: NodeTemplate): Observable<string[]> {

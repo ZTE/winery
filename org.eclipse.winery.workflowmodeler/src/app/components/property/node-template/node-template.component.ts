@@ -9,9 +9,11 @@
  * Contributors:
  *     ZTE - initial API and implementation and/or initial documentation
  */
-import { AfterViewInit, Component, Input  } from '@angular/core';
+import { AfterViewInit, Component, Input } from '@angular/core';
 import { Subscription } from '../../../../../node_modules/rxjs/Subscription.d';
 
+import { ValueSource } from '../../../model/value-source.enum';
+import { Parameter } from "../../../model/workflow/parameter";
 import { NodeTemplate } from '../../../model/topology/node-template';
 import { ToscaNodeTask } from '../../../model/workflow/tosca-node-task';
 import { BroadcastService } from '../../../services/broadcast.service';
@@ -27,6 +29,9 @@ import { DataService } from '../../../services/data/data.service';
 })
 export class WmNodeTemplateComponent implements AfterViewInit {
     @Input() public node: ToscaNodeTask;
+
+    public inputSources: ValueSource[] = [ValueSource.String, ValueSource.Topology, ValueSource.Plan];
+    public outputSources: ValueSource[] = [ValueSource.Topology, ValueSource.Plan];
     private nodeInterfaces: string[] = [];
     private nodeOperations: any[] = [];
     private nodeTemplates: NodeTemplate[] = [];
@@ -116,12 +121,14 @@ export class WmNodeTemplateComponent implements AfterViewInit {
                         name: param,
                         type: 'string',
                         value: '',
+                        valueSource: ValueSource[ValueSource.String],
                     }));
 
                     params.output.forEach(param => this.node.output.push({
                         name: param,
                         type: 'string',
                         value: '',
+                        valueSource: ValueSource[ValueSource.String],
                     }));
                 });
         }

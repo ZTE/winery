@@ -11,14 +11,13 @@
  *     ZTE - initial API and implementation and/or initial documentation
  *******************************************************************************/
 -->
+<b4t-parameter *ngFor="let param of node.parameters; let i = index;" [param]="param"
+    [valueSource]="sources" [canEdit]="true" (delete)="delete(i)"></b4t-parameter> 
 <div class="form-group row">
     <div class="col-md-10"></div>
     <div class="col-md-2">
-        <button (click)="customParameterComponent.show(node.parameters);" type="button" class="btn btn-primary">
-            <i class="fa fa-edit"></i>
+        <button (click)="create();" type="button" class="btn btn-primary pull-right">
+            <i class="fa fa-plus"></i>
         </button>
     </div>
 </div>
-<b4t-parameter *ngFor="let param of node.parameters" [param]="param"></b4t-parameter>
-
-<b4t-custom-parameter #customParameterComponent (updateParams)="parameterChanges($event)"></b4t-custom-parameter>

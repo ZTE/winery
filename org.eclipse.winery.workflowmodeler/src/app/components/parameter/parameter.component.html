@@ -12,9 +12,47 @@
  */
 -->
 
-<div class="form-group row">
-    <label class="col-md-3 form-control-label text-md-right">{{param.name}}</label>
-    <div class="col-md-9">
-        <input class="form-control" type="text" [(ngModel)]="param.value">
+
+<div *ngIf="canEdit" class="form-group row">
+    <div class="col-md-3">
+        <input class="form-control" type="text" [(ngModel)]="param.name">
+    </div>
+    <div class="col-md-7">
+        <div [ngSwitch]="param.valueSource">
+            <input *ngSwitchCase="sourceEnum[sourceEnum.String]" class="form-control col-md-9  pull-left" type="text" [(ngModel)]="param.value">
+            <select *ngSwitchCase="sourceEnum[sourceEnum.Plan]" class="form-control col-md-9 pull-left" type="text" [(ngModel)]="param.value">
+                <option *ngFor="let plan of planOptions" value="{{plan}}">{{plan}}</option>
+            </select>
+            <select *ngSwitchCase="sourceEnum[sourceEnum.Topology]" class="form-control col-md-9 pull-left" type="text" [(ngModel)]="param.value">
+                <option *ngFor="let topology of topologyOptions" value="{{topology}}">{{topology}}</option>
+            </select>
+        </div>
+        <select class="form-control col-md-3 pull-right font-select" type="text" [ngModel]="param.valueSource" (ngModelChange)="param.valueSource=$event;resetValue()">
+            <option *ngFor="let sourceType of valueSource" value="{{sourceEnum[sourceType]}}">{{sourceEnum[sourceType]}}</option>
+        </select>
+    </div>
+    <div class="col-md-2">
+        <button type="button" class="btn btn-warning pull-right" (click)="deleteParam()">
+            <i class="fa fa-minus"></i>
+        </button>
     </div>
 </div>
+<div *ngIf="!canEdit"  class="form-group row">
+    <div class="col-md-3 text-md-right">
+        <label class="form-control-label">{{param.name}}</label>
+    </div>
+    <div class="col-md-9">
+        <div [ngSwitch]="param.valueSource">
+            <input *ngSwitchCase="sourceEnum[sourceEnum.String]" class="form-control col-md-9  pull-left" type="text" [(ngModel)]="param.value">
+            <select *ngSwitchCase="sourceEnum[sourceEnum.Plan]" class="form-control col-md-9 pull-left" type="text" [(ngModel)]="param.value">
+                <option *ngFor="let plan of planOptions" value="{{plan}}">{{plan}}</option>
+            </select>
+            <select *ngSwitchCase="sourceEnum[sourceEnum.Topology]" class="form-control col-md-9 pull-left" type="text" [(ngModel)]="param.value">
+                <option *ngFor="let topology of topologyOptions" value="{{topology}}">{{topology}}</option>
+            </select>
+        </div>
+        <select class="form-control col-md-3  pull-right font-select" type="text" [ngModel]="param.valueSource" (ngModelChange)="param.valueSource=$event;resetValue()">
+            <option *ngFor="let sourceType of valueSource" value="{{sourceEnum[sourceType]}}">{{sourceEnum[sourceType]}}</option>
+        </select>
+    </div>
+</div> 
