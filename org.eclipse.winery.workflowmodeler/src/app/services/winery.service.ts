@@ -11,7 +11,7 @@
  */
 
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs/Rx';
+import { Observable } from 'rxjs/Observable';
 import { isNullOrUndefined } from 'util';
 
 import { NodeTemplate } from '../model/node-template';
@@ -34,9 +34,11 @@ export class WineryService {
 
     private planModel: PlanModel;
 
+    private allNodesProperties: string[] = [];
+
     constructor(private broadcastService: BroadcastService,
-                private httpService: HttpService,
-                private notifyService: NotifyService) {
+        private httpService: HttpService,
+        private notifyService: NotifyService) {
         this.broadcastService.saveEvent$.subscribe(data => this.save());
     }
 
@@ -46,7 +48,9 @@ export class WineryService {
         this.serviceTemplateId = queryParams.id;
         this.plan = queryParams.plan;
 
+
         if (!isNullOrUndefined(this.repositoryURL)) {
+            this.refreshAllNodesProperties();
             this.loadPlan();
         }
 
@@ -73,13 +77,10 @@ export class WineryService {
         });
     }
 
-    public loadTopologyProperties(nodeTemplate: NodeTemplate) {
+    public loadTopologyProperties(nodeTemplate: NodeTemplate): Observable<any> {
         const url = 'nodetypes/' + this.encode(nodeTemplate.namespace)
-            + '/' + this.encode(nodeTemplate.id) + '/propertiesdefinition/winery/list/';
-
-        this.httpService.get(this.getFullUrl(url)).subscribe(properties => {
-            properties.forEach(property => nodeTemplate.properties.push(property.key));
-        });
+            + '/' + this.encode(nodeTemplate.type) + '/propertiesdefinition/winery/list/';
+        return this.httpService.get(this.getFullUrl(url));
     }
 
     public loadNodeTemplateInterfaces(namespace: string, nodeType: string): Observable<any> {
@@ -90,8 +91,8 @@ export class WineryService {
     }
 
     public loadNodeTemplateOperations(namespace: string,
-                                      nodeType: string,
-                                      interfaceName: string): Observable<any> {
+        nodeType: string,
+        interfaceName: string): Observable<any> {
         const url = 'nodetypes/' + this.encode(namespace)
             + '/' + this.encode(nodeType) + '/interfaces/' + this.encode(interfaceName) + '/operations/';
 
@@ -99,9 +100,9 @@ export class WineryService {
     }
 
     public loadNodeTemplateOperationParameter(namespace: string,
-                                              nodeType: string,
-                                              interfaceName: string,
-                                              operation: string): Promise<any> {
+        nodeType: string,
+        interfaceName: string,
+        operation: string): Promise<any> {
         const relativePath = 'nodetypes/' + this.encode(namespace) + '/' + this.encode(nodeType)
             + '/interfaces/' + this.encode(interfaceName) + '/operations/' + this.encode(operation) + '/';
 
@@ -159,6 +160,10 @@ export class WineryService {
         });
     }
 
+    public getAllNodesProperties(): string[] {
+        return this.allNodesProperties;
+    }
+
     private decode(param: string): string {
         return decodeURIComponent(decodeURIComponent(param));
     }
@@ -169,5 +174,32 @@ export class WineryService {
 
     private getFullUrl(relativePath: string) {
         return this.repositoryURL + relativePath;
+    }
+
+    private refreshAllNodesProperties(): void {
+        this.loadNodeTemplates().subscribe(nodes => {
+            let subscribes = [];
+            let allProperties: string[] = [];
+            nodes.forEach(element => {
+                subscribes.push(this.loadTopologyProperties(element))
+            });
+            if (0 === subscribes.length) {
+                console.warn('WineryService refreshAllNodesProperties get Nodes Array length is 0!');
+                return;
+            }
+            Observable.forkJoin(subscribes).map(nodesProperties => {
+                // Every node
+                nodesProperties.forEach((properties, index) => {
+                    // Every properties
+                    const temp = properties as Array<any>;
+                    temp.forEach(property => {
+                        allProperties.push(nodes[index].name + '.' + property.key);
+                    });
+                });
+                return allProperties;
+            }).subscribe(allProperties => {
+                this.allNodesProperties = allProperties;
+            });
+        })
     }
 }

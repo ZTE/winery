@@ -10,10 +10,10 @@
  *     ZTE - initial API and implementation and/or initial documentation
  */
 
+import { ValueSource } from "../value-source.enum";
+import { ValueType } from "../value-type.enum";
+
 export class Parameter {
-    public name: string;
-    public type: string;
-    public valueSource: string[];
-    public value: string;
-    public canDelete: boolean = false;
+    constructor(public name: string, public value: string, public valueSource?: string,
+        public type: string = ValueType[ValueType.String]) { }
 }

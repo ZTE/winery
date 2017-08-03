@@ -1,5 +1,3 @@
-import {Position} from './position';
-import {SequenceFlow} from './sequence-flow';
 /**
  * Copyright (c) 2017 ZTE Corporation.
  * All rights reserved. This program and the accompanying materials
@@ -11,6 +9,9 @@ import {SequenceFlow} from './sequence-flow';
  * Contributors:
  *     ZTE - initial API and implementation and/or initial documentation
  */
+import { Position } from './position';
+import { SequenceFlow } from './sequence-flow';
+import { ValueSource } from '../value-source.enum';
 
 export class WorkflowNode {
     public connection: SequenceFlow[] = [];

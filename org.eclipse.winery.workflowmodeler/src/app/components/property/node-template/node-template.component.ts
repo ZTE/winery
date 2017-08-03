@@ -9,9 +9,11 @@
  * Contributors:
  *     ZTE - initial API and implementation and/or initial documentation
  */
-import { AfterViewInit, Component, Input  } from '@angular/core';
+import { AfterViewInit, Component, Input } from '@angular/core';
 import { Subscription } from '../../../../../node_modules/rxjs/Subscription.d';
 
+import { ValueSource } from '../../../model/value-source.enum';
+import { Parameter } from "../../../model/workflow/parameter";
 import { NodeTemplate } from '../../../model/node-template';
 import { Operation } from '../../../model/operation';
 import { ToscaNodeTask } from '../../../model/workflow/tosca-node-task';
@@ -28,6 +30,9 @@ import { WineryService } from '../../../services/winery.service';
 })
 export class WmNodeTemplateComponent implements AfterViewInit {
     @Input() public node: ToscaNodeTask;
+
+    public inputSources: ValueSource[] = [ValueSource.String, ValueSource.Topology, ValueSource.Plan];
+    public outputSources: ValueSource[] = [ValueSource.Topology, ValueSource.Plan];
     private nodeInterfaces: any[] = [];
     private nodeOperations: any[] = [];
     private nodeTemplates: NodeTemplate[] = [];
@@ -101,25 +106,17 @@ export class WmNodeTemplateComponent implements AfterViewInit {
         if (this.node.template.operation) {
             this.wineryService
                 .loadNodeTemplateOperationParameter(
-                    this.node.template.namespace,
-                    this.node.template.type,
-                    this.node.template.nodeInterface,
-                    this.node.template.operation)
+                this.node.template.namespace,
+                this.node.template.type,
+                this.node.template.nodeInterface,
+                this.node.template.operation)
                 .then(params => {
                     this.node.input = [];
                     this.node.output = [];
 
-                    params.input.forEach(param => this.node.input.push({
-                        name: param,
-                        type: 'string',
-                        value: '',
-                    }));
+                    params.input.forEach(param => this.node.input.push(new Parameter(param, '')));
 
-                    params.output.forEach(param => this.node.output.push({
-                        name: param,
-                        type: 'string',
-                        value: '',
-                    }));
+                    params.output.forEach(param => this.node.output.push(new Parameter(param, '')));
                 });
         }
     }

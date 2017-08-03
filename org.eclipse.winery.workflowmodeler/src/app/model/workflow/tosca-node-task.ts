@@ -13,10 +13,15 @@ import { Parameter } from './parameter';
 import { RestParameter } from './rest-parameter';
 import { Template } from './template';
 import { WorkflowNode } from './workflow-node';
+import { ValueSource } from '../value-source.enum';
 
 export class ToscaNodeTask extends WorkflowNode {
     public input: Parameter[] = [];
     public output: Parameter[] = [];
 
     public template: Template = new Template();
+
+    public constructor(){
+        super();
+    }
 }

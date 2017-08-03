@@ -39,3 +39,8 @@
 .editing .edit {
     display: block;
 }
+
+.font-select{
+    font-size: 10px;
+    padding: 1px;
+}

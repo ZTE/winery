@@ -18,7 +18,6 @@ import { AlertModule, ModalModule } from 'ngx-bootstrap/index';
 import { AppComponent } from './app.component';
 import { WmContainerComponent } from './components/container/container.component';
 import { WmEditablePropertyComponent } from './components/editable-property/editable-property.component';
-import { CustomParameterComponent } from './components/node-parameters/custom-parameter/custom-parameter.component';
 import { WmNodeParametersComponent } from './components/node-parameters/node-parameters.component';
 import { WmParameterTreeComponent } from './components/node-parameters/parameter-tree/parameter-tree.component';
 import { WmNodeComponent } from './components/node/node.component';
@@ -50,7 +49,6 @@ import { HttpService } from './util/http.service';
     declarations: [
         AppComponent,
         WmContainerComponent,
-        CustomParameterComponent,
         WmEditablePropertyComponent,
         WmNodeComponent,
         WmNodeParametersComponent,

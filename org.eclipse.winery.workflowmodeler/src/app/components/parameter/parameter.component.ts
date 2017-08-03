@@ -10,9 +10,11 @@
  *     ZTE - initial API and implementation and/or initial documentation
  */
 
-import {Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 
+import { ValueSource } from '../../model/value-source.enum';
 import { Parameter } from '../../model/workflow/parameter';
+import { WineryService } from '../../services/winery.service';
 
 /**
  * this component contains in property component if the corresponding node has parameter properties
@@ -23,7 +25,30 @@ import { Parameter } from '../../model/workflow/parameter';
     styleUrls: ['./parameter.component.css'],
     templateUrl: 'parameter.component.html',
 })
-export class WmParameterComponent {
-    @Input()
-    public param: Parameter;
+export class WmParameterComponent implements OnInit {
+    @Input() public param: Parameter;
+    @Input() public valueSource: ValueSource[];
+    @Input() public canEdit: boolean;
+    @Output() delete: EventEmitter<Parameter> = new EventEmitter<Parameter>();
+
+    public sourceEnum = ValueSource;
+    public planOptions: string[] = [];
+    public topologyOptions: string[];
+
+    public constructor(public wineryService: WineryService) { }
+
+    public ngOnInit(): void {
+        if (undefined === this.param.valueSource) {
+            this.param.valueSource = this.sourceEnum[this.valueSource[0]];
+        }
+        this.topologyOptions = this.wineryService.getAllNodesProperties();
+    }
+
+    public resetValue(): void {
+        this.param.value = '';
+    }
+
+    public deleteParam(): void {
+        this.delete.emit();
+    }
 }

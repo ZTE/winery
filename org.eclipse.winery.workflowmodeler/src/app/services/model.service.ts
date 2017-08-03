@@ -86,7 +86,9 @@ export class ModelService {
     }
 
     private createNodeByType(type: string): WorkflowNode {
-        if (type === 'restTask') {
+        if (type === 'startEvent') {
+            return new StartEvent();
+        }else if (type === 'restTask') {
             return new RestTask();
         } else if (type === 'toscaNodeManagementTask') {
             return new ToscaNodeTask();
