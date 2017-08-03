@@ -14,11 +14,10 @@ import { Subscription } from '../../../../../node_modules/rxjs/Subscription.d';
 
 import { ValueSource } from '../../../model/value-source.enum';
 import { Parameter } from "../../../model/workflow/parameter";
-import { NodeTemplate } from '../../../model/node-template';
-import { Operation } from '../../../model/operation';
+import { NodeTemplate } from '../../../model/topology/node-template';
 import { ToscaNodeTask } from '../../../model/workflow/tosca-node-task';
 import { BroadcastService } from '../../../services/broadcast.service';
-import { WineryService } from '../../../services/winery.service';
+import { DataService } from '../../../services/data/data.service';
 
 /**
  * node template component provides operations about tosca modules which saved in winery.
@@ -33,15 +32,15 @@ export class WmNodeTemplateComponent implements AfterViewInit {
 
     public inputSources: ValueSource[] = [ValueSource.String, ValueSource.Topology, ValueSource.Plan];
     public outputSources: ValueSource[] = [ValueSource.Topology, ValueSource.Plan];
-    private nodeInterfaces: any[] = [];
+    private nodeInterfaces: string[] = [];
     private nodeOperations: any[] = [];
     private nodeTemplates: NodeTemplate[] = [];
 
-    constructor(private wineryService: WineryService) {
+    constructor(private dataService: DataService) {
     }
 
     public ngAfterViewInit() {
-        this.wineryService.loadNodeTemplates()
+        this.dataService.service.loadNodeTemplates()
             .subscribe(nodeTemplates => this.nodeTemplates = nodeTemplates);
 
         this.loadInterfaces();
@@ -51,21 +50,22 @@ export class WmNodeTemplateComponent implements AfterViewInit {
     public nodeTemplateChanged() {
         this.setTemplateNamespace();
 
-        this.node.template.nodeInterface = '';
-        this.nodeInterfaceChanged();
+        this.nodeInterfaceChanged('');
 
         this.loadInterfaces();
     }
 
-    public nodeInterfaceChanged() {
+    public nodeInterfaceChanged(newInterface: string) {
+        this.node.nodeInterface = newInterface;
 
-        this.node.template.operation = '';
-        this.nodeOperationChanged();
+        this.nodeOperationChanged('');
 
         this.loadOperations();
     }
 
-    public nodeOperationChanged() {
+    public nodeOperationChanged(operation: string) {
+        this.node.operation = operation;
+
         this.node.input = [];
         this.node.output = [];
 
@@ -84,39 +84,52 @@ export class WmNodeTemplateComponent implements AfterViewInit {
 
     private loadInterfaces() {
         if (this.node.template.id) {
-            this.wineryService
-                .loadNodeTemplateInterfaces(this.node.template.namespace, this.node.template.type)
-                .subscribe(interfaces => this.nodeInterfaces = interfaces);
+            this.dataService.service
+                .loadNodeTemplateInterfaces(this.node.template)
+                .subscribe(interfaces => {
+                    this.nodeInterfaces = interfaces;
+                });
+        } else {
+            this.nodeInterfaces = [];
         }
     }
 
     private loadOperations() {
-        if (this.node.template.nodeInterface) {
+        if (this.node.nodeInterface) {
             this.nodeOperations = [];
-            this.wineryService.loadNodeTemplateOperations(
-                this.node.template.namespace,
-                this.node.template.type,
-                this.node.template.nodeInterface)
-                .subscribe(operations =>
-                    operations.forEach(operation => this.nodeOperations.push(new Operation(operation))));
+            this.dataService.service.loadNodeTemplateOperations(
+                this.node.template,
+                this.node.nodeInterface)
+                .subscribe(operations => this.nodeOperations = operations);
+        } else {
+            this.nodeOperations = [];
         }
     }
 
     private loadParameters() {
-        if (this.node.template.operation) {
-            this.wineryService
+        if (this.node.operation) {
+            this.dataService.service
                 .loadNodeTemplateOperationParameter(
-                this.node.template.namespace,
-                this.node.template.type,
-                this.node.template.nodeInterface,
-                this.node.template.operation)
-                .then(params => {
+                    this.node.template,
+                    this.node.nodeInterface,
+                    this.node.operation)
+                .subscribe(params => {
                     this.node.input = [];
                     this.node.output = [];
 
-                    params.input.forEach(param => this.node.input.push(new Parameter(param, '')));
+                    params.input.forEach(param => this.node.input.push({
+                        name: param,
+                        type: 'string',
+                        value: '',
+                        valueSource: ValueSource[ValueSource.String],
+                    }));
 
-                    params.output.forEach(param => this.node.output.push(new Parameter(param, '')));
+                    params.output.forEach(param => this.node.output.push({
+                        name: param,
+                        type: 'string',
+                        value: '',
+                        valueSource: ValueSource[ValueSource.String],
+                    }));
                 });
         }
     }

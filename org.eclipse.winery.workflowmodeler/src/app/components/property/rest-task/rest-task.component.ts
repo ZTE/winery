@@ -17,8 +17,8 @@ import { RestTask } from '../../../model/workflow/rest-task';
 import { BroadcastService } from '../../../services/broadcast.service';
 import { NotifyService } from '../../../services/notify.service';
 import { RestService } from '../../../services/rest.service';
-import { WineryService } from '../../../services/winery.service';
 import { WorkflowUtil } from '../../../util/workflow-util';
+import {ValueSource} from '../../../model/value-source.enum';
 
 @Component({
     selector: 'b4t-rest-task',
@@ -44,23 +44,25 @@ export class WmRestTaskComponent implements AfterViewInit {
         }, 0);
     }
 
-    public serviceChanged() {
-        this.node.url = '';
-        this.urlChanged();
-
+    public serviceChanged(swagger: string) {
+        this.node.swagger=swagger;
+        this.urlChanged('');
         this.loadInterfaces();
     }
 
-    public urlChanged() {
-        this.node.method = '';
+    public urlChanged(url: string) {
+        this.node.url = url;
+
         this.node.consumes = [];
         this.node.produces = [];
-        this.methodChanged();
+        this.methodChanged('');
 
         this.loadOperations();
     }
 
-    public methodChanged() {
+    public methodChanged(method: string) {
+        this.node.method = method;
+
         this.node.parameters = [];
         this.node.responses = [];
 

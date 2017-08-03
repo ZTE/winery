@@ -10,30 +10,9 @@
  *     ZTE - initial API and implementation and/or initial documentation
  */
 
-import {Interface} from './interface';
-
 export class NodeTemplate {
     public id: string;
-    public interfaces: Interface[] = [];
     public name: string;
-    public namespace: string;
-    public properties: string[] = [];
     public type: string;
-
-    public top: number;
-    public left: number;
-
-    constructor(id: string,
-                name: string,
-                namespace: string,
-                type: string,
-                top: number,
-                left: number) {
-        this.id = id;
-        this.left = left;
-        this.name = name;
-        this.namespace = namespace;
-        this.type = type;
-        this.top = top;
-    }
+    public namespace: string;
 }

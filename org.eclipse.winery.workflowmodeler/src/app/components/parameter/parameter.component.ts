@@ -14,7 +14,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 
 import { ValueSource } from '../../model/value-source.enum';
 import { Parameter } from '../../model/workflow/parameter';
-import { WineryService } from '../../services/winery.service';
+import { DataService } from '../../services/data/data.service';
 
 /**
  * this component contains in property component if the corresponding node has parameter properties
@@ -35,13 +35,13 @@ export class WmParameterComponent implements OnInit {
     public planOptions: string[] = [];
     public topologyOptions: string[];
 
-    public constructor(public wineryService: WineryService) { }
+    public constructor(public dataService: DataService) { }
 
     public ngOnInit(): void {
         if (undefined === this.param.valueSource) {
-            this.param.valueSource = this.sourceEnum[this.valueSource[0]];
+            this.param.valueSource = ValueSource[this.valueSource[0]];
         }
-        this.topologyOptions = this.wineryService.getAllNodesProperties();
+        this.topologyOptions = this.dataService.service.getAllNodesProperties();
     }
 
     public resetValue(): void {

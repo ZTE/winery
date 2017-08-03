@@ -31,10 +31,7 @@ import { SwaggerTreeConverterService } from './swagger-tree-converter.service';
 export class ModelService {
     public rootNodeId = 'root';
 
-    private planModel: PlanModel = new PlanModel({
-        configs: {},
-        nodes: [],
-    });
+    private planModel: PlanModel = new PlanModel();
 
     constructor(private broadcastService: BroadcastService) {
         this.broadcastService.planModel$.subscribe(plan => this.planModel = plan);
@@ -110,7 +107,7 @@ export class ModelService {
         if (targetParentId) {
             this.addChild(targetParentId, node);
         } else {
-            this.planModel.addNode(node);
+            this.planModel.nodes.push(node);
         }
     }
 
@@ -240,7 +237,7 @@ export class ModelService {
         console.log('****************** save data *********************');
         console.log(this.planModel);
 
-        this.broadcastService.broadcast(this.broadcastService.saveEvent, JSON.stringify(this.planModel));
+        this.broadcastService.broadcast(this.broadcastService.saveEvent, this.planModel);
     }
 
     private createId() {

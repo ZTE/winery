@@ -18,6 +18,7 @@ import { RestTask } from '../../model/workflow/rest-task';
 import { BroadcastService } from '../../services/broadcast.service';
 import { RestService } from '../../services/rest.service';
 import { SwaggerTreeConverterService } from '../../services/swagger-tree-converter.service';
+import {ValueSource} from '../../model/value-source.enum';
 
 /**
  * property component presents information of a workflow node.
@@ -32,6 +33,8 @@ import { SwaggerTreeConverterService } from '../../services/swagger-tree-convert
 export class WmNodeParametersComponent implements AfterViewInit {
     @Input() public task: RestTask;
 
+    public inputSources: ValueSource[] = [ValueSource.String, ValueSource.Topology, ValueSource.Plan];
+    public outputSources: ValueSource[] = [ValueSource.Topology, ValueSource.Plan];
     public inputParams: TreeNode[] = [];
     public outputParams: TreeNode[] = [];
     public pathParams: any[] = [];

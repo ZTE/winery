@@ -11,12 +11,7 @@
  */
 import { Parameter } from './parameter';
 import { WorkflowNode } from './workflow-node';
-import { ValueSource } from '../value-source.enum';
 
 export class StartEvent extends WorkflowNode {
-    public parameters: Parameter[];
-    public constructor(){
-        super();
-        this.parameters = [];
-    }
+    public parameters: Parameter[] = [];
 }

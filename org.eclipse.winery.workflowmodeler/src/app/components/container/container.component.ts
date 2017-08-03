@@ -11,12 +11,14 @@
  */
 
 import { AfterViewInit, Component, HostListener, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 
 import { SequenceFlow } from '../../model/workflow/sequence-flow';
 import { WorkflowNode } from '../../model/workflow/workflow-node';
 import { BroadcastService } from '../../services/broadcast.service';
 import { JsPlumbService } from '../../services/jsplumb.service';
 import { ModelService } from '../../services/model.service';
+import {DataService} from '../../services/data/data.service';
 
 /**
  * main canvas, it contains two parts: canvas and node property component
@@ -33,7 +35,9 @@ export class WmContainerComponent implements AfterViewInit, OnInit {
     public currentType: string;
 
     constructor(private broadcastService: BroadcastService,
+                private route: ActivatedRoute,
                 private jsPlumbService: JsPlumbService,
+                private dataService: DataService,
                 private modelService: ModelService) {
     }
 
@@ -60,6 +64,10 @@ export class WmContainerComponent implements AfterViewInit, OnInit {
         this.broadcastService.currentSequenceFlow$.subscribe(sequenceFlow => this.currentSequenceFlow = sequenceFlow);
         this.broadcastService.currentWorkflowNode$.subscribe(workflowNode => this.currentWorkflowNode = workflowNode);
         this.broadcastService.currentType$.subscribe(type => this.currentType = type);
+
+        this.route.queryParams.subscribe(queryParams => {
+            this.dataService.service.setParameters(queryParams);
+        });
     }
 
     public canvasClick() {

@@ -15,22 +15,17 @@ export class PlanModel {
     public nodes: WorkflowNode[];
     public configs: any;
 
-    constructor({nodes, configs}) {
-        this.nodes = nodes;
-        this.configs = configs;
-    }
-
-    public addNode(node: WorkflowNode) {
-        this.nodes.push(node);
-    }
-
-    public deleteNode(id: string): WorkflowNode {
-        const index = this.nodes.findIndex(node => node.id === id);
-        if (index !== -1) {
-            const deletedNode = this.nodes.splice(index, 1);
-            return deletedNode[0];
-        }
-        return null;
-    }
+    //public addNode(node: WorkflowNode) {
+    //    this.nodes.push(node);
+    //}
+    //
+    //public deleteNode(id: string): WorkflowNode {
+    //    const index = this.nodes.findIndex(node => node.id === id);
+    //    if (index !== -1) {
+    //        const deletedNode = this.nodes.splice(index, 1);
+    //        return deletedNode[0];
+    //    }
+    //    return null;
+    //}
 
 }

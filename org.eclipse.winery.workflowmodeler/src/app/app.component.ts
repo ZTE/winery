@@ -10,10 +10,7 @@
  *     ZTE - initial API and implementation and/or initial documentation
  */
 
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-
-import { WineryService } from './services/winery.service';
+import { Component } from '@angular/core';
 
 /**
  * main component
@@ -22,12 +19,5 @@ import { WineryService } from './services/winery.service';
     selector: 'b4t-app',
     templateUrl: 'app.component.html',
 })
-export class AppComponent implements OnInit {
-    constructor(private route: ActivatedRoute,
-                private wineryService: WineryService) {
-    }
-
-    public ngOnInit() {
-        this.route.queryParams.subscribe(params => this.wineryService.setRequestParam(params));
-    }
+export class AppComponent {
 }

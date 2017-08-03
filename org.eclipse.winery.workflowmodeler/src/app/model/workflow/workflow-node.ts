@@ -11,7 +11,6 @@
  */
 import { Position } from './position';
 import { SequenceFlow } from './sequence-flow';
-import { ValueSource } from '../value-source.enum';
 
 export class WorkflowNode {
     public connection: SequenceFlow[] = [];

@@ -13,30 +13,30 @@
 -->
 
 <div class="form-group row">
-	<label class="col-md-3 form-control-label text-md-right">Node</label>
+	<label class="col-md-3 form-control-label text-md-right">Service</label>
 	<div class="col-md-9">
 		<select class="form-control" [ngModel]="node.swagger"
-				(ngModelChange)="node.swagger=$event; serviceChanged();">
+				(ngModelChange)="serviceChanged($event)">
 			<option *ngFor="let restConfig of restService.getRestConfigs()" value="{{restConfig.baseUrl}}">{{restConfig.name}}</option>
 		</select>
 	</div>
 </div>
 
 <div class="form-group row">
-	<label class="col-md-3 form-control-label text-md-right">Interface</label>
+	<label class="col-md-3 form-control-label text-md-right">Path</label>
 	<div class="col-md-9">
 		<select class="form-control" [ngModel]="node.url"
-				(ngModelChange)="node.url=$event; urlChanged();">
+				(ngModelChange)="urlChanged($event)">
 			<option *ngFor="let interface of restInterfaces" value="{{interface}}">{{interface}}</option>
 		</select>
 	</div>
 </div>
 
 <div class="form-group row">
-	<label class="col-md-3 form-control-label text-md-right">Operation</label>
+	<label class="col-md-3 form-control-label text-md-right">Method</label>
 	<div class="col-md-9">
 		<select class="form-control" [ngModel]="node.method"
-				(ngModelChange)="node.method=$event; methodChanged();">
+				(ngModelChange)="methodChanged($event)">
 			<option *ngFor="let operation of restOperations" value="{{operation}}">{{operation}}</option>
 		</select>
 	</div>
