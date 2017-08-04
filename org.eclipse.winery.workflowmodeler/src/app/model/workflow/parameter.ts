@@ -11,10 +11,9 @@
  */
 
 import { ValueSource } from "../value-source.enum";
+import { ValueType } from '../value-type.enum';
 
 export class Parameter {
-    public name: string;
-    public type: string;
-    public value: string;
-    public valueSource: string = ValueSource[ValueSource.String];
+    constructor(public name: string, public value: string, public valueSource: string,
+        public type: string = ValueType[ValueType.String]) { }
 }

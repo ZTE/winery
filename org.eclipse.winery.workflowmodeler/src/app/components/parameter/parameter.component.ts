@@ -34,13 +34,14 @@ export class WmParameterComponent implements OnInit {
     public sourceEnum = ValueSource;
     public planOptions: string[] = [];
     public topologyOptions: string[];
+    // public showValueSource: boolean = true;
 
     public constructor(public dataService: DataService) { }
 
     public ngOnInit(): void {
-        if (undefined === this.param.valueSource) {
-            this.param.valueSource = ValueSource[this.valueSource[0]];
-        }
+        // if (1 === this.valueSource.length) {
+        //     this.showValueSource = false;
+        // }
         this.topologyOptions = this.dataService.service.getAllNodesProperties();
     }
 
