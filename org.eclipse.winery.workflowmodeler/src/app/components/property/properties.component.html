@@ -39,4 +39,5 @@
     <b4t-node-template *ngIf="node.type == 'toscaNodeManagementTask'" [node]="node"></b4t-node-template>
     <b4t-rest-task *ngIf="node.type == 'restTask'" [node]="node"></b4t-rest-task>
     <b4t-start-event-parameters *ngIf="'startEvent' == node.type" [node]="node"></b4t-start-event-parameters>
+    <b4t-intermediate-catch-event *ngIf="'intermediateCatchEvent' == node.type" [node]="node"></b4t-intermediate-catch-event>
 </div>

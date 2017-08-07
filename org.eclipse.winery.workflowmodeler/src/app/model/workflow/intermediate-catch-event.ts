@@ -9,14 +9,10 @@
  * Contributors:
  *     ZTE - initial API and implementation and/or initial documentation
  */
+import { WorkflowNode } from './workflow-node';
+import {TimerEventDefinition} from './timer-event-definition';
+import {TimerEventDefinitionType} from './timer-event-definition';
 
-export const WorkflowNodeType = [
-    'startEvent',
-    'endEvent',
-    'toscaNodeManagementTask',
-    'restTask',
-    'exclusiveGateway',
-    'parallelGateway',
-    'subProcess',
-    'intermediateCatchEvent',
-];
+export class IntermediateCatchEvent extends WorkflowNode {
+    public timerEventDefinition: TimerEventDefinition = new TimerEventDefinition(TimerEventDefinitionType[TimerEventDefinitionType.timeDuration]);
+}
