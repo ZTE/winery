@@ -28,7 +28,7 @@ export class StartEventParametersComponent {
     public sources: ValueSource[] = [ValueSource.String];
 
     public create(): void {
-        this.node.parameters.push(new Parameter());
+        this.node.parameters.push(new Parameter('', '', ValueSource[ValueSource.String]));
     }
 
     public delete(index: number): void {

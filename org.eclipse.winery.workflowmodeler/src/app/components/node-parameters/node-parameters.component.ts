@@ -10,7 +10,7 @@
  *     ZTE - initial API and implementation and/or initial documentation
  */
 
-import { AfterViewInit, Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { TreeNode } from 'primeng/primeng';
 
 import { Swagger } from '../../model/swagger';
@@ -18,7 +18,7 @@ import { RestTask } from '../../model/workflow/rest-task';
 import { BroadcastService } from '../../services/broadcast.service';
 import { RestService } from '../../services/rest.service';
 import { SwaggerTreeConverterService } from '../../services/swagger-tree-converter.service';
-import {ValueSource} from '../../model/value-source.enum';
+import { ValueSource } from '../../model/value-source.enum';
 
 /**
  * property component presents information of a workflow node.
@@ -30,7 +30,7 @@ import {ValueSource} from '../../model/value-source.enum';
     styleUrls: ['./node-parameters.component.css'],
     templateUrl: 'node-parameters.component.html',
 })
-export class WmNodeParametersComponent implements AfterViewInit {
+export class WmNodeParametersComponent implements OnInit {
     @Input() public task: RestTask;
 
     public inputSources: ValueSource[] = [ValueSource.String, ValueSource.Topology, ValueSource.Plan];
@@ -43,11 +43,11 @@ export class WmNodeParametersComponent implements AfterViewInit {
     private queryParams: any[] = [];
 
     constructor(private broadcastService: BroadcastService,
-                private restService: RestService,
-                private swaggerTreeConverterService: SwaggerTreeConverterService) {
+        private restService: RestService,
+        private swaggerTreeConverterService: SwaggerTreeConverterService) {
     }
 
-    public ngAfterViewInit() {
+    public ngOnInit() {
         this.broadcastService.nodeTaskChange$.subscribe(() => {
             this.resetRequestParams();
             this.resetResponseParams();
