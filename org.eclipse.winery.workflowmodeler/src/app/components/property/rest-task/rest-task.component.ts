@@ -14,11 +14,13 @@ import { Subscription } from 'rxjs/Subscription';
 
 import { Swagger, SwaggerMethod, SwaggerParameter, SwaggerResponse } from '../../../model/swagger';
 import { RestTask } from '../../../model/workflow/rest-task';
+import { RestParameter } from '../../../model/workflow/rest-parameter';
 import { BroadcastService } from '../../../services/broadcast.service';
 import { NotifyService } from '../../../services/notify.service';
 import { RestService } from '../../../services/rest.service';
 import { WorkflowUtil } from '../../../util/workflow-util';
-import {ValueSource} from '../../../model/value-source.enum';
+import { ValueSource } from '../../../model/value-source.enum';
+import { ValueType } from '../../../model/value-type.enum';
 
 @Component({
     selector: 'b4t-rest-task',
@@ -32,8 +34,8 @@ export class WmRestTaskComponent implements AfterViewInit {
     private swagger: Swagger;
 
     constructor(private broadcastService: BroadcastService,
-                private notifyService: NotifyService,
-                private restService: RestService) {
+        private notifyService: NotifyService,
+        private restService: RestService) {
 
     }
 
@@ -45,7 +47,7 @@ export class WmRestTaskComponent implements AfterViewInit {
     }
 
     public serviceChanged(swagger: string) {
-        this.node.swagger=swagger;
+        this.node.swagger = swagger;
         this.urlChanged('');
         this.loadInterfaces();
     }
@@ -110,7 +112,12 @@ export class WmRestTaskComponent implements AfterViewInit {
             this.node.consumes = WorkflowUtil.deepClone(method.consumes);
             this.node.produces = WorkflowUtil.deepClone(method.produces);
 
-            this.node.parameters = method.parameters.map(param => WorkflowUtil.deepClone(param));
+            method.parameters.forEach(param => {
+                //const nodeParam = new Parameter(param.name, '', ValueSource[ValueSource.String], param.type);
+                const nodeParam = new RestParameter(param.name, '', ValueSource[ValueSource.String],
+                    ValueType[ValueType.String], param.position, param.schema);
+                this.node.parameters.push(nodeParam);
+            });
 
             const responseParams = this.restService.getResponseParameters(
                 this.swagger, this.node.url, this.node.method);
