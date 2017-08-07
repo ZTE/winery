@@ -13,6 +13,7 @@ import { Injectable } from '@angular/core';
 import { isNullOrUndefined } from 'util';
 
 import { PlanModel } from '../model/plan-model';
+import { IntermediateCatchEvent } from '../model/workflow/intermediate-catch-event';
 import { Position } from '../model/workflow/position';
 import { RestTask } from '../model/workflow/rest-task';
 import { SequenceFlow } from '../model/workflow/sequence-flow';
@@ -91,7 +92,9 @@ export class ModelService {
             return new ToscaNodeTask();
         } else if (type === 'subProcess') {
             return new SubProcess();
-        } else {
+        } else if (type === 'intermediateCatchEvent') {
+            return new IntermediateCatchEvent();
+        }else {
             return new WorkflowNode();
         }
     }
@@ -236,6 +239,7 @@ export class ModelService {
     public save() {
         console.log('****************** save data *********************');
         console.log(this.planModel);
+        console.log(JSON.stringify(this.planModel));
 
         this.broadcastService.broadcast(this.broadcastService.saveEvent, this.planModel);
     }

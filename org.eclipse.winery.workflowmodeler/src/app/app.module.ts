@@ -44,12 +44,14 @@ import { DataService } from './services/data/data.service';
 
 import { SharedModule } from './shared/shared.module';
 import { HttpService } from './util/http.service';
+import { IntermediateCatchEventComponent } from './components/property/intermediate-catch-event/intermediate-catch-event.component';
 
 @NgModule({
     declarations: [
         AppComponent,
         WmContainerComponent,
         WmEditablePropertyComponent,
+        IntermediateCatchEventComponent,
         WmNodeComponent,
         WmNodeParametersComponent,
         WmNodeTemplateComponent,
