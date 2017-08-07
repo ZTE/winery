@@ -13,7 +13,9 @@
 import { Component, Input, Output } from '@angular/core';
 import { TreeNode } from 'primeng/primeng';
 
+import { RestParameter } from '../../../model/workflow/rest-parameter';
 import { RestTask } from '../../../model/workflow/rest-task';
+import { ValueSource } from '../../../model/value-source.enum';
 import { RestService } from '../../../services/rest.service';
 import { SwaggerTreeConverterService } from '../../../services/swagger-tree-converter.service';
 import { WorkflowUtil } from '../../../util/workflow-util';
@@ -26,15 +28,13 @@ import { WorkflowUtil } from '../../../util/workflow-util';
     templateUrl: 'parameter-tree.component.html',
 })
 export class WmParameterTreeComponent {
-    @Input() public parameters: any;
+    @Input() public parameters: RestParameter[];
     @Input() public task: RestTask;
+    @Input() public valueSource: ValueSource[];
 
     private restService: RestService;
-    private swaggerTreeConverterService: SwaggerTreeConverterService;
 
-    constructor(swaggerTreeConverterService: SwaggerTreeConverterService) {
-        this.swaggerTreeConverterService = swaggerTreeConverterService;
-    }
+    constructor(private swaggerTreeConverterService: SwaggerTreeConverterService) {}
 
     public addChildNode4DynamicObject(node: any) {
         const copyItem = WorkflowUtil.deepClone(node.parameter.additionalProperties);

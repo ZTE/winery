@@ -2,5 +2,5 @@
 <hr *ngIf="pathParams.length > 0">
 <b4t-parameter *ngFor="let param of queryParams" [param]="param" [valueSource]= "inputSources"></b4t-parameter>
 
-<b4t-parameter-tree [task]="task" [parameters]="inputParams"></b4t-parameter-tree>
-<b4t-parameter-tree [task]="task" [parameters]="outputParams"></b4t-parameter-tree>
+<b4t-parameter-tree [task]="task" [parameters]="inputParams" [valueSource]= "inputSources"></b4t-parameter-tree>
+<b4t-parameter-tree [task]="task" [parameters]="outputParams" [valueSource]= "outputSources"></b4t-parameter-tree>
