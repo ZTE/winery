@@ -28,12 +28,14 @@ import { DataService } from '../../services/data/data.service';
 export class WmParameterComponent implements OnInit {
     @Input() public param: Parameter;
     @Input() public valueSource: ValueSource[];
-    @Input() public canEdit: boolean;
+    @Input() public canEditName: boolean;
+    @Input() public canDelete: boolean;
     @Output() delete: EventEmitter<Parameter> = new EventEmitter<Parameter>();
 
     public sourceEnum = ValueSource;
     public planOptions: string[] = [];
     public topologyOptions: string[];
+    public valueClass;
     // public showValueSource: boolean = true;
 
     public constructor(public dataService: DataService) { }
@@ -43,6 +45,10 @@ export class WmParameterComponent implements OnInit {
         //     this.showValueSource = false;
         // }
         this.topologyOptions = this.dataService.service.getAllNodesProperties();
+        this.valueClass = {
+            'col-md-7': this.canDelete,
+            'col-md-9': !this.canDelete
+        };
     }
 
     public resetValue(): void {
