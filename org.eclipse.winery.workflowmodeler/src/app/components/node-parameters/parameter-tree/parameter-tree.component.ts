@@ -15,9 +15,9 @@ import { TreeNode } from 'primeng/primeng';
 
 import { ValueSource } from '../../../model/value-source.enum';
 import { ValueType } from '../../../model/value-type.enum';
+import { Parameter } from '../../../model/workflow/parameter';
 import { RestParameter } from '../../../model/workflow/rest-parameter';
 import { RestTask } from '../../../model/workflow/rest-task';
-import { Parameter } from '../../../model/workflow/parameter';
 import { RestService } from '../../../services/rest.service';
 import { SwaggerTreeConverterService } from '../../../services/swagger-tree-converter.service';
 import { WorkflowUtil } from '../../../util/workflow-util';
@@ -49,11 +49,10 @@ export class WmParameterTreeComponent {
 
     public getValueParameter(node: any, key: string) {
         const nodeValue = node[key] ? node[key] : {
-            'value': '',
-            'valueSource': ValueSource[ValueSource.String]
+            value: '',
+            valueSource: ValueSource[ValueSource.String],
         };
         node[key] = nodeValue;
-        const parameter = new Parameter(key, nodeValue.value, nodeValue.valueSource, node.type);
         return nodeValue;
     }
 

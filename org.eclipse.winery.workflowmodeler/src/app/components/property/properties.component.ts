@@ -60,7 +60,7 @@ export class WmPropertiesComponent implements AfterViewInit {
 
         setTimeout(() => {
             this.jsPlumbService.jsplumbInstanceMap.get(this.node.parentId).repaintEverything();
-        }, 0)
+        }, 0);
     }
 
     public deleteNode() {

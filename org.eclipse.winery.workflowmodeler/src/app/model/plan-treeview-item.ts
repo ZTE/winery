@@ -11,6 +11,9 @@
  */
 
 export class PlanTreeviewItem {
-    constructor(public name: string, public value: string, public children: PlanTreeviewItem[],
-        public canSelect: boolean = true) { }
+    constructor(public name: string,
+                public value: string,
+                public children: PlanTreeviewItem[],
+                public canSelect?: boolean) {
+    }
 }

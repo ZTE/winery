@@ -14,11 +14,11 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { TreeNode } from 'primeng/primeng';
 
 import { Swagger } from '../../model/swagger';
+import { ValueSource } from '../../model/value-source.enum';
 import { RestTask } from '../../model/workflow/rest-task';
 import { BroadcastService } from '../../services/broadcast.service';
 import { RestService } from '../../services/rest.service';
 import { SwaggerTreeConverterService } from '../../services/swagger-tree-converter.service';
-import { ValueSource } from '../../model/value-source.enum';
 
 /**
  * property component presents information of a workflow node.
@@ -43,8 +43,8 @@ export class WmNodeParametersComponent implements OnInit {
     private queryParams: any[] = [];
 
     constructor(private broadcastService: BroadcastService,
-        private restService: RestService,
-        private swaggerTreeConverterService: SwaggerTreeConverterService) {
+                private restService: RestService,
+                private swaggerTreeConverterService: SwaggerTreeConverterService) {
     }
 
     public ngOnInit() {

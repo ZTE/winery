@@ -29,7 +29,7 @@ export class WmParameterComponent implements OnInit {
     @Input() public param: Parameter;
     @Input() public valueSource: ValueSource[];
     @Input() public canEditName: boolean;
-    @Input() public showLabel: boolean = true;
+    @Input() public showLabel = true;
     @Input() public canDelete: boolean;
     @Output() delete: EventEmitter<Parameter> = new EventEmitter<Parameter>();
 
@@ -37,20 +37,19 @@ export class WmParameterComponent implements OnInit {
     public planOptions: string[] = [];
     public topologyOptions: string[];
     public valueClass;
-     public showValueSource: boolean = true;
+     public showValueSource = true;
 
     public constructor(public dataService: DataService) {
     }
 
     public ngOnInit(): void {
-        console.log('param input param', this.valueSource);
         if (1 === this.valueSource.length) {
             this.showValueSource = false;
         }
         this.topologyOptions = this.dataService.service.getAllNodesProperties();
         this.valueClass = {
             'col-md-7': this.canDelete,
-            'col-md-9': !this.canDelete
+            'col-md-9': !this.canDelete,
         };
     }
 

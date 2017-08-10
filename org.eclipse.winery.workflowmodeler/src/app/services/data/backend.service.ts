@@ -15,11 +15,10 @@ import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
 
 import { PlanModel } from '../../model/plan-model';
-import {NodeTemplate} from '../../model/topology/node-template';
-import {BroadcastService} from '../broadcast.service';
-import {HttpService} from '../../util/http.service';
-import {NotifyService} from '../notify.service';
-import '../../util/rxjs-operators';
+import { NodeTemplate } from '../../model/topology/node-template';
+import { HttpService } from '../../util/http.service';
+import { BroadcastService } from '../broadcast.service';
+import { NotifyService } from '../notify.service';
 
 /**
  * BackendService
@@ -46,11 +45,11 @@ export abstract class BackendService {
     public abstract loadNodeTemplateInterfaces(nodeTemplate: NodeTemplate): Observable<string[]>;
 
     public abstract loadNodeTemplateOperations(nodeTemplate: NodeTemplate,
-                                                interfaceName: string): Observable<string[]>;
+                                               interfaceName: string): Observable<string[]>;
 
     public abstract loadNodeTemplateOperationParameter(nodeTemplate: NodeTemplate,
-                                                        interfaceName: string,
-                                                        operation: string): Observable<any>;
+                                                       interfaceName: string,
+                                                       operation: string): Observable<any>;
 
     public abstract save(planModel: PlanModel): Observable<any>;
 
@@ -67,9 +66,9 @@ export abstract class BackendService {
                 return;
             }
 
-            let subscribes = nodes.map(node => this.loadTopologyProperties(node));
+            const subscribes = nodes.map(node => this.loadTopologyProperties(node));
             Observable.forkJoin(subscribes).map(nodesProperties => {
-                let allProperties: string[] = [];
+                const allProperties: string[] = [];
                 nodesProperties.forEach((properties, index) => {
                     properties.forEach(property => {
                         allProperties.push(nodes[index].name + '.' + property);
@@ -79,6 +78,6 @@ export abstract class BackendService {
             }).subscribe(allProperties => {
                 this.allNodesProperties = allProperties;
             });
-        })
+        });
     }
 }

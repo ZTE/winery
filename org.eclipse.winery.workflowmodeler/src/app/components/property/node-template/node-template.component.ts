@@ -12,9 +12,9 @@
 import { AfterViewInit, Component, Input } from '@angular/core';
 import { Subscription } from '../../../../../node_modules/rxjs/Subscription.d';
 
-import { ValueSource } from '../../../model/value-source.enum';
-import { Parameter } from "../../../model/workflow/parameter";
 import { NodeTemplate } from '../../../model/topology/node-template';
+import { ValueSource } from '../../../model/value-source.enum';
+import { Parameter } from '../../../model/workflow/parameter';
 import { ToscaNodeTask } from '../../../model/workflow/tosca-node-task';
 import { BroadcastService } from '../../../services/broadcast.service';
 import { DataService } from '../../../services/data/data.service';
@@ -119,12 +119,12 @@ export class WmNodeTemplateComponent implements AfterViewInit {
 
                     params.input.forEach(param => {
                         const p = new Parameter(param, '', ValueSource[ValueSource.String]);
-                        this.node.input.push(p)
+                        this.node.input.push(p);
                     });
 
                     params.output.forEach(param => {
                         const p = new Parameter(param, '', ValueSource[ValueSource.Topology]);
-                        this.node.output.push(p)
+                        this.node.output.push(p);
                     });
                 });
         }

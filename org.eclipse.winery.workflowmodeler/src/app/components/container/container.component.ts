@@ -16,9 +16,9 @@ import { ActivatedRoute } from '@angular/router';
 import { SequenceFlow } from '../../model/workflow/sequence-flow';
 import { WorkflowNode } from '../../model/workflow/workflow-node';
 import { BroadcastService } from '../../services/broadcast.service';
+import { DataService } from '../../services/data/data.service';
 import { JsPlumbService } from '../../services/jsplumb.service';
 import { ModelService } from '../../services/model.service';
-import {DataService} from '../../services/data/data.service';
 
 /**
  * main canvas, it contains two parts: canvas and node property component

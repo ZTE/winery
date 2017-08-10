@@ -13,14 +13,14 @@ import { AfterViewInit, Component, Input } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 
 import { Swagger, SwaggerMethod, SwaggerParameter, SwaggerResponse } from '../../../model/swagger';
-import { RestTask } from '../../../model/workflow/rest-task';
+import { ValueSource } from '../../../model/value-source.enum';
+import { ValueType } from '../../../model/value-type.enum';
 import { RestParameter } from '../../../model/workflow/rest-parameter';
+import { RestTask } from '../../../model/workflow/rest-task';
 import { BroadcastService } from '../../../services/broadcast.service';
 import { NotifyService } from '../../../services/notify.service';
 import { RestService } from '../../../services/rest.service';
 import { WorkflowUtil } from '../../../util/workflow-util';
-import { ValueSource } from '../../../model/value-source.enum';
-import { ValueType } from '../../../model/value-type.enum';
 
 @Component({
     selector: 'b4t-rest-task',
@@ -34,8 +34,8 @@ export class WmRestTaskComponent implements AfterViewInit {
     private swagger: Swagger;
 
     constructor(private broadcastService: BroadcastService,
-        private notifyService: NotifyService,
-        private restService: RestService) {
+                private notifyService: NotifyService,
+                private restService: RestService) {
 
     }
 
@@ -113,7 +113,6 @@ export class WmRestTaskComponent implements AfterViewInit {
             this.node.produces = WorkflowUtil.deepClone(method.produces);
 
             method.parameters.forEach(param => {
-                //const nodeParam = new Parameter(param.name, '', ValueSource[ValueSource.String], param.type);
                 const nodeParam = new RestParameter(param.name, '', ValueSource[ValueSource.String],
                     ValueType[ValueType.String], param.position, param.schema);
                 this.node.parameters.push(nodeParam);

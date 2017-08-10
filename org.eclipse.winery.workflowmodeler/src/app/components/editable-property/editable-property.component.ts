@@ -12,9 +12,9 @@
 
 import { AfterViewInit, Component, EventEmitter, Input, Output } from '@angular/core';
 
-import { Parameter} from '../../model/workflow/parameter';
 import { ValueSource } from '../../model/value-source.enum';
 import { ValueType } from '../../model/value-type.enum';
+import { Parameter} from '../../model/workflow/parameter';
 
 /**
  * property component presents information of a workflow node.
