@@ -13,9 +13,11 @@
 import { Component, Input, Output } from '@angular/core';
 import { TreeNode } from 'primeng/primeng';
 
+import { ValueSource } from '../../../model/value-source.enum';
+import { ValueType } from '../../../model/value-type.enum';
 import { RestParameter } from '../../../model/workflow/rest-parameter';
 import { RestTask } from '../../../model/workflow/rest-task';
-import { ValueSource } from '../../../model/value-source.enum';
+import { Parameter } from '../../../model/workflow/parameter';
 import { RestService } from '../../../services/rest.service';
 import { SwaggerTreeConverterService } from '../../../services/swagger-tree-converter.service';
 import { WorkflowUtil } from '../../../util/workflow-util';
@@ -35,6 +37,30 @@ export class WmParameterTreeComponent {
     private restService: RestService;
 
     constructor(private swaggerTreeConverterService: SwaggerTreeConverterService) {}
+
+    public getKeyParameter(node: any) {
+        return new Parameter('key', node.label, ValueSource[ValueSource.String], ValueType[ValueType.String]);
+    }
+
+    public keyParameterChange(node: any, parameter: Parameter) {
+        node.label = parameter.value;
+        this.propertyKeyChanged(node, parameter.value);
+    }
+
+    public getValueParameter(node: any, key: string) {
+        const nodeValue = node[key] ? node[key] : {
+            'value': '',
+            'valueSource': ValueSource[ValueSource.String]
+        };
+        node[key] = nodeValue;
+        const parameter = new Parameter(key, nodeValue.value, nodeValue.valueSource, node.type);
+        return nodeValue;
+    }
+
+    public valueParameterChange(node: any, key: string, parameter: Parameter) {
+        node[key].value = parameter.value;
+        node[key].valueSource = parameter.valueSource;
+    }
 
     public addChildNode4DynamicObject(node: any) {
         const copyItem = WorkflowUtil.deepClone(node.parameter.additionalProperties);

@@ -15,7 +15,7 @@
 <div class="wm-properties-wrapper" *ngIf="show">
     <div class="form-group row">
         <div class="view col-md-10">
-            <b4t-editable-property [(propertyValue)]="node.name"></b4t-editable-property>
+            <b4t-editable-property [parameter]="nameParameter" (parameterChange)="nodeNameChange($event)" [showLabel]="false" [valueSource]="valueSource"></b4t-editable-property>
         </div>
         <div class="col-md-2">
             <button (click)="deleteNode()" type="button" class="btn btn-danger">

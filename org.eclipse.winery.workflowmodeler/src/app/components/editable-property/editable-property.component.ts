@@ -12,6 +12,10 @@
 
 import { AfterViewInit, Component, EventEmitter, Input, Output } from '@angular/core';
 
+import { Parameter} from '../../model/workflow/parameter';
+import { ValueSource } from '../../model/value-source.enum';
+import { ValueType } from '../../model/value-type.enum';
+
 /**
  * property component presents information of a workflow node.
  * the presented information can be edit in this component.
@@ -22,8 +26,10 @@ import { AfterViewInit, Component, EventEmitter, Input, Output } from '@angular/
     templateUrl: 'editable-property.component.html',
 })
 export class WmEditablePropertyComponent {
-    @Input() public propertyValue: any;
-    @Output() public propertyValueChange = new EventEmitter<any>();
+    @Input() public parameter: Parameter;
+    @Input() public showLabel: boolean;
+    @Input() public valueSource: ValueSource[];
+    @Output() public parameterChange = new EventEmitter<Parameter>();
 
     private editing = false;
 
@@ -37,6 +43,6 @@ export class WmEditablePropertyComponent {
 
     public completeEdit() {
         this.editing = false;
-        this.propertyValueChange.emit(this.propertyValue);
+        this.parameterChange.emit(this.parameter);
     }
 }

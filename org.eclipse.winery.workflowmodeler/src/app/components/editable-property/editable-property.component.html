@@ -1,10 +1,10 @@
 <span *ngIf="!isEditing()">
-    <span (dblclick)="startEdit()">{{propertyValue}}</span>
+    <span (dblclick)="startEdit()">{{parameter.value}}</span>
     <i class="fa fa-edit" (click)="startEdit()"></i>
 </span>
 <span class="row" *ngIf="isEditing()">
     <span class="col-sm-10">
-        <input class="form-control" style="display: inline" (blur)="completeEdit()" type="text" [(ngModel)]="propertyValue"/>
+        <b4t-parameter [param]="parameter" [showLabel]="showLabel" [valueSource]= "valueSource"></b4t-parameter>
     </span>
     <span class="col-sm-2">
         <i class="fa fa-check" (click)="completeEdit()"></i>

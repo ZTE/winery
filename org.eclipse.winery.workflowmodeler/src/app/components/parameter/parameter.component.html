@@ -13,7 +13,7 @@
 -->
 
 <div class="form-group row">
-    <div class="col-md-3 text-md-right">
+    <div *ngIf="showLabel" class="col-md-3 text-md-right">
         <input *ngIf="canEditName" class="form-control" type="text" [(ngModel)]="param.name">
         <label *ngIf="!canEditName" class="form-control-label">{{param.name}}</label>
     </div>
@@ -27,7 +27,7 @@
                 <option *ngFor="let topology of topologyOptions" value="{{topology}}">{{topology}}</option>
             </select>
         </div>
-        <select class="form-control col-md-3 pull-right font-select" type="text" [ngModel]="param.valueSource" (ngModelChange)="param.valueSource=$event;resetValue()">
+        <select *ngIf="showValueSource" class="form-control col-md-3 pull-right font-select" type="text" [ngModel]="param.valueSource" (ngModelChange)="param.valueSource=$event;resetValue()">
             <option *ngFor="let sourceType of valueSource" value="{{sourceEnum[sourceType]}}">{{sourceEnum[sourceType]}}</option>
         </select>
     </div>
