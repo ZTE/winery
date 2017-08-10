@@ -14,6 +14,8 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
 import { AlertModule, ModalModule } from 'ngx-bootstrap/index';
+import { Ng2BootstrapModule } from 'ngx-bootstrap';
+import { NgxTreeSelectModule } from 'ngx-tree-select';
 
 import { AppComponent } from './app.component';
 import { WmContainerComponent } from './components/container/container.component';
@@ -83,6 +85,16 @@ import { IntermediateCatchEventComponent } from './components/property/intermedi
         ModalModule.forRoot(),
         RouterModule.forRoot([]),
         SharedModule,
+        Ng2BootstrapModule.forRoot(),
+        NgxTreeSelectModule.forRoot({
+            allowFilter: true,
+            filterPlaceholder: 'Type your filter here...',
+            maxVisibleItemCount: 5,
+            idField: 'id',
+            textField: 'name',
+            childrenField: 'children',
+            allowParentSelection: true
+        })
     ],
     bootstrap: [
         AppComponent,

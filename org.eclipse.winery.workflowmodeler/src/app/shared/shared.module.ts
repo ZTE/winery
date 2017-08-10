@@ -24,7 +24,7 @@ const module = [
     HttpModule,
     RouterModule,
     RadioButtonModule,
-    TreeModule,
+    TreeModule
 ];
 
 @NgModule({
