@@ -15,7 +15,7 @@
 <div class="wm-properties-wrapper" *ngIf="show">
     <div class="form-group row">
         <div class="view col-md-10">
-            <b4t-editable-property [(propertyValue)]="node.name"></b4t-editable-property>
+            <b4t-editable-property [parameter]="nameParameter" (parameterChange)="nodeNameChange($event)" [showLabel]="false" [valueSource]="valueSource"></b4t-editable-property>
         </div>
         <div class="col-md-2">
             <button (click)="deleteNode()" type="button" class="btn btn-danger">
@@ -36,8 +36,8 @@
     </div>
 
     <hr>
-    <b4t-node-template *ngIf="node.type == 'toscaNodeManagementTask'" [node]="node"></b4t-node-template>
-    <b4t-rest-task *ngIf="node.type == 'restTask'" [node]="node"></b4t-rest-task>
     <b4t-start-event-parameters *ngIf="'startEvent' == node.type" [node]="node"></b4t-start-event-parameters>
+    <b4t-node-template *ngIf="node.type == 'toscaNodeManagementTask'" [node]="node" [planItems]="planTreeviewItems"></b4t-node-template>
+    <b4t-rest-task *ngIf="node.type == 'restTask'" [node]="node" [planItems]="planTreeviewItems"></b4t-rest-task>
     <b4t-intermediate-catch-event *ngIf="'intermediateCatchEvent' == node.type" [node]="node"></b4t-intermediate-catch-event>
 </div>

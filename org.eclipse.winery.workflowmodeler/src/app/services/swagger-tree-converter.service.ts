@@ -12,6 +12,8 @@
 
 import { Injectable } from '@angular/core';
 import { TreeNode } from 'primeng/primeng';
+
+import { ValueSource } from '../model/value-source.enum';
 import { WorkflowUtil } from '../util/workflow-util';
 import { RestService } from './rest.service';
 
@@ -57,6 +59,8 @@ export class SwaggerTreeConverterService {
                 param.value = {};
             } else if (param.type === 'array') {
                 param.value = [];
+            } else { // primary type
+                param.valueSource = ValueSource[ValueSource.String];
             }
         }
     }

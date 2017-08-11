@@ -13,6 +13,9 @@
 import { AfterViewInit, Component } from '@angular/core';
 import { TreeNode } from 'primeng/primeng';
 
+import { PlanTreeviewItem } from '../../model/plan-treeview-item';
+import { ValueSource } from '../../model/value-source.enum';
+import { Parameter } from '../../model/workflow/parameter';
 import { WorkflowNode } from '../../model/workflow/workflow-node';
 import { WorkflowNodeType } from '../../model/workflow/workflow-node-type';
 import { BroadcastService } from '../../services/broadcast.service';
@@ -31,24 +34,36 @@ import { ModelService } from '../../services/model.service';
 })
 export class WmPropertiesComponent implements AfterViewInit {
     public node: WorkflowNode;
+    public planTreeviewItems: PlanTreeviewItem[];
     public nodeTypes: string[] = WorkflowNodeType;
     public show = false;
     public titleEditing = false;
+    public valueSource = [ValueSource.String];
+
+    public nameParameter = new Parameter('nodeName', '', ValueSource[ValueSource.String], '');
 
     constructor(private broadcastService: BroadcastService,
-                private modelService: ModelService,
-                private jsPlumbService: JsPlumbService) {
+        private modelService: ModelService,
+        private jsPlumbService: JsPlumbService) {
 
     }
 
     public ngAfterViewInit() {
         this.broadcastService.showProperty$.subscribe(show => this.show = show);
-        this.broadcastService.nodeProperty$.subscribe(node => this.node = node);
+        this.broadcastService.nodeProperty$.subscribe(node => {
+            this.node = node;
+            this.planTreeviewItems = this.modelService.getPlanParameters(this.node.id);
+            this.nameParameter.value = this.node.name;
+        });
     }
 
-    public nodeNameChanged() {
+    public nodeNameChange(nameParamter: Parameter) {
         this.titleEditing = !this.titleEditing;
-        this.jsPlumbService.jsplumbInstanceMap.get(this.node.parentId).repaintEverything();
+        this.node.name = nameParamter.value;
+
+        setTimeout(() => {
+            this.jsPlumbService.jsplumbInstanceMap.get(this.node.parentId).repaintEverything();
+        }, 0);
     }
 
     public deleteNode() {

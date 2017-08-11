@@ -24,6 +24,7 @@ import { WmNodeParametersComponent } from './components/node-parameters/node-par
 import { WmParameterTreeComponent } from './components/node-parameters/parameter-tree/parameter-tree.component';
 import { WmNodeComponent } from './components/node/node.component';
 import { WmParameterComponent } from './components/parameter/parameter.component';
+import { IntermediateCatchEventComponent } from './components/property/intermediate-catch-event/intermediate-catch-event.component';
 import { WmNodeTemplateComponent } from './components/property/node-template/node-template.component';
 import { WmPropertiesComponent } from './components/property/properties.component';
 import { WmRestTaskComponent } from './components/property/rest-task/rest-task.component';
@@ -37,16 +38,15 @@ import { WmToolbarComponent } from './components/toolbar/toolbar.component';
 import { ResizableDirective } from './directive/resizable/resizable.directive';
 
 import { BroadcastService } from './services/broadcast.service';
+import { DataService } from './services/data/data.service';
 import { JsPlumbService } from './services/jsplumb.service';
 import { ModelService } from './services/model.service';
 import { NotifyService } from './services/notify.service';
 import { RestService } from './services/rest.service';
 import { SwaggerTreeConverterService } from './services/swagger-tree-converter.service';
-import { DataService } from './services/data/data.service';
 
 import { SharedModule } from './shared/shared.module';
 import { HttpService } from './util/http.service';
-import { IntermediateCatchEventComponent } from './components/property/intermediate-catch-event/intermediate-catch-event.component';
 
 @NgModule({
     declarations: [
@@ -93,7 +93,7 @@ import { IntermediateCatchEventComponent } from './components/property/intermedi
             idField: 'id',
             textField: 'name',
             childrenField: 'children',
-            allowParentSelection: true
+            allowParentSelection: false
         })
     ],
     bootstrap: [

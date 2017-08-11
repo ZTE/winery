@@ -11,7 +11,6 @@
  */
 
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { TreeviewConfig, TreeItem, TreeviewItem } from 'ngx-treeview';
 
 import { PlanTreeviewItem } from '../../model/plan-treeview-item';
 import { ValueSource } from '../../model/value-source.enum';
@@ -31,36 +30,36 @@ export class WmParameterComponent implements OnInit {
     @Input() public param: Parameter;
     @Input() public valueSource: ValueSource[];
     @Input() public canEditName: boolean;
+    @Input() public showLabel = true;
     @Input() public canDelete: boolean;
+    @Input() public planItems: PlanTreeviewItem[];
     @Output() delete: EventEmitter<Parameter> = new EventEmitter<Parameter>();
 
     public sourceEnum = ValueSource;
+    public valueGroupClass;
     public valueClass;
-    public topologyOptions: [];
-    public treeviewConfig = TreeviewConfig.create({
-        hasAllCheckBox: false,
-        hasFilter: true,
-        hasCollapseExpand: true,
-        maxHeight: 300
-    });
-    public treeviewItems: TreeviewItem[] = [];
-    // public showValueSource: boolean = true;
+    public planOptions = [];
+    public topologyOptions = [];
+    public showValueSource: boolean = true;
 
-    public constructor(public dataService: DataService) { }
+    constructor(private dataService: DataService) { }
 
     public ngOnInit(): void {
-        // if (1 === this.valueSource.length) {
-        //     this.showValueSource = false;
-        // }
+        if (1 === this.valueSource.length) {
+            this.showValueSource = false;
+        }
         this.topologyOptions = this.dataService.service.getAllNodesProperties();
         this.valueClass = {
+            'col-md-9': this.showValueSource,
+            'col-md-12': !this.showValueSource
+        };
+
+        this.valueGroupClass = {
             'col-md-7': this.canDelete,
             'col-md-9': !this.canDelete
         };
-        // TODO: call service function to get plan options
-        const planOptions: PlanTreeviewItem[] = [];
         // trans plan options to tree view items.
-        this.initPlanTreeviewItems(planOptions, this.param.value);
+        this.initPlanTreeviewItems(this.planItems);
     }
 
     public resetValue(): void {
@@ -84,47 +83,21 @@ export class WmParameterComponent implements OnInit {
         // this.treeviewItems[0].collapsed()
     }
 
-    private initPlanTreeviewItems(planResponses: PlanTreeviewItem[], value: string): void {
-        // const items = this.getTreeviewChild(planResponses, value);
-        const item = new TreeviewItem({
-            text: 'IT', value: 9, children: [
-                {
-                    text: 'Programming', value: 91, children: [{
-                        text: 'Frontend', value: 911, children: [
-                            { text: 'Angular 1', value: 9111, checked: false },
-                            { text: 'Angular 2', value: 9112, checked: false },
-                            { text: 'ReactJS', value: 9113, checked: false }
-                        ]
-                    }, {
-                        text: 'Backend', value: 912, checked: false, children: [
-                            { text: 'C#', value: 9121, checked: false },
-                            { text: 'Java', value: 9122, checked: false },
-                            { text: 'Python', value: 9123, checked: false }
-                        ]
-                    }]
-                },
-                {
-                    text: 'Networking', value: 92, children: [
-                        { text: 'Internet', value: 921, checked: false },
-                        { text: 'Security', value: 922, checked: false, disabled: true }
-                    ]
-                }
-            ]
-        });
-        // item.setCheckedRecursive(true);
-        this.treeviewItems.push(item);
+    private initPlanTreeviewItems(planResponses: PlanTreeviewItem[]): void {
+        this.planOptions = this.getTreeviewChild(planResponses);
     }
 
-    private getTreeviewChild(planTreeviewItems: PlanTreeviewItem[], value: string): TreeviewItem[] {
-        let treeviewItems: TreeviewItem[] = [];
+    private getTreeviewChild(planTreeviewItems: PlanTreeviewItem[]): any[] {
+        let treeviewItems = [];
         if (undefined == planTreeviewItems || 0 === planTreeviewItems.length) {
             // todo: debug check if it need [] or undefined.
             return treeviewItems;
         }
         planTreeviewItems.forEach(item => {
-            const treeviewItem = new TreeviewItem({
-                text: item.name, value: item.value, checked: item.value == value, disabled: !item.canSelect,
-                children: this.getTreeviewChild(item.children, value) });
+            const treeviewItem = {
+                id: item.value, name: item.name, disabled: false,//!item.canSelect,
+                children: this.getTreeviewChild(item.children)
+            };
             treeviewItems.push(treeviewItem);
         })
         return treeviewItems;

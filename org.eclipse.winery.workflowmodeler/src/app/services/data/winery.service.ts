@@ -11,15 +11,15 @@
  */
 
 import { Injectable } from '@angular/core';
-import { isNullOrUndefined } from 'util';
 import { Observable } from 'rxjs/Observable';
-import { NodeTemplate } from '../../model/topology/node-template';
+import { isNullOrUndefined } from 'util';
+
 import { PlanModel } from '../../model/plan-model';
+import { NodeTemplate } from '../../model/topology/node-template';
 import { HttpService } from '../../util/http.service';
 import { BroadcastService } from './../broadcast.service';
 import { NotifyService } from './../notify.service';
 import {BackendService} from './backend.service';
-import '../../util/rxjs-operators';
 
 /**
  * WineryService
@@ -38,13 +38,13 @@ export class WineryService extends BackendService {
         this.serviceTemplateId = queryParams.id;
         this.plan = queryParams.plan;
 
-        if(this.repositoryURL) {
+        if (this.repositoryURL) {
             this.refreshAllNodesProperties();
             this.loadPlan().subscribe(planModel => {
-                if(!planModel.nodes) {
+                if (!planModel.nodes) {
                     planModel.nodes = [];
                 }
-                if(!planModel.configs) {
+                if (!planModel.configs) {
                     planModel.configs = {};
                 }
                 this.broadcastService.broadcast(this.broadcastService.planModel, planModel);

@@ -20,5 +20,5 @@ export class RestTask extends WorkflowNode {
     public produces: string[] = [];
     public consumes: string[] = [];
     public parameters: RestParameter[] = [];
-    public responses: any[];
+    public responses: any[] = [];
 }

@@ -13,7 +13,10 @@ import { Injectable } from '@angular/core';
 import { isNullOrUndefined } from 'util';
 
 import { PlanModel } from '../model/plan-model';
+import { PlanTreeviewItem } from '../model/plan-treeview-item';
+import { Swagger, SwaggerModel, SwaggerModelSimple, SwaggerPrimitiveObject, SwaggerReferenceObject } from '../model/swagger';
 import { IntermediateCatchEvent } from '../model/workflow/intermediate-catch-event';
+import { NodeType } from '../model/workflow/node-type.enum';
 import { Position } from '../model/workflow/position';
 import { RestTask } from '../model/workflow/rest-task';
 import { SequenceFlow } from '../model/workflow/sequence-flow';
@@ -22,6 +25,7 @@ import { SubProcess } from '../model/workflow/sub-process';
 import { ToscaNodeTask } from '../model/workflow/tosca-node-task';
 import { WorkflowNode } from '../model/workflow/workflow-node';
 import { BroadcastService } from './broadcast.service';
+import { RestService } from './rest.service';
 import { SwaggerTreeConverterService } from './swagger-tree-converter.service';
 
 /**
@@ -34,7 +38,7 @@ export class ModelService {
 
     private planModel: PlanModel = new PlanModel();
 
-    constructor(private broadcastService: BroadcastService) {
+    constructor(private broadcastService: BroadcastService, private restService: RestService) {
         this.broadcastService.planModel$.subscribe(plan => this.planModel = plan);
     }
 
@@ -84,18 +88,19 @@ export class ModelService {
     }
 
     private createNodeByType(type: string): WorkflowNode {
-        if (type === 'startEvent') {
-            return new StartEvent();
-        }else if (type === 'restTask') {
-            return new RestTask();
-        } else if (type === 'toscaNodeManagementTask') {
-            return new ToscaNodeTask();
-        } else if (type === 'subProcess') {
-            return new SubProcess();
-        } else if (type === 'intermediateCatchEvent') {
-            return new IntermediateCatchEvent();
-        }else {
-            return new WorkflowNode();
+        switch (type) {
+            case NodeType[NodeType.startEvent]:
+                return new StartEvent();
+            case NodeType[NodeType.restTask]:
+                return new RestTask();
+            case NodeType[NodeType.toscaNodeManagementTask]:
+                return new ToscaNodeTask();
+            case NodeType[NodeType.subProcess]:
+                return new SubProcess();
+            case NodeType[NodeType.intermediateCatchEvent]:
+                return new IntermediateCatchEvent();
+            default:
+                return new WorkflowNode();
         }
     }
 
@@ -234,6 +239,114 @@ export class ModelService {
         }
 
         return null;
+    }
+
+    public getPlanParameters(nodeId: string): PlanTreeviewItem[] {
+        const preNodeList = new Array<WorkflowNode>();
+        this.getPreNodes(nodeId, this.getNodeMap(), preNodeList);
+
+        return this.loadNodeOutputs(preNodeList);
+    }
+
+    private loadNodeOutputs(nodes: WorkflowNode[]): PlanTreeviewItem[] {
+        const params = new Array<PlanTreeviewItem >();
+        nodes.forEach(node => {
+            switch (node.type) {
+                case NodeType[NodeType.startEvent]:
+                    params.push(this.loadOutput4StartEvent(<StartEvent>node));
+                    break;
+                case NodeType[NodeType.toscaNodeManagementTask]:
+                    params.push(this.loadOutput4ToscaNodeTask(<ToscaNodeTask>node));
+                    break;
+                case NodeType[NodeType.restTask]:
+                    params.push(this.loadOutput4RestTask(<RestTask>node));
+                    break;
+                default:
+                    break;
+            }
+        });
+
+        return params;
+    }
+
+    private loadOutput4StartEvent(node: StartEvent): PlanTreeviewItem {
+        const startItem = new PlanTreeviewItem(node.name, `[${node.id}]`, []);
+        node.parameters.map(param =>
+            startItem.children.push(new PlanTreeviewItem(param.name, `${startItem.value}.[${param.name}]`, [])));
+        return startItem;
+    }
+
+    private loadOutput4ToscaNodeTask(node: ToscaNodeTask): PlanTreeviewItem {
+        const item = new PlanTreeviewItem(node.name, `[${node.id}]`, []);
+        item.children.push(this.createStatusCodeTreeViewItem(node.id));
+        const responseItem = this.createResponseTreeViewItem(node.id);
+        item.children.push(responseItem);
+
+        node.output.map(param =>
+            responseItem.children.push(new PlanTreeviewItem(param.name, `${responseItem.value}.[${param.name}]`, [])));
+        return item;
+    }
+
+    private loadOutput4RestTask(node: RestTask): PlanTreeviewItem {
+        const item = new PlanTreeviewItem(node.name, `[${node.id}]`, []);
+        item.children.push(this.createStatusCodeTreeViewItem(node.id));
+
+        if (node.responses.length !== 0) { // load rest responses
+            const responseItem = this.createResponseTreeViewItem(node.id);
+            item.children.push(responseItem);
+            const swagger = this.restService.getSwaggerInfo(node.swagger);
+            const swaggerDefinition = this.restService.getDefinition(swagger, node.responses[0].schema.$ref);
+            this.loadParamsBySwaggerDefinition(responseItem, swagger, <SwaggerModelSimple>swaggerDefinition);
+        }
+
+        return item;
+    }
+
+    private loadParamsBySwaggerDefinition(parentItem: PlanTreeviewItem, swagger: Swagger, definition: SwaggerModelSimple) {
+        Object.getOwnPropertyNames(definition.properties).map(key => {
+            const property = definition.properties[key];
+            const value = `${parentItem.value}.[${key}]`;
+            const propertyItem = new PlanTreeviewItem(key, value, []);
+            parentItem.children.push(propertyItem);
+
+            if (property instanceof SwaggerReferenceObject) {
+                const propertyDefinition = this.restService.getDefinition(swagger, property.$ref);
+                this.loadParamsBySwaggerDefinition(propertyItem, swagger,
+                    <SwaggerModelSimple>propertyDefinition);
+            }
+
+            return propertyItem;
+        });
+    }
+
+    private createStatusCodeTreeViewItem(nodeId: string): PlanTreeviewItem {
+        return new PlanTreeviewItem('statusCode', `[${nodeId}].[statusCode]`, []);
+    }
+
+    private createResponseTreeViewItem(nodeId: string): PlanTreeviewItem {
+        return new PlanTreeviewItem('response', `[${nodeId}].[response]`, []);
+    }
+
+    public getPreNodes(nodeId: string, nodeMap: Map<string, WorkflowNode>, preNodes: WorkflowNode[]) {
+        const preNode4CurrentNode = [];
+        nodeMap.forEach(node => {
+            if (this.isPreNode(node, nodeId)) {
+                const existNode = preNodes.find(tmpNode => tmpNode.id === node.id);
+                if (existNode) {
+                    // current node already exists. this could avoid loop circle.
+                } else {
+                    preNode4CurrentNode.push(node);
+                    preNodes.push(node);
+                }
+            }
+        });
+
+        preNode4CurrentNode.forEach(node => this.getPreNodes(node.id, nodeMap, preNodes));
+    }
+
+    public isPreNode(preNode: WorkflowNode, id: string): boolean {
+        const targetNode = preNode.connection.find(connection => connection.targetRef === id);
+        return targetNode !== undefined;
     }
 
     public save() {

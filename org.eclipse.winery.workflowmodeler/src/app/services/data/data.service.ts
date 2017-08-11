@@ -13,12 +13,11 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
+import { HttpService } from '../../util/http.service';
+import { NotifyService } from '../notify.service';
 import { BroadcastService } from './../broadcast.service';
-import {BackendService} from './backend.service';
-import {HttpService} from '../../util/http.service';
-import {WineryService} from './winery.service';
-import {NotifyService} from '../notify.service';
-//import {CatalogService} from './catalog.service';
+import { BackendService } from './backend.service';
+import { WineryService } from './winery.service';
 
 /**
  * DataService
@@ -37,9 +36,6 @@ export class DataService {
 
     private createBackendService() {
         switch (this.environment) {
-            case 'Catalog':
-                //this.service = new CatalogService(this.broadcastService, this.notifyService, this.httpService);
-                break;
             default:
                 this.service = new WineryService(this.broadcastService, this.notifyService, this.httpService);
                 break;
