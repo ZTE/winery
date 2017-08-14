@@ -40,6 +40,7 @@ export class WmNodeParametersComponent implements OnInit {
     public inputParams: TreeNode[] = [];
     public outputParams: TreeNode[] = [];
     public pathParams: any[] = [];
+    public valueSource = ValueSource;
 
     private index = 1;
     private queryParams: any[] = [];

@@ -33,6 +33,7 @@ export class WmParameterComponent implements OnInit {
     @Input() public showLabel = true;
     @Input() public canDelete: boolean;
     @Input() public planItems: PlanTreeviewItem[];
+    @Output() public paramChange = new EventEmitter<Parameter>();
     @Output() delete: EventEmitter<Parameter> = new EventEmitter<Parameter>();
 
     public sourceEnum = ValueSource;
@@ -63,28 +64,20 @@ export class WmParameterComponent implements OnInit {
     }
 
     public resetValue(): void {
-        this.param.value = '';
+        this.modelChange('');
+    }
+
+    public modelChange(value: string) {
+        this.param.value = value;
+        this.paramChange.emit(this.param)
     }
 
     public deleteParam(): void {
         this.delete.emit();
     }
 
-    public treeviewSelectedChange(values) {
-        if (0 === values.length) {
-            return;
-        } else if (1 === values.length) {
-            this.param.value = values[0];
-        } else {
-            this.param.value = values[1];
-
-        }
-        console.log('select object is:' + values);
-        // this.treeviewItems[0].collapsed()
-    }
-
-    private initPlanTreeviewItems(planResponses: PlanTreeviewItem[]): void {
-        this.planOptions = this.getTreeviewChild(planResponses);
+    private initPlanTreeviewItems(planTreeviewItems: PlanTreeviewItem[]): void {
+        this.planOptions = this.getTreeviewChild(planTreeviewItems);
     }
 
     private getTreeviewChild(planTreeviewItems: PlanTreeviewItem[]): any[] {
@@ -95,7 +88,10 @@ export class WmParameterComponent implements OnInit {
         }
         planTreeviewItems.forEach(item => {
             const treeviewItem = {
-                id: item.value, name: item.name, disabled: false,//!item.canSelect,
+                id: item.value,
+                name: item.name,
+                disabled: false,
+                //!item.canSelect,
                 children: this.getTreeviewChild(item.children)
             };
             treeviewItems.push(treeviewItem);

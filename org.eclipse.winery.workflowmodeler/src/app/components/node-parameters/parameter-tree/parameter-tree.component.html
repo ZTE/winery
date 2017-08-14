@@ -1,7 +1,10 @@
 
 <p-tree *ngIf="parameters.length > 0" [value]="parameters">
     <ng-template let-node  pTemplate="default">
-        <span *ngIf="!node.keyEditable">[{{node.parameter.type}}]{{node.label}}:</span>
+        <b4t-parameter [param]="node.parameter" [canEditName]="node.keyEditable" [valueSource]= "valueSource"
+            [planItems]="planItems" (paramChange)="paramChange($event, node)"></b4t-parameter>
+
+        <!-- <span *ngIf="!node.keyEditable">[{{node.parameter.type}}] {{node.label}}:</span>
         <span *ngIf="node.keyEditable">[{{node.parameter.type}}]
             <b4t-editable-property [parameter]="getKeyParameter(node)"  [showLabel]="false"
                 [planItems]="planItems" (parameterChange)="keyParameterChange(node, $event)"></b4t-editable-property>:
@@ -16,7 +19,7 @@
                                (parameterChange)="valueParameterChange(node.parameter, 'value', $event)">
         </b4t-editable-property>
 
-        <i *ngIf="canDelete(node)" class="fa fa-minus-square-o" (click)="deleteTreeNode(node)"></i>
+        <i *ngIf="canDelete(node)" class="fa fa-minus-square-o" (click)="deleteTreeNode(node)"></i> -->
     </ng-template>
 
     <ng-template let-node  pTemplate="array">

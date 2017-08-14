@@ -14,7 +14,3 @@
     padding: 0;
     height: 32px;
 }
-
-select.form-control:not([size]):not([multiple]){
-    height: 34px;
-}
