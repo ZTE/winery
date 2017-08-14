@@ -13,3 +13,15 @@
 body, html {
     height: 100%;
 }
+
+.form-control-label{
+    line-height: 34px;
+}
+
+.ui-treenode-label{
+    width: calc(100% - 32px);
+}
+
+select.form-control:not([size]):not([multiple]){
+    height: 34px;
+}

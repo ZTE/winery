@@ -2,5 +2,7 @@
 <hr *ngIf="pathParams.length > 0">
 <b4t-parameter *ngFor="let param of queryParams" [param]="param" [valueSource]= "inputSources" [planItems]="planItems"></b4t-parameter>
 
-<b4t-parameter-tree [task]="task" [parameters]="inputParams" [valueSource]="inputSources" [planItems]="planItems"></b4t-parameter-tree>
-<b4t-parameter-tree [task]="task" [parameters]="outputParams" [valueSource]="outputSources" [planItems]="planItems"></b4t-parameter-tree>
+<b4t-parameter-tree [task]="task" [parameters]="inputParams" [valueSource]="inputSources"
+    [planItems]="planItems" [defaultValueSource]="valueSource[valueSource.String]"></b4t-parameter-tree>
+<b4t-parameter-tree [task]="task" [parameters]="outputParams" [valueSource]="outputSources"
+    [planItems]="planItems" [defaultValueSource]="valueSource[valueSource.Topology]"></b4t-parameter-tree>
