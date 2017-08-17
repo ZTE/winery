@@ -294,9 +294,11 @@ export class ModelService {
         if (node.responses.length !== 0) { // load rest responses
             const responseItem = this.createResponseTreeViewItem(node.id);
             item.children.push(responseItem);
-            const swagger = this.restService.getSwaggerInfo(node.swagger);
-            const swaggerDefinition = this.restService.getDefinition(swagger, node.responses[0].schema.$ref);
-            this.loadParamsBySwaggerDefinition(responseItem, swagger, <SwaggerModelSimple>swaggerDefinition);
+            if(node.responses[0]) {
+                const swagger = this.restService.getSwaggerInfo(node.swagger);
+                const swaggerDefinition = this.restService.getDefinition(swagger, node.responses[0].schema.$ref);
+                this.loadParamsBySwaggerDefinition(responseItem, swagger, <SwaggerModelSimple>swaggerDefinition);
+            }
         }
 
         return item;
