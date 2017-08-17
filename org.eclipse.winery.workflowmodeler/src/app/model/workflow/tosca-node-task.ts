@@ -9,10 +9,10 @@
  * Contributors:
  *     ZTE - initial API and implementation and/or initial documentation
  */
+import { NodeTemplate } from '../topology/node-template';
 import { Parameter } from './parameter';
 import { RestParameter } from './rest-parameter';
 import { WorkflowNode } from './workflow-node';
-import {NodeTemplate} from '../topology/node-template';
 
 export class ToscaNodeTask extends WorkflowNode {
     public input: Parameter[] = [];

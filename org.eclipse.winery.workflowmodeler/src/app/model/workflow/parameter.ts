@@ -1,4 +1,3 @@
-import {ValueSource} from '../value-source.enum';
 /**
  * Copyright (c) 2017 ZTE Corporation.
  * All rights reserved. This program and the accompanying materials
@@ -11,9 +10,11 @@ import {ValueSource} from '../value-source.enum';
  *     ZTE - initial API and implementation and/or initial documentation
  */
 
+import { ValueSource } from '../value-source.enum';
+import { ValueType } from '../value-type.enum';
+
 export class Parameter {
-    public name: string;
-    public type: string;
-    public value: string;
-    public valueSource: string = ValueSource[ValueSource.String];
+    constructor(public name: string, public value: string, public valueSource: string,
+                public type: string = ValueType[ValueType.String]) {
+    }
 }

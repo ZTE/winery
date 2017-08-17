@@ -12,6 +12,7 @@
 
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 
+import { PlanTreeviewItem } from '../../model/plan-treeview-item';
 import { ValueSource } from '../../model/value-source.enum';
 import { Parameter } from '../../model/workflow/parameter';
 import { DataService } from '../../services/data/data.service';
@@ -28,27 +29,73 @@ import { DataService } from '../../services/data/data.service';
 export class WmParameterComponent implements OnInit {
     @Input() public param: Parameter;
     @Input() public valueSource: ValueSource[];
-    @Input() public canEdit: boolean;
+    @Input() public canEditName: boolean;
+    @Input() public showLabel = true;
+    @Input() public canDelete: boolean;
+    @Input() public planItems: PlanTreeviewItem[];
+    @Output() public paramChange = new EventEmitter<Parameter>();
     @Output() delete: EventEmitter<Parameter> = new EventEmitter<Parameter>();
 
     public sourceEnum = ValueSource;
-    public planOptions: string[] = [];
-    public topologyOptions: string[];
+    public valueGroupClass;
+    public valueClass;
+    public planOptions = [];
+    public topologyOptions = [];
+    public showValueSource: boolean = true;
 
-    public constructor(public dataService: DataService) { }
+    constructor(private dataService: DataService) { }
 
     public ngOnInit(): void {
-        if (undefined === this.param.valueSource) {
-            this.param.valueSource = ValueSource[this.valueSource[0]];
+        if (1 === this.valueSource.length) {
+            this.showValueSource = false;
         }
         this.topologyOptions = this.dataService.service.getAllNodesProperties();
+        this.valueClass = {
+            'col-md-9': this.showValueSource,
+            'col-md-12': !this.showValueSource
+        };
+
+        this.valueGroupClass = {
+            'col-md-7': this.canDelete,
+            'col-md-9': !this.canDelete
+        };
+        // trans plan options to tree view items.
+        this.initPlanTreeviewItems(this.planItems);
     }
 
     public resetValue(): void {
-        this.param.value = '';
+        this.modelChange('');
+    }
+
+    public modelChange(value: string) {
+        this.param.value = value;
+        this.paramChange.emit(this.param)
     }
 
     public deleteParam(): void {
         this.delete.emit();
+    }
+
+    private initPlanTreeviewItems(planTreeviewItems: PlanTreeviewItem[]): void {
+        this.planOptions = this.getTreeviewChild(planTreeviewItems);
+    }
+
+    private getTreeviewChild(planTreeviewItems: PlanTreeviewItem[]): any[] {
+        let treeviewItems = [];
+        if (undefined == planTreeviewItems || 0 === planTreeviewItems.length) {
+            // todo: debug check if it need [] or undefined.
+            return treeviewItems;
+        }
+        planTreeviewItems.forEach(item => {
+            const treeviewItem = {
+                id: item.value,
+                name: item.name,
+                disabled: false,
+                //!item.canSelect,
+                children: this.getTreeviewChild(item.children)
+            };
+            treeviewItems.push(treeviewItem);
+        })
+        return treeviewItems;
     }
 }

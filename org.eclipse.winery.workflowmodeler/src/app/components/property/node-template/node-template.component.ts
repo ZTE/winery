@@ -12,9 +12,10 @@
 import { AfterViewInit, Component, Input } from '@angular/core';
 import { Subscription } from '../../../../../node_modules/rxjs/Subscription.d';
 
-import { ValueSource } from '../../../model/value-source.enum';
-import { Parameter } from "../../../model/workflow/parameter";
+import { PlanTreeviewItem } from '../../../model/plan-treeview-item';
 import { NodeTemplate } from '../../../model/topology/node-template';
+import { ValueSource } from '../../../model/value-source.enum';
+import { Parameter } from '../../../model/workflow/parameter';
 import { ToscaNodeTask } from '../../../model/workflow/tosca-node-task';
 import { BroadcastService } from '../../../services/broadcast.service';
 import { DataService } from '../../../services/data/data.service';
@@ -29,6 +30,7 @@ import { DataService } from '../../../services/data/data.service';
 })
 export class WmNodeTemplateComponent implements AfterViewInit {
     @Input() public node: ToscaNodeTask;
+    @Input() public planItems: PlanTreeviewItem[];
 
     public inputSources: ValueSource[] = [ValueSource.String, ValueSource.Topology, ValueSource.Plan];
     public outputSources: ValueSource[] = [ValueSource.Topology, ValueSource.Plan];
@@ -110,26 +112,22 @@ export class WmNodeTemplateComponent implements AfterViewInit {
         if (this.node.operation) {
             this.dataService.service
                 .loadNodeTemplateOperationParameter(
-                    this.node.template,
-                    this.node.nodeInterface,
-                    this.node.operation)
+                this.node.template,
+                this.node.nodeInterface,
+                this.node.operation)
                 .subscribe(params => {
                     this.node.input = [];
                     this.node.output = [];
 
-                    params.input.forEach(param => this.node.input.push({
-                        name: param,
-                        type: 'string',
-                        value: '',
-                        valueSource: ValueSource[ValueSource.String],
-                    }));
+                    params.input.forEach(param => {
+                        const p = new Parameter(param, '', ValueSource[ValueSource.String]);
+                        this.node.input.push(p);
+                    });
 
-                    params.output.forEach(param => this.node.output.push({
-                        name: param,
-                        type: 'string',
-                        value: '',
-                        valueSource: ValueSource[ValueSource.String],
-                    }));
+                    params.output.forEach(param => {
+                        const p = new Parameter(param, '', ValueSource[ValueSource.Topology]);
+                        this.node.output.push(p);
+                    });
                 });
         }
     }

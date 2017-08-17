@@ -9,11 +9,11 @@
  * Contributors:
  *     ZTE - initial API and implementation and/or initial documentation
  */
-import 'rxjs/add/observable/forkJoin';
-import 'rxjs/add/observable/throw';
-import 'rxjs/add/operator/catch';
-import 'rxjs/add/operator/debounceTime';
-import 'rxjs/add/operator/distinctUntilChanged';
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/switchMap';
-import 'rxjs/add/operator/toPromise';
+
+export class PlanTreeviewItem {
+    constructor(public name: string,
+                public value: string,
+                public children: PlanTreeviewItem[],
+                public canSelect?: boolean) {
+    }
+}

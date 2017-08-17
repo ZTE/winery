@@ -26,7 +26,7 @@ import {CatalogService} from './catalog.service';
  */
 @Injectable()
 export class DataService {
-    private environment = 'Winery'; // 'Winery', 'Catalog'
+    private environment = 'Catalog'; // 'Winery', 'Catalog'
     public service: BackendService;
 
     constructor(private broadcastService: BroadcastService,

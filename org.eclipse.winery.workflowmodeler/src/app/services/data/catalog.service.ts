@@ -27,16 +27,17 @@ import '../../util/rxjs-operators';
  */
 @Injectable()
 export class CatalogService extends BackendService {
-    private rootUrl: string = 'catalog';
+    private rootUrl: string = '/openoapi/catalog/v1';
     private serviceTemplateId: string;
     private planName: string;
 
     public setParameters(queryParams: any) {
         this.serviceTemplateId = queryParams.serviceTemplateId;
-        this.planName = queryParams.planName;
+        this.planName = queryParams.plan;
         console.log(`planName`, this.planName);
         if(this.planName) {
                 console.log('load plan');
+                this.refreshAllNodesProperties();
             this.loadPlan().subscribe(planModel => {
                 console.log('load plan success');
                 if(planModel instanceof Array) {
@@ -111,7 +112,9 @@ export class CatalogService extends BackendService {
     public loadPlan(): Observable<PlanModel> {
         const url = `/md/servicetemplates/${this.serviceTemplateId}/plans/${this.planName}`;
 
-        return this.httpService.get(this.getFullUrl(url));
+        return this.httpService.get(this.getFullUrl(url)).map(response => {
+            return response;
+        });
     }
 
     private getFullUrl(relativePath: string) {
