@@ -19,24 +19,22 @@ import '@angular/platform-browser-dynamic';
 import '@angular/router';
 import 'angular-in-memory-web-api';
 
+// jquery-ui
+import 'jqueryui/jquery-ui.min.css';
+import 'jqueryui/jquery-ui.min.js';
+
 // bootstrap
 import 'bootstrap/dist/css/bootstrap.css';
 
 // font-awesome
-import 'font-awesome/less/font-awesome.less';
+import 'font-awesome/css/font-awesome.css';
 
 // RxJS
 import 'rxjs';
-
-// pnotify
-import 'pnotify/dist/pnotify.buttons.css';
-import 'pnotify/dist/pnotify.buttons.js';
-import 'pnotify/dist/pnotify.css';
 
 // primeng
 import 'primeng/resources/primeng.min.css';
 import 'primeng/resources/themes/bootstrap/theme.css';
 
-// jquery-ui
-import 'jqueryui/jquery-ui.min.css';
-import 'jqueryui/jquery-ui.min.js';
+// custom css
+import './ngict-component.css';

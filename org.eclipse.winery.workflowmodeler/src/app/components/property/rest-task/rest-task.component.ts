@@ -19,7 +19,7 @@ import { ValueType } from '../../../model/value-type.enum';
 import { RestParameter } from '../../../model/workflow/rest-parameter';
 import { RestTask } from '../../../model/workflow/rest-task';
 import { BroadcastService } from '../../../services/broadcast.service';
-import { NotifyService } from '../../../services/notify.service';
+import { NoticeService } from '../../../services/notice.service';
 import { RestService } from '../../../services/rest.service';
 import { WorkflowUtil } from '../../../util/workflow-util';
 
@@ -35,11 +35,8 @@ export class WmRestTaskComponent implements AfterViewInit {
     public restOperations: any = [];
     private swagger: Swagger;
 
-    constructor(private broadcastService: BroadcastService,
-                private notifyService: NotifyService,
-                private restService: RestService) {
-
-    }
+    constructor(private broadcastService: BroadcastService, private restService: RestService,
+        private noticeService: NoticeService) { }
 
     public ngAfterViewInit() {
         setTimeout(() => {
@@ -90,7 +87,7 @@ export class WmRestTaskComponent implements AfterViewInit {
                 }
                 this.loadOperations();
             } else {
-                this.notifyService.error('swagger info not specified, please set swagger info first');
+                this.noticeService.error('swagger info not specified, please set swagger info first');
             }
         }
     }

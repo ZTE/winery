@@ -1,0 +1,4 @@
+<div class="alert-div">
+  <alert *ngFor="let notice of notices; let i = index;" [type]="noticeType[notice.type]" dismissible="true"
+    [dismissOnTimeout]="notice.timeout" (onClosed)="onClosed(i)">{{notice.content}}</alert>
+</div>

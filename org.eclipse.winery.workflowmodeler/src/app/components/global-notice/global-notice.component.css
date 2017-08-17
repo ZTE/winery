@@ -1,0 +1,8 @@
+.alert-div{
+    position: fixed;
+    top: 100px;
+    left: 0;
+    right: 0;
+    margin: auto;
+    width: 400px;
+}

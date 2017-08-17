@@ -41,12 +41,13 @@ import { BroadcastService } from './services/broadcast.service';
 import { DataService } from './services/data/data.service';
 import { JsPlumbService } from './services/jsplumb.service';
 import { ModelService } from './services/model.service';
-import { NotifyService } from './services/notify.service';
+import { NoticeService } from './services/notice.service';
 import { RestService } from './services/rest.service';
 import { SwaggerTreeConverterService } from './services/swagger-tree-converter.service';
 
 import { SharedModule } from './shared/shared.module';
 import { HttpService } from './util/http.service';
+import { GlobalNoticeComponent } from './components/global-notice/global-notice.component';
 
 @NgModule({
     declarations: [
@@ -68,13 +69,14 @@ import { HttpService } from './util/http.service';
         WmRestConfigDetailComponent,
         WmRestConfigListComponent,
         ResizableDirective,
+        GlobalNoticeComponent,
     ],
     providers: [
         BroadcastService,
         HttpService,
         JsPlumbService,
         ModelService,
-        NotifyService,
+        NoticeService,
         RestService,
         SwaggerTreeConverterService,
         DataService,

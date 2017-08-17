@@ -16,7 +16,6 @@ import { ValueSource } from '../../../model/value-source.enum';
 import { Parameter } from '../../../model/workflow/parameter';
 import { StartEvent } from '../../../model/workflow/start-event';
 import { BroadcastService } from '../../../services/broadcast.service';
-import { NotifyService } from '../../../services/notify.service';
 import { WorkflowUtil } from '../../../util/workflow-util';
 
 @Component({

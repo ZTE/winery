@@ -18,8 +18,7 @@ import { PlanModel } from '../../model/plan-model';
 import { NodeTemplate } from '../../model/topology/node-template';
 import { HttpService } from '../../util/http.service';
 import { BroadcastService } from './../broadcast.service';
-import { NotifyService } from './../notify.service';
-import {BackendService} from './backend.service';
+import { BackendService } from './backend.service';
 
 /**
  * WineryService
@@ -89,7 +88,7 @@ export class WineryService extends BackendService {
     }
 
     public loadNodeTemplateOperations(nodeTemplate: NodeTemplate,
-                                      interfaceName: string): Observable<string[]> {
+        interfaceName: string): Observable<string[]> {
         const url = 'nodetypes/' + this.encode(nodeTemplate.namespace)
             + '/' + this.encode(nodeTemplate.type) + '/interfaces/' + this.encode(interfaceName) + '/operations/';
 
@@ -97,8 +96,8 @@ export class WineryService extends BackendService {
     }
 
     public loadNodeTemplateOperationParameter(nodeTemplate: NodeTemplate,
-                                              interfaceName: string,
-                                              operation: string): Observable<any> {
+        interfaceName: string,
+        operation: string): Observable<any> {
         const relativePath = 'nodetypes/' + this.encode(nodeTemplate.namespace) + '/' + this.encode(nodeTemplate.type)
             + '/interfaces/' + this.encode(interfaceName) + '/operations/' + this.encode(operation) + '/';
 

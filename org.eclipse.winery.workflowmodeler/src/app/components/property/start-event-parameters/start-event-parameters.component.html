@@ -11,13 +11,15 @@
  *     ZTE - initial API and implementation and/or initial documentation
  *******************************************************************************/
 -->
-<b4t-parameter *ngFor="let param of node.parameters; let i = index;" [param]="param" [canEditName]="true"
-    [valueSource]="sources" [canDelete]="true" (delete)="delete(i)"></b4t-parameter> 
+
 <div class="form-group row">
     <div class="col-md-10"></div>
     <div class="col-md-2">
-        <button (click)="create();" type="button" class="btn btn-primary pull-right">
+        <button (click)="create();" type="button" class="btn blue1 pull-right">
             <i class="fa fa-plus"></i>
         </button>
     </div>
 </div>
+
+<b4t-parameter *ngFor="let param of node.parameters; let i = index;" [param]="param" [canEditName]="true"
+    [valueSource]="sources" [canDelete]="true" (delete)="delete(i)"></b4t-parameter>

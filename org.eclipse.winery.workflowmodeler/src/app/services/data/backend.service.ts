@@ -18,7 +18,7 @@ import { PlanModel } from '../../model/plan-model';
 import { NodeTemplate } from '../../model/topology/node-template';
 import { HttpService } from '../../util/http.service';
 import { BroadcastService } from '../broadcast.service';
-import { NotifyService } from '../notify.service';
+import { NoticeService } from '../notice.service';
 
 /**
  * BackendService
@@ -29,10 +29,10 @@ export abstract class BackendService {
     private allNodesProperties: string[] = [];
 
     constructor(protected broadcastService: BroadcastService,
-                private notifyService: NotifyService,
+                private noticeService: NoticeService,
                 protected httpService: HttpService) {
         this.broadcastService.saveEvent$.subscribe(planModel => {
-            this.save(planModel).subscribe(response => this.notifyService.success('save plan success'));
+            this.save(planModel).subscribe(response => this.noticeService.success('save plan success'));
         });
     }
 
