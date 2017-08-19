@@ -70,6 +70,7 @@ export class WmNodeParametersComponent implements OnInit {
             } else if (param.position === 'body') {
                 const requestTreeNode = this.swaggerTreeConverterService
                     .schema2TreeNode('Request Param', this.task.restConfigId, param.schema);
+                    param.value = param.schema.value;
                 this.inputParams.push(requestTreeNode);
             } else {
                 // TODO others param types not supported
