@@ -11,6 +11,12 @@
     </div>
 </div>
 <div class="form-group row">
+    <label class="col-md-2 form-control-label text-md-right">Definition</label>
+    <div class="col-md-10">
+        <input class="form-control" [(ngModel)]="restConfig.definition">
+    </div>
+</div>
+<div class="form-group row">
     <label class="col-md-2 form-control-label text-md-right">Dynamic</label>
     <div class="col-md-10">
         <p-radioButton name="dynamic" [value]=true label="true" (ngModelChange)="toggleDynamic($event)"

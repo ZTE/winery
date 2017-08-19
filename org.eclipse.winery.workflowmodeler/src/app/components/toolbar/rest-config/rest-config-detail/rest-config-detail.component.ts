@@ -14,6 +14,7 @@ import { Component, Input, OnChanges, ViewChild } from '@angular/core';
 import { ModalDirective } from 'ngx-bootstrap/modal';
 
 import { Swagger } from '../../../../model/swagger';
+import { RestConfig } from '../../../../model/rest-config';
 import { RestService } from '../../../../services/rest.service';
 
 /**
@@ -25,12 +26,7 @@ import { RestService } from '../../../../services/rest.service';
     templateUrl: 'rest-config-detail.component.html',
 })
 export class WmRestConfigDetailComponent implements OnChanges {
-    @Input() restConfig: {
-        name: string,
-        baseUrl: string,
-        dynamic: boolean,
-        swagger: Swagger,
-    };
+    @Input() restConfig: RestConfig;
 
     public detail: string;
 
@@ -38,6 +34,9 @@ export class WmRestConfigDetailComponent implements OnChanges {
     }
 
     public ngOnChanges() {
+        if(this.restConfig == null) {
+            this.restConfig = new RestConfig('', '', '', '', false);
+        }
         this.parseSwagger2String();
     }
 
@@ -66,11 +65,17 @@ export class WmRestConfigDetailComponent implements OnChanges {
     public toggleDynamic(dynamic: boolean) {
         this.restConfig.dynamic = dynamic;
 
-        if (this.restConfig.dynamic && this.restConfig.baseUrl) {
-            this.restService.getDynamicSwaggerInfo(this.restConfig.baseUrl)
+        if (this.restConfig.dynamic && this.restConfig.definition) {
+            this.restService.getDynamicSwaggerInfo(this.restConfig.definition)
                 .subscribe(response => {
-                    this.restConfig.swagger = new Swagger(response);
-                    this.parseSwagger2String();
+                    try {
+                        this.restConfig.swagger = new Swagger(response);
+                        this.parseSwagger2String();
+                    } catch (e) {
+                        console.log('detail transfer error');
+                        console.error(e);
+                    }   
+                    
                 });
         }
     }

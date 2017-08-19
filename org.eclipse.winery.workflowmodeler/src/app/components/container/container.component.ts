@@ -43,12 +43,10 @@ export class WmContainerComponent implements AfterViewInit, OnInit {
 
     @HostListener('window:keyup.delete', ['$event']) ondelete(event: KeyboardEvent) {
         if (this.currentType === 'WorkflowNode') {
-            console.log(`delete node ${this.currentWorkflowNode.id}`);
             const parentId = this.jsPlumbService.getParentNodeId(this.currentWorkflowNode.id);
             this.jsPlumbService.remove(this.currentWorkflowNode);
             this.modelService.deleteNode(parentId, this.currentWorkflowNode.id);
         } else if (this.currentType === 'SequenceFlow') {
-            console.log(`delete SequenceFlow ${this.currentSequenceFlow.sourceRef} ${this.currentSequenceFlow.targetRef}`);
             this.modelService.deleteConnection(this.currentSequenceFlow.sourceRef, this.currentSequenceFlow.targetRef);
             this.jsPlumbService.deleteConnect(this.currentSequenceFlow.sourceRef, this.currentSequenceFlow.targetRef);
         }

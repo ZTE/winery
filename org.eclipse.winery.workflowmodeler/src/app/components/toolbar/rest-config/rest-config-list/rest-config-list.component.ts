@@ -14,6 +14,7 @@ import { Component, EventEmitter, Input, Output, ViewChild } from '@angular/core
 import { ModalDirective } from 'ngx-bootstrap/modal';
 
 import { Swagger } from '../../../../model/swagger';
+import { RestConfig } from '../../../../model/rest-config';
 import { RestService } from '../../../../services/rest.service';
 
 /**
@@ -25,22 +26,17 @@ import { RestService } from '../../../../services/rest.service';
     templateUrl: 'rest-config-list.component.html',
 })
 export class WmRestConfigListComponent {
-    @Output() configSelected = new EventEmitter<any>();
+    @Output() configSelected = new EventEmitter<RestConfig>();
 
     constructor(public restService: RestService) {
     }
 
-    public onConfigSelected(restConfig: any) {
+    public onConfigSelected(restConfig: RestConfig) {
         this.configSelected.emit(restConfig);
     }
 
     public addRestConfig() {
-        const restConfig = {
-            name: 'new Rest Config',
-            baseUrl: '',
-            dynamic: false,
-        };
-        this.restService.getRestConfigs().push(restConfig);
+        const restConfig = this.restService.addRestConfig();
 
         this.onConfigSelected(restConfig);
     }
@@ -48,7 +44,7 @@ export class WmRestConfigListComponent {
     public deleteRestConfig(index: number) {
         this.restService.getRestConfigs().splice(index, 1);
 
-        let restConfig = {};
+        let restConfig;
         if (this.restService.getRestConfigs().length > 0) {
             if (this.restService.getRestConfigs()[index]) {
                 restConfig = this.restService.getRestConfigs()[index];

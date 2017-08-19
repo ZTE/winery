@@ -20,14 +20,14 @@ import { RestService } from './rest.service';
 @Injectable()
 export class SwaggerTreeConverterService {
 
-    private swaggerUrl: string;
+    private restConfigId: string;
 
     constructor(private restService: RestService) {
 
     }
 
-    public schema2TreeNode(key: string | number, swaggerUrl: string, schema: any): any {
-        this.swaggerUrl = swaggerUrl;
+    public schema2TreeNode(key: string | number, restConfigId: string, schema: any): any {
+        this.restConfigId = restConfigId;
 
         if (schema.$ref) {
             const treeNode = this.getTreeNodeBySwaggerDefinition(key, schema);
@@ -39,7 +39,11 @@ export class SwaggerTreeConverterService {
     }
 
     private getTreeNodeBySwaggerDefinition(key: string | number, schema: any): TreeNode {
-        const swagger = this.restService.getSwaggerInfo(this.swaggerUrl);
+        const swagger = this.restService.getSwaggerInfo(this.restConfigId);
+        if(swagger === undefined) {
+            console.log(`swagger definition not exist, restConfigId [${this.restConfigId}]`);
+            return null;
+        }
         const swaggerDefinition = this.restService.getDefinition(swagger, schema.$ref);
 
         const definitionCopy = WorkflowUtil.deepClone(swaggerDefinition);
@@ -49,7 +53,7 @@ export class SwaggerTreeConverterService {
             schema.value = definitionCopy.value;
         }
 
-        return this.schema2TreeNode(key, this.swaggerUrl, definitionCopy);
+        return this.schema2TreeNode(key, this.restConfigId, definitionCopy);
     }
 
     private setInitValue4Param(value: any | any[], param: any) {
@@ -103,7 +107,7 @@ export class SwaggerTreeConverterService {
         param.value.forEach((itemValue, index) => {
             const itemCopy = WorkflowUtil.deepClone(param.items);
             itemCopy.value = itemValue;
-            node.children.push(this.schema2TreeNode(index, this.swaggerUrl, itemCopy));
+            node.children.push(this.schema2TreeNode(index, this.restConfigId, itemCopy));
         });
     }
 
@@ -128,7 +132,7 @@ export class SwaggerTreeConverterService {
                 objectValue[key] = property.value;
             }
 
-            treeNodes.push(this.schema2TreeNode(key, this.swaggerUrl, property));
+            treeNodes.push(this.schema2TreeNode(key, this.restConfigId, property));
         }
         return treeNodes;
     }
@@ -139,7 +143,7 @@ export class SwaggerTreeConverterService {
             const propertyCopy = WorkflowUtil.deepClone(additionalProperties);
             propertyCopy.value = mapOrDictionary[key];
 
-            const treeNode = this.schema2TreeNode(key, this.swaggerUrl, propertyCopy);
+            const treeNode = this.schema2TreeNode(key, this.restConfigId, propertyCopy);
             treeNode.keyEditable = true;
             treeNodes.push(treeNode);
 

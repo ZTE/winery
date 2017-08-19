@@ -128,7 +128,7 @@ export class WmParameterTreeComponent implements OnChanges {
         const copyItem = WorkflowUtil.deepClone(node.parameter.additionalProperties);
         const key = Object.keys(node.parameter.value).length;
         const childrenNode = this.swaggerTreeConverterService
-            .schema2TreeNode(key, this.task.swagger, copyItem);
+            .schema2TreeNode(key, this.task.restConfigId, copyItem);
 
         childrenNode.keyEditable = true;
         node.parameter.value[key] = childrenNode.parameter.value;
@@ -146,10 +146,11 @@ export class WmParameterTreeComponent implements OnChanges {
 
     public addChildNode4ObjectArray(node: any) {
         const copyItem = WorkflowUtil.deepClone(node.parameter.items);
+
         const childrenNode = this.swaggerTreeConverterService
             .schema2TreeNode(
             node.children.length,
-            this.task.swagger,
+            this.task.restConfigId,
             copyItem);
 
         node.parameter.value.push(childrenNode.parameter.value);
