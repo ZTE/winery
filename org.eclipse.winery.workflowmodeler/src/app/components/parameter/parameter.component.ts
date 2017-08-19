@@ -40,7 +40,7 @@ export class WmParameterComponent implements OnInit {
     public valueGroupClass;
     public valueClass;
     public planOptions = [];
-    public topologyOptions = [];
+    public topologyOptions: {name: string, value: string}[] = [];
     public showValueSource: boolean = true;
 
     constructor(private dataService: DataService) { }

@@ -26,7 +26,7 @@ import { NotifyService } from '../notify.service';
  */
 @Injectable()
 export abstract class BackendService {
-    private allNodesProperties: string[] = [];
+    private allNodesProperties: {name: string, value: string}[] = [];
 
     constructor(protected broadcastService: BroadcastService,
                 private notifyService: NotifyService,
@@ -55,7 +55,7 @@ export abstract class BackendService {
 
     public abstract loadPlan(): Observable<PlanModel>;
 
-    public getAllNodesProperties(): string[] {
+    public getAllNodesProperties(): {name: string, value:string}[] {
         return this.allNodesProperties;
     }
 
@@ -68,10 +68,15 @@ export abstract class BackendService {
 
             const subscribes = nodes.map(node => this.loadTopologyProperties(node));
             Observable.forkJoin(subscribes).map(nodesProperties => {
-                const allProperties: string[] = [];
+                const allProperties: {name:string, value:string}[] = [];
                 nodesProperties.forEach((properties, index) => {
                     properties.forEach(property => {
-                        allProperties.push(nodes[index].name + '.' + property);
+                        // allProperties.push(nodes[index].name + '.' + property);
+                        const propertyOption = {
+                            name: `${nodes[index].name}.${property}`,
+                            value: `[${nodes[index].name}].[${property}]`
+                        };
+                        allProperties.push(propertyOption);
                     });
                 });
                 return allProperties;

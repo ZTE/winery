@@ -15,9 +15,9 @@
 <div class="form-group row">
 	<label class="col-md-3 form-control-label text-md-right">Service</label>
 	<div class="col-md-9">
-		<select class="form-control" [ngModel]="node.swagger"
+		<select class="form-control" [ngModel]="node.restConfigId"
 				(ngModelChange)="serviceChanged($event)">
-			<option *ngFor="let restConfig of restService.getRestConfigs()" value="{{restConfig.baseUrl}}">{{restConfig.name}}</option>
+			<option *ngFor="let restConfig of restService.getRestConfigs()" value="{{restConfig.id}}">{{restConfig.name}}</option>
 		</select>
 	</div>
 </div>

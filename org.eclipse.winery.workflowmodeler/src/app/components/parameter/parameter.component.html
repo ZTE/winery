@@ -26,7 +26,7 @@
                 [ngModel]="param.value" (ngModelChange)="modelChange($event)"></tree-select>
             <select *ngSwitchCase="sourceEnum[sourceEnum.Topology]" [ngClass]="valueClass" class="form-control"
                 type="text" [ngModel]="param.value" (ngModelChange)="modelChange($event)">
-                <option *ngFor="let topology of topologyOptions" value="{{topology}}">{{topology}}</option>
+                <option *ngFor="let topology of topologyOptions" value="{{topology.value}}">{{topology.name}}</option>
             </select>
         </div>
         <select *ngIf="showValueSource" class="form-control col-md-3" type="text" [ngModel]="param.valueSource"

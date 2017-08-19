@@ -48,8 +48,8 @@ export class WmRestTaskComponent implements AfterViewInit {
         }, 0);
     }
 
-    public serviceChanged(swagger: string) {
-        this.node.swagger = swagger;
+    public serviceChanged(configId: string) {
+        this.node.restConfigId = configId;
         this.urlChanged('');
         this.loadInterfaces();
     }
@@ -80,8 +80,8 @@ export class WmRestTaskComponent implements AfterViewInit {
     }
 
     private loadInterfaces() {
-        if (this.node.swagger) {
-            this.swagger = this.restService.getSwaggerInfo(this.node.swagger);
+        if (this.node.restConfigId) {
+            this.swagger = this.restService.getSwaggerInfo(this.node.restConfigId);
 
             if (this.swagger) {
                 this.restInterfaces = [];
