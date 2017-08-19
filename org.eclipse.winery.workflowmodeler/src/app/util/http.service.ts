@@ -37,7 +37,13 @@ export class HttpService {
     public getHttp(type: string, uri: string, data?: any, options?: RequestOptionsArgs): Observable<any> {
         if (data) {
             return this.http[type](uri, data, options)
-                .map(response => response.json())
+                .map(response => {
+                    if(response.text() === "") {
+                        return {};
+                    }
+
+                   return response.json();
+                })
                 .catch(this.handleError);
         } else {
             return this.http[type](uri, options)
