@@ -26,8 +26,8 @@ import { ModelService } from '../../services/model.service';
  */
 @Component({
     selector: 'b4t-container',
-    styleUrls: ['./container.component.css'],
     templateUrl: 'container.component.html',
+    styleUrls: ['./container.component.css']
 })
 export class WmContainerComponent implements AfterViewInit, OnInit {
     public currentWorkflowNode: WorkflowNode;

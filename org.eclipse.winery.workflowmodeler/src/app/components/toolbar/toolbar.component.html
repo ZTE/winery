@@ -12,23 +12,11 @@
  */
 -->
 <div class="toolbar">
-    <div class="btn-group" role="group" aria-label="Basic example">
-        <button *ngFor="let nodeType of nodeTypes" type="button" class="btn btn-secondary item ui-draggable"
-                [attr.nodeType]="nodeType">{{nodeType}}
+    <div class="row">
+        <button *ngFor="let nodeType of nodeTypes" type="button" [attr.nodeType]="nodeType"
+            class="btn btn-secondary item ui-draggable">
+            <div class="{{nodeType}}"></div>
+            <span>{{getNameByType(nodeType)}}</span>
         </button>
     </div>
-
-    <div class="btn-group" role="group" aria-label="Basic example">
-        <button type="button" class="btn blue1" (click)="save()">Save</button>
-    </div>
-
-    <div class="btn-group" role="group" aria-label="Basic example">
-        <button type="button" class="btn white" (click)="showRestConfigModal()">Setting</button>
-    </div>
-
-    <!-- <div class="btn-group" role="group" aria-label="Basic example">
-        <button type="button" class="btn btn-primary" (click)="test()">test</button>
-    </div> -->
 </div>
-
-<b4t-rest-config></b4t-rest-config>

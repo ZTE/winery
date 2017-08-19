@@ -14,7 +14,6 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
 import { AlertModule, ModalModule } from 'ngx-bootstrap/index';
-import { Ng2BootstrapModule } from 'ngx-bootstrap';
 import { NgxTreeSelectModule } from 'ngx-tree-select';
 
 import { AppComponent } from './app.component';
@@ -30,9 +29,9 @@ import { WmPropertiesComponent } from './components/property/properties.componen
 import { WmRestTaskComponent } from './components/property/rest-task/rest-task.component';
 import { StartEventParametersComponent } from './components/property/start-event-parameters/start-event-parameters.component';
 import { WmSequenceFlowComponent } from './components/sequence-flow/sequence-flow.component';
-import { WmRestConfigDetailComponent } from './components/toolbar/rest-config/rest-config-detail/rest-config-detail.component';
-import { WmRestConfigListComponent } from './components/toolbar/rest-config/rest-config-list/rest-config-list.component';
-import { WmRestConfigComponent } from './components/toolbar/rest-config/rest-config.component';
+import { WmRestConfigDetailComponent } from './components/menus/rest-config/rest-config-detail/rest-config-detail.component';
+import { WmRestConfigListComponent } from './components/menus/rest-config/rest-config-list/rest-config-list.component';
+import { WmRestConfigComponent } from './components/menus/rest-config/rest-config.component';
 import { WmToolbarComponent } from './components/toolbar/toolbar.component';
 
 import { ResizableDirective } from './directive/resizable/resizable.directive';
@@ -48,6 +47,7 @@ import { SwaggerTreeConverterService } from './services/swagger-tree-converter.s
 import { SharedModule } from './shared/shared.module';
 import { HttpService } from './util/http.service';
 import { GlobalNoticeComponent } from './components/global-notice/global-notice.component';
+import { MenusComponent } from './components/menus/menus.component';
 
 @NgModule({
     declarations: [
@@ -70,6 +70,7 @@ import { GlobalNoticeComponent } from './components/global-notice/global-notice.
         WmRestConfigListComponent,
         ResizableDirective,
         GlobalNoticeComponent,
+        MenusComponent,
     ],
     providers: [
         BroadcastService,
@@ -87,7 +88,6 @@ import { GlobalNoticeComponent } from './components/global-notice/global-notice.
         ModalModule.forRoot(),
         RouterModule.forRoot([]),
         SharedModule,
-        Ng2BootstrapModule.forRoot(),
         NgxTreeSelectModule.forRoot({
             allowFilter: true,
             filterPlaceholder: 'Type your filter here...',

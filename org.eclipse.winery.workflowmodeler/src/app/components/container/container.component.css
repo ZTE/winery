@@ -22,5 +22,7 @@
     position: relative;
     overflow: auto;
     z-index: 0;
-    background-color: #84acb3;
+    background-color: white;
+    border: 1px solid #eaeaea;
+    border-radius: 4px;
 }

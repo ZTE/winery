@@ -9,12 +9,10 @@
  * Contributors:
  *     ZTE - initial API and implementation and/or initial documentation
  */
- 
-.alert-div{
-    position: fixed;
-    top: 100px;
-    left: 0;
-    right: 0;
-    margin: auto;
-    width: 400px;
+import { Swagger } from './swagger';
+
+export class SwaggerSetting {
+    constructor(public name: string, public baseUrl: string, public dynamic: boolean,
+        public swagger?: Swagger) {
+    }
 }
