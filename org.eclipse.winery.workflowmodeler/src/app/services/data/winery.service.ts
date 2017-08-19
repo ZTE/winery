@@ -88,7 +88,7 @@ export class WineryService extends BackendService {
     }
 
     public loadNodeTemplateOperations(nodeTemplate: NodeTemplate,
-        interfaceName: string): Observable<string[]> {
+                                      interfaceName: string): Observable<string[]> {
         const url = 'nodetypes/' + this.encode(nodeTemplate.namespace)
             + '/' + this.encode(nodeTemplate.type) + '/interfaces/' + this.encode(interfaceName) + '/operations/';
 
@@ -96,8 +96,8 @@ export class WineryService extends BackendService {
     }
 
     public loadNodeTemplateOperationParameter(nodeTemplate: NodeTemplate,
-        interfaceName: string,
-        operation: string): Observable<any> {
+                                              interfaceName: string,
+                                              operation: string): Observable<any> {
         const relativePath = 'nodetypes/' + this.encode(nodeTemplate.namespace) + '/' + this.encode(nodeTemplate.type)
             + '/interfaces/' + this.encode(interfaceName) + '/operations/' + this.encode(operation) + '/';
 

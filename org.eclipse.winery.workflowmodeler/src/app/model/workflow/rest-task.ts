@@ -13,7 +13,7 @@ import { RestParameter } from './rest-parameter';
 import { WorkflowNode } from './workflow-node';
 
 export class RestTask extends WorkflowNode {
-    public swagger: string;
+    public restConfigId: string;
     public url: string;
     public method: string;
     public operationId: string;

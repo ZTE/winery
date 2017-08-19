@@ -295,7 +295,7 @@ export class ModelService {
             const responseItem = this.createResponseTreeViewItem(node.id);
             item.children.push(responseItem);
             if(node.responses[0]) {
-                const swagger = this.restService.getSwaggerInfo(node.swagger);
+                const swagger = this.restService.getSwaggerInfo(node.restConfigId);
                 const swaggerDefinition = this.restService.getDefinition(swagger, node.responses[0].schema.$ref);
                 this.loadParamsBySwaggerDefinition(responseItem, swagger, <SwaggerModelSimple>swaggerDefinition);
             }
@@ -354,7 +354,6 @@ export class ModelService {
     public save() {
         console.log('****************** save data *********************');
         console.log(this.planModel);
-        console.log(JSON.stringify(this.planModel));
 
         this.broadcastService.broadcast(this.broadcastService.saveEvent, this.planModel);
     }

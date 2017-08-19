@@ -69,7 +69,7 @@ export class WmNodeParametersComponent implements OnInit {
                 this.queryParams.push(param);
             } else if (param.position === 'body') {
                 const requestTreeNode = this.swaggerTreeConverterService
-                    .schema2TreeNode('Request Param', this.task.swagger, param.schema);
+                    .schema2TreeNode('Request Param', this.task.restConfigId, param.schema);
                 this.inputParams.push(requestTreeNode);
             } else {
                 // TODO others param types not supported
@@ -81,7 +81,7 @@ export class WmNodeParametersComponent implements OnInit {
         this.outputParams = [];
         if (this.task.method && this.task.responses[0] && this.task.responses[0].schema) {
             const treeNode = this.swaggerTreeConverterService
-                .schema2TreeNode('Response Params', this.task.swagger, this.task.responses[0].schema);
+                .schema2TreeNode('Response Params', this.task.restConfigId, this.task.responses[0].schema);
             this.outputParams.push(treeNode);
         }
     }
