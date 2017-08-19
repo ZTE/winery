@@ -23,7 +23,7 @@
                 type="text" [ngModel]="param.value" (ngModelChange)="modelChange($event)">
             <tree-select *ngSwitchCase="sourceEnum[sourceEnum.Plan]" name="simpleSelect" [items]="planOptions"
                 childrenField="children" #simpleSelect="ngModel" [ngClass]="valueClass" class="tree-select-class"
-                [ngModel]="param.value" (ngModelChange)="modelChange($event)"></tree-select>
+                [ngModel]="planValue" (ngModelChange)="modelChange($event)"></tree-select>
             <select *ngSwitchCase="sourceEnum[sourceEnum.Topology]" [ngClass]="valueClass" class="form-control"
                 type="text" [ngModel]="param.value" (ngModelChange)="modelChange($event)">
                 <option *ngFor="let topology of topologyOptions" value="{{topology.value}}">{{topology.name}}</option>

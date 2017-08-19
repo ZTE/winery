@@ -40,8 +40,9 @@ export class WmParameterComponent implements OnInit {
     public valueGroupClass;
     public valueClass;
     public planOptions = [];
-    public topologyOptions: {name: string, value: string}[] = [];
+    public topologyOptions: { name: string, value: string }[] = [];
     public showValueSource: boolean = true;
+    public planValue: any = {};
 
     constructor(private dataService: DataService) { }
 
@@ -61,14 +62,27 @@ export class WmParameterComponent implements OnInit {
         };
         // trans plan options to tree view items.
         this.initPlanTreeviewItems(this.planItems);
+        if (ValueSource[ValueSource.Plan] === this.param.valueSource) {
+            this.planValue = { id: this.param.value };
+        }
     }
 
     public resetValue(): void {
         this.modelChange('');
     }
 
-    public modelChange(value: string) {
-        this.param.value = value;
+    public modelChange(value: any) {
+        if (ValueSource[ValueSource.Plan] === this.param.valueSource) {
+            if ('object' === typeof (value)) {
+                this.planValue = value;
+                this.param.value = value.id;
+            }else{
+                this.planValue = {id:''};
+                this.param.value = '';
+            }
+        } else {
+            this.param.value = value;
+        }
         this.paramChange.emit(this.param)
     }
 
