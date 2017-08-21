@@ -56,4 +56,12 @@ export class WmToolbarComponent implements AfterViewInit {
                 return 'unKnown';
         }
     }
+
+    public isGetway(type: string):boolean{
+        if('exclusiveGateway' === type || 'parallelGateway' === type){
+            return true;
+        }else{
+            return false;
+        }
+    }
 }

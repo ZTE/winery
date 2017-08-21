@@ -63,23 +63,23 @@
 }
 
 .anchor-left {
-    left: -5px;
-    top: 40%;
+    left: -6px;
+    top: calc(50% - 6px);
 }
 
 .anchor-right {
-    right: -5px;
-    top: 40%;
+    right: -6px;
+    top: calc(50% - 6px);
 }
 
 .anchor-top {
-    top: -5px;
-    left: 40%;
+    top: -6px;
+    left: calc(50% - 6px);
 }
 
 .anchor-bottom {
-    bottom: -5px;
-    left: 40%;
+    bottom: -6px;
+    left: calc(50% - 6px);
 }
 
 /*right arrow*/
@@ -150,8 +150,8 @@
 
 /*top arrow*/
 .top {
-    width: 9px;
-    height: 9px;
+    width: 10px;
+    height: 10px;
     position: absolute;
     left: 1px;
     z-index: 2;
@@ -178,13 +178,13 @@
 
 .top-arrow2 {
     top: -2px;
-    border-bottom: 4px white solid;
+    border-bottom: 5px white solid;
 }
 
 /*bottom arrow*/
 .bottom {
-    width: 9px;
-    height: 9px;
+    width: 10px;
+    height: 10px;
     position: absolute;
     left: 1px;
     top: 4px;
@@ -199,10 +199,10 @@
     left: 0;
     top: 0;
     z-index: 5;
-    border-bottom: 4px transparent dashed;
-    border-left: 4px transparent dashed;
-    border-right: 4px transparent dashed;
-    border-top: 4px black solid;
+    border-bottom: 5px transparent dashed;
+    border-left: 5px transparent dashed;
+    border-right: 5px transparent dashed;
+    border-top: 5px black solid;
     overflow: hidden;
 }
 
@@ -212,7 +212,7 @@
 }
 
 .bottom-arrow2 {
-    border-top: 4px white solid;
+    border-top: 5px white solid;
 }
 /**
  * Anchors End

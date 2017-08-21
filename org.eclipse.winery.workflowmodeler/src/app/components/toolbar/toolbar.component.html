@@ -15,7 +15,9 @@
     <div class="row">
         <button *ngFor="let nodeType of nodeTypes" type="button" [attr.nodeType]="nodeType"
             class="btn btn-secondary item ui-draggable">
-            <div class="{{nodeType}}"></div>
+            <div [class.getway]="isGetway(nodeType)">
+                <div class="{{nodeType}}"></div>
+            </div>
             <span>{{getNameByType(nodeType)}}</span>
         </button>
     </div>

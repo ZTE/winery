@@ -3,3 +3,7 @@
 .btn-right{
     float: right;
 }
+
+button i{
+    padding-right: 3px;
+}
