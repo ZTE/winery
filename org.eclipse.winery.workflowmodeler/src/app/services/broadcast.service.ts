@@ -28,6 +28,9 @@ export class BroadcastService {
     public showProperty = new Subject<boolean>();
     public showProperty$ = this.showProperty.asObservable();
 
+    public planEditable = new Subject<boolean>();
+    public planEditable$ = this.planEditable.asObservable();
+
     public planModel = new Subject<PlanModel>();
     public planModel$ = this.planModel.asObservable();
 

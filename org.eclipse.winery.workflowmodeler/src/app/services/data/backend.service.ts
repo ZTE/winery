@@ -29,7 +29,7 @@ export abstract class BackendService {
     private allNodesProperties: {name: string, value: string}[] = [];
 
     constructor(protected broadcastService: BroadcastService,
-                private noticeService: NoticeService,
+                protected noticeService: NoticeService,
                 protected httpService: HttpService) {
         this.broadcastService.saveEvent$.subscribe(planModel => {
             this.save(planModel).subscribe(response => this.noticeService.success('save plan success'));
@@ -57,6 +57,10 @@ export abstract class BackendService {
 
     public getAllNodesProperties(): {name: string, value:string}[] {
         return this.allNodesProperties;
+    }
+
+    public canEdit(): boolean {
+        return true;
     }
 
     protected refreshAllNodesProperties(): void {

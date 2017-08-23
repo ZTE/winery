@@ -30,12 +30,15 @@ export class CatalogService extends BackendService {
     private serviceTemplateId: string;
     private planName: string;
 
+    private serviceTemplateInfo: { csarId: string, processState: string };
+
     public setParameters(queryParams: any) {
         this.serviceTemplateId = queryParams.serviceTemplateId;
         this.planName = queryParams.plan;
         console.log(`planName`, this.planName);
         if (this.planName) {
             console.log('load plan');
+            this.loadServiceTemplateInfo();
             this.refreshAllNodesProperties();
             this.loadPlan().subscribe(planModel => {
                 console.log('load plan success');
@@ -113,6 +116,17 @@ export class CatalogService extends BackendService {
 
         return this.httpService.get(this.getFullUrl(url)).map(response => {
             return response;
+        });
+    }
+
+    private loadServiceTemplateInfo() {
+        const url = `/csars/${this.serviceTemplateId}`;
+        this.httpService.get(this.getFullUrl(url)).subscribe(response => {
+            this.serviceTemplateInfo = response;
+            console.log(this.serviceTemplateInfo);
+
+            const planEditable = this.serviceTemplateInfo.processState === 'DRAFT';
+            this.broadcastService.broadcast(this.broadcastService.planEditable, planEditable);
         });
     }
 
