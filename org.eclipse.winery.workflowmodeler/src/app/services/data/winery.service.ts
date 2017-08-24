@@ -31,6 +31,10 @@ export class WineryService extends BackendService {
     private serviceTemplateId: string;
     private plan: string;
 
+    public getBackendType(){
+        return 'Winery';
+    }
+
     public setParameters(queryParams: any) {
         this.repositoryURL = queryParams.repositoryURL;
         this.namespace = queryParams.namespace;

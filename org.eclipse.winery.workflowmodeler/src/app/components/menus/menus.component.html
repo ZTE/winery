@@ -19,7 +19,7 @@
   <!-- <button type="button" class="btn white" (click)="showRestConfigModal()">
     <i class="fa fa-cog"></i>Setting
   </button> -->
-  <button type="button" class="btn white" (click)="back()">
+  <button *ngIf="showBack" type="button" class="btn white" (click)="back()">
     <i class="fa fa-arrow-left"></i>Back
   </button>
   <!-- <button type="button" class="btn white" (click)="test()">test</button> -->

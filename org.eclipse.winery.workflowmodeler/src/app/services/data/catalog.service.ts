@@ -32,6 +32,10 @@ export class CatalogService extends BackendService {
 
     private serviceTemplateInfo: { csarId: string, processState: string };
 
+    public getBackendType(){
+        return 'Catalog';
+    }
+
     public setParameters(queryParams: any) {
         this.serviceTemplateId = queryParams.serviceTemplateId;
         this.planName = queryParams.plan;

@@ -35,6 +35,10 @@ export class DataService {
         this.createBackendService();
     }
 
+    public getBackendType():string{
+        return this.service.getBackendType();
+    }
+
     private createBackendService() {
         switch (this.environment) {
             case 'Catalog':

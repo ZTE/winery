@@ -36,6 +36,8 @@ export abstract class BackendService {
         });
     }
 
+    public abstract getBackendType():string;
+
     public abstract setParameters(params: any);
 
     public abstract loadNodeTemplates(): Observable<NodeTemplate[]>;
