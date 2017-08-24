@@ -35,7 +35,7 @@ export class WmRestConfigDetailComponent implements OnChanges {
 
     public ngOnChanges() {
         if(this.restConfig == null) {
-            this.restConfig = new RestConfig('', '', '', '', false);
+            this.restConfig = new RestConfig('', '', '', '');
         }
         this.parseSwagger2String();
     }
@@ -63,21 +63,21 @@ export class WmRestConfigDetailComponent implements OnChanges {
     }
 
     public toggleDynamic(dynamic: boolean) {
-        this.restConfig.dynamic = dynamic;
+        // this.restConfig.dynamic = dynamic;
 
-        if (this.restConfig.dynamic && this.restConfig.definition) {
-            this.restService.getDynamicSwaggerInfo(this.restConfig.definition)
-                .subscribe(response => {
-                    try {
-                        this.restConfig.swagger = new Swagger(response);
-                        this.parseSwagger2String();
-                    } catch (e) {
-                        console.log('detail transfer error');
-                        console.error(e);
-                    }   
+        // if (this.restConfig.dynamic && this.restConfig.definition) {
+        //     this.restService.getDynamicSwaggerInfo(this.restConfig.definition)
+        //         .subscribe(response => {
+        //             try {
+        //                 this.restConfig.swagger = new Swagger(response);
+        //                 this.parseSwagger2String();
+        //             } catch (e) {
+        //                 console.log('detail transfer error');
+        //                 console.error(e);
+        //             }   
                     
-                });
-        }
+        //         });
+        // }
     }
 
 }

@@ -13,6 +13,7 @@ import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs/Subject';
 
 import { PlanModel } from '../model/plan-model';
+import { RestConfig } from '../model/rest-config';
 import { Swagger } from '../model/swagger';
 import { SequenceFlow } from '../model/workflow/sequence-flow';
 import { WorkflowNode } from '../model/workflow/workflow-node';
@@ -33,6 +34,9 @@ export class BroadcastService {
 
     public planModel = new Subject<PlanModel>();
     public planModel$ = this.planModel.asObservable();
+
+    public updateModelRestConfig = new Subject<RestConfig[]>();
+    public updateModelRestConfig$ = this.updateModelRestConfig.asObservable();
 
     public saveEvent = new Subject<PlanModel>();
     public saveEvent$ = this.saveEvent.asObservable();

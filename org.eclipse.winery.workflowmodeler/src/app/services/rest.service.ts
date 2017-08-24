@@ -24,59 +24,50 @@ import { BroadcastService } from './broadcast.service';
 @Injectable()
 export class RestService {
 
-    private restConfigs: Array<RestConfig> = new Array();
+    private restConfigs: RestConfig[] = [];
 
     constructor(private broadcastService: BroadcastService,
-                private httpService: HttpService) {
-
-        this.broadcastService.planModel$.subscribe(planModel => {
-            if (!planModel.configs.restConfigs) {
-                planModel.configs.restConfigs = [];
-            } else {
-                planModel.configs.restConfigs.forEach(restConfig => this.initSwaggerInfo(restConfig));
-            }
-
-            this.restConfigs = planModel.configs.restConfigs;
-        });
+        private httpService: HttpService) {
+        this.initSwaggerInfoByMSB();
     }
 
-    public addRestConfig(): RestConfig {
-        let index = 0;
-        this.restConfigs.forEach(config => {
-            const currentId = parseInt(config.id);
-            if(currentId > index) {
-                index = currentId;
-            }
-        });
+    // public addRestConfig(): RestConfig {
+    //     let index = 0;
+    //     this.restConfigs.forEach(config => {
+    //         const currentId = parseInt(config.id);
+    //         if (currentId > index) {
+    //             index = currentId;
+    //         }
+    //     });
 
-        index += 1;
+    //     index += 1;
 
-        const restConfig = new RestConfig(index.toString(), 'new Config', '', '', false);
-        this.restConfigs.push(restConfig);
-        
-        return restConfig;
-    }
+    //     const restConfig = new RestConfig(index.toString(), 'new Config', '', '', false);
+    //     this.restConfigs.push(restConfig);
 
-    public initSwaggerInfo(restConfig: RestConfig) {
-        if (restConfig.dynamic && restConfig.definition) {
-            this.getDynamicSwaggerInfo(restConfig.definition).subscribe(response => restConfig.swagger = new Swagger(response));
-        } else {
-            restConfig.swagger = new Swagger(restConfig.swagger);
-        }
-    }
+    //     return restConfig;
+    // }
+
+    // public initSwaggerInfo(restConfig: RestConfig) {
+    //     if (restConfig.dynamic && restConfig.definition) {
+    //         this.getDynamicSwaggerInfo(restConfig.definition).subscribe(response => restConfig.swagger = new Swagger(response));
+    //     } else {
+    //         restConfig.swagger = new Swagger(restConfig.swagger);
+    //     }
+    // }
 
     public getRestConfigs() {
         return this.restConfigs;
     }
 
-    public getDynamicSwaggerInfo(url: string): Observable<any> {
-        const options: any = {
-            headers: {
-                Accept: 'application/json',
-            },
-        };
-        return this.httpService.get(url, options);
-    }
+    // public getDynamicSwaggerInfo(url: string): Observable<any> {
+    //     const options: any = {
+    //         headers: {
+    //             Accept: 'application/json',
+    //         },
+    //     };
+    //     return this.httpService.get(url, options);
+    // }
 
     public getSwaggerInfo(id: string): Swagger {
         const restConfig = this.restConfigs.find(tmp => tmp.id === id);
@@ -103,4 +94,48 @@ export class RestService {
         return swagger.definitions[definitionName];
     }
 
+    private initSwaggerInfoByMSB(): void {
+        const options: any = {
+            headers: {
+                Accept: 'application/json',
+            }
+        };
+        let restConfigs = this.restConfigs;
+        this.httpService.get('/api/msdiscover/v1/services').subscribe(response => {
+            if (!Array.isArray(response)) {
+                return;
+            }
+            let swaggerObservableArray: Observable<any>[] = [];
+            response.forEach(serviceInfo => {
+                if ('REST' === serviceInfo.protocol) {
+                    // this service don't have sawgger file.
+                    if ('workflow-tomcat' !== serviceInfo.serviceName) {
+                        restConfigs.push(new RestConfig(serviceInfo.serviceName + '.' + serviceInfo.version,
+                            serviceInfo.serviceName, serviceInfo.version, serviceInfo.url));
+                        let swaggerUrl: string = '';
+                        if (undefined !== serviceInfo.swagger_url && '' !== serviceInfo.swagger_url) {
+                            swaggerUrl = serviceInfo.url + serviceInfo.swagger_url;
+                        } else {
+                            // default swagger url is: '/swagger.json'
+                            swaggerUrl = serviceInfo.url + '/swagger.json';
+                        }
+                        swaggerObservableArray.push(this.httpService.get(swaggerUrl, options));
+                    }
+                }
+            });
+            Observable.forkJoin(swaggerObservableArray).subscribe(
+                swaggers => {
+                    swaggers.forEach((swagger, index) => {
+                        // this.restConfigs[index].swagger = new Swagger(swagger);
+                        restConfigs[index].swagger = new Swagger(swagger);
+                    });
+                    this.broadcastService.broadcast(this.broadcastService.updateModelRestConfig, restConfigs);
+                },
+                error => {
+                    console.warn('Get swagger file failed!' + error);
+                }
+            );
+        });
+    };
 }
+

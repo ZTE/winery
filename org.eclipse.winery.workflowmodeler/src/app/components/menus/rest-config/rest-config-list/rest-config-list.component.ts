@@ -36,22 +36,22 @@ export class WmRestConfigListComponent {
     }
 
     public addRestConfig() {
-        const restConfig = this.restService.addRestConfig();
+        // const restConfig = this.restService.addRestConfig();
 
-        this.onConfigSelected(restConfig);
+        // this.onConfigSelected(restConfig);
     }
 
     public deleteRestConfig(index: number) {
-        this.restService.getRestConfigs().splice(index, 1);
+        // this.restService.getRestConfigs().splice(index, 1);
 
-        let restConfig;
-        if (this.restService.getRestConfigs().length > 0) {
-            if (this.restService.getRestConfigs()[index]) {
-                restConfig = this.restService.getRestConfigs()[index];
-            } else {
-                restConfig = this.restService.getRestConfigs()[index - 1];
-            }
-        }
-        this.onConfigSelected(restConfig);
+        // let restConfig;
+        // if (this.restService.getRestConfigs().length > 0) {
+        //     if (this.restService.getRestConfigs()[index]) {
+        //         restConfig = this.restService.getRestConfigs()[index];
+        //     } else {
+        //         restConfig = this.restService.getRestConfigs()[index - 1];
+        //     }
+        // }
+        // this.onConfigSelected(restConfig);
     }
 }

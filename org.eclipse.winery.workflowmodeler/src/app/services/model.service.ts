@@ -14,6 +14,7 @@ import { isNullOrUndefined } from 'util';
 
 import { PlanModel } from '../model/plan-model';
 import { PlanTreeviewItem } from '../model/plan-treeview-item';
+import { RestConfig } from "../model/rest-config";
 import { Swagger, SwaggerModel, SwaggerModelSimple, SwaggerPrimitiveObject, SwaggerReferenceObject } from '../model/swagger';
 import { IntermediateCatchEvent } from '../model/workflow/intermediate-catch-event';
 import { NodeType } from '../model/workflow/node-type.enum';
@@ -40,6 +41,7 @@ export class ModelService {
 
     constructor(private broadcastService: BroadcastService, private restService: RestService) {
         this.broadcastService.planModel$.subscribe(plan => this.planModel = plan);
+        this.broadcastService.updateModelRestConfig.subscribe(restConfigs => this.updateRestConfig(restConfigs));
     }
 
     public getChildrenNodes(parentId: string): WorkflowNode[] {
@@ -126,6 +128,10 @@ export class ModelService {
         node.position.top = top;
         node.position.width = width;
         node.position.height = height;
+    }
+
+    public updateRestConfig(restConfigs: RestConfig[]): void {
+        this.planModel.configs.restConfigs = restConfigs;
     }
 
     public getNodeMap(): Map<string, WorkflowNode> {
@@ -249,7 +255,7 @@ export class ModelService {
     }
 
     private loadNodeOutputs(nodes: WorkflowNode[]): PlanTreeviewItem[] {
-        const params = new Array<PlanTreeviewItem >();
+        const params = new Array<PlanTreeviewItem>();
         nodes.forEach(node => {
             switch (node.type) {
                 case NodeType[NodeType.startEvent]:
@@ -294,7 +300,7 @@ export class ModelService {
         if (node.responses.length !== 0) { // load rest responses
             const responseItem = this.createResponseTreeViewItem(node.id);
             item.children.push(responseItem);
-            if(node.responses[0]) {
+            if (node.responses[0]) {
                 const swagger = this.restService.getSwaggerInfo(node.restConfigId);
                 const swaggerDefinition = this.restService.getDefinition(swagger, node.responses[0].schema.$ref);
                 this.loadParamsBySwaggerDefinition(responseItem, swagger, <SwaggerModelSimple>swaggerDefinition);

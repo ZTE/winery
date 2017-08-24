@@ -12,6 +12,6 @@
 import { Swagger } from './swagger';
 
 export class RestConfig {
-    constructor(public id:string, public name: string,
-        public baseUrl: string, public definition: string, public dynamic: boolean, public swagger?: Swagger) {};
+    constructor(public id: string, public name: string, public version: string, public url: string,
+        public swagger?: Swagger) { };
 }

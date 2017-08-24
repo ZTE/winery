@@ -19,7 +19,6 @@ import { ValueType } from '../../../model/value-type.enum';
 import { Parameter } from '../../../model/workflow/parameter';
 import { RestParameter } from '../../../model/workflow/rest-parameter';
 import { RestTask } from '../../../model/workflow/rest-task';
-import { RestService } from '../../../services/rest.service';
 import { SwaggerTreeConverterService } from '../../../services/swagger-tree-converter.service';
 import { WorkflowUtil } from '../../../util/workflow-util';
 
@@ -37,8 +36,6 @@ export class WmParameterTreeComponent implements OnChanges {
     @Input() public defaultValueSource: string;
     @Input() public valueSource: ValueSource[];
     @Input() public planItems: PlanTreeviewItem[];
-
-    private restService: RestService;
 
     constructor(private swaggerTreeConverterService: SwaggerTreeConverterService) { }
 

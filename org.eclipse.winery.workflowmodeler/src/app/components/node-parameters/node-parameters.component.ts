@@ -18,7 +18,6 @@ import { Swagger } from '../../model/swagger';
 import { ValueSource } from '../../model/value-source.enum';
 import { RestTask } from '../../model/workflow/rest-task';
 import { BroadcastService } from '../../services/broadcast.service';
-import { RestService } from '../../services/rest.service';
 import { SwaggerTreeConverterService } from '../../services/swagger-tree-converter.service';
 
 /**
@@ -46,7 +45,6 @@ export class WmNodeParametersComponent implements OnInit {
     private queryParams: any[] = [];
 
     constructor(private broadcastService: BroadcastService,
-                private restService: RestService,
                 private swaggerTreeConverterService: SwaggerTreeConverterService) {
     }
 
