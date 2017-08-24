@@ -47,12 +47,12 @@ export class WmRestTaskComponent implements AfterViewInit {
 
     public serviceChanged(configId: string) {
         this.node.restConfigId = configId;
-        this.urlChanged('');
+        this.pathChanged('');
         this.loadInterfaces();
     }
 
-    public urlChanged(url: string) {
-        this.node.url = url;
+    public pathChanged(path: string) {
+        this.node.path = path;
 
         this.node.consumes = [];
         this.node.produces = [];
@@ -93,8 +93,8 @@ export class WmRestTaskComponent implements AfterViewInit {
     }
 
     private loadOperations() {
-        if (this.node.url) {
-            const swaggerPath: any = this.swagger.paths[this.node.url];
+        if (this.node.path) {
+            const swaggerPath: any = this.swagger.paths[this.node.path];
 
             this.restOperations = [];
             for (const key of Object.keys(swaggerPath)) {
@@ -105,7 +105,7 @@ export class WmRestTaskComponent implements AfterViewInit {
 
     private updateMethodInfo() {
         if (this.node.method) {
-            const path: any = this.swagger.paths[this.node.url];
+            const path: any = this.swagger.paths[this.node.path];
             const method: SwaggerMethod = path[this.node.method];
 
             this.node.consumes = WorkflowUtil.deepClone(method.consumes);
@@ -118,7 +118,7 @@ export class WmRestTaskComponent implements AfterViewInit {
             });
 
             const responseParams = this.restService.getResponseParameters(
-                this.swagger, this.node.url, this.node.method);
+                this.swagger, this.node.path, this.node.method);
             this.node.responses = responseParams.map(param => WorkflowUtil.deepClone(param));
 
             this.notifyTaskChanged();

@@ -11,6 +11,7 @@
  *******************************************************************************/
 
 import { Injectable } from '@angular/core';
+import { Http } from '@angular/http';
 import { Observable } from 'rxjs/Rx';
 import { isNullOrUndefined } from 'util';
 
@@ -26,8 +27,7 @@ export class RestService {
 
     private restConfigs: RestConfig[] = [];
 
-    constructor(private broadcastService: BroadcastService,
-        private httpService: HttpService) {
+    constructor(private broadcastService: BroadcastService, private http: Http) {
         this.initSwaggerInfoByMSB();
     }
 
@@ -101,12 +101,13 @@ export class RestService {
             }
         };
         let restConfigs = this.restConfigs;
-        this.httpService.get('/api/msdiscover/v1/services').subscribe(response => {
-            if (!Array.isArray(response)) {
+        this.http.get('/api/msdiscover/v1/services').subscribe(response => {
+            if (!Array.isArray(response.json())) {
                 return;
             }
+            let services = response.json();
             let swaggerObservableArray: Observable<any>[] = [];
-            response.forEach(serviceInfo => {
+            services.forEach(serviceInfo => {
                 if ('REST' === serviceInfo.protocol) {
                     // this service don't have sawgger file.
                     if ('workflow-tomcat' !== serviceInfo.serviceName) {
@@ -119,16 +120,29 @@ export class RestService {
                             // default swagger url is: '/swagger.json'
                             swaggerUrl = serviceInfo.url + '/swagger.json';
                         }
-                        swaggerObservableArray.push(this.httpService.get(swaggerUrl, options));
+                        swaggerObservableArray.push(this.http.get(swaggerUrl, options).catch((error): Observable<any> => {
+                            console.log('Request swagger from:"' + swaggerUrl + '" faild!');
+                            return Observable.of(null);
+                        }));
                     }
                 }
             });
             Observable.forkJoin(swaggerObservableArray).subscribe(
-                swaggers => {
-                    swaggers.forEach((swagger, index) => {
-                        // this.restConfigs[index].swagger = new Swagger(swagger);
-                        restConfigs[index].swagger = new Swagger(swagger);
+                responses => {
+                    let deleteArray: number[] = [];
+                    responses.forEach((response, index) => {
+                        // mark http get failed request index or set the swagger into restConfigs
+                        if (null === response) {
+                            deleteArray.push(index);
+                        } else {
+                            restConfigs[index].swagger = new Swagger(response.json());
+                        }
                     });
+                    // delete failed request from all restConfigs array
+                    deleteArray.reverse();
+                    deleteArray.forEach(deleteIndex => {
+                        restConfigs.splice(deleteIndex, 1);
+                    })
                     this.broadcastService.broadcast(this.broadcastService.updateModelRestConfig, restConfigs);
                 },
                 error => {

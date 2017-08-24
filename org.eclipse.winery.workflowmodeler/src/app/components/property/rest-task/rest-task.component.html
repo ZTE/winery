@@ -25,8 +25,8 @@
 <div class="form-group row">
 	<label class="col-md-3 form-control-label text-md-right">Path</label>
 	<div class="col-md-9">
-		<select class="form-control" [ngModel]="node.url"
-				(ngModelChange)="urlChanged($event)">
+		<select class="form-control" [ngModel]="node.path"
+				(ngModelChange)="pathChanged($event)">
 			<option *ngFor="let interface of restInterfaces" value="{{interface}}">{{interface}}</option>
 		</select>
 	</div>

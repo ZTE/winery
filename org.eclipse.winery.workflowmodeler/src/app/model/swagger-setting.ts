@@ -12,7 +12,7 @@
 import { Swagger } from './swagger';
 
 export class SwaggerSetting {
-    constructor(public name: string, public baseUrl: string, public dynamic: boolean,
+    constructor(public name: string, public version:string, public url: string, public path: string,
         public swagger?: Swagger) {
     }
 }

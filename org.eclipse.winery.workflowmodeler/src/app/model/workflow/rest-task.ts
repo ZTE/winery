@@ -14,7 +14,7 @@ import { WorkflowNode } from './workflow-node';
 
 export class RestTask extends WorkflowNode {
     public restConfigId: string;
-    public url: string;
+    public path: string;
     public method: string;
     public operationId: string;
     public produces: string[] = [];
