@@ -280,7 +280,7 @@ export class ModelService {
     private loadOutput4StartEvent(node: StartEvent): PlanTreeviewItem {
         const startItem = new PlanTreeviewItem(node.name, `[${node.id}]`, []);
         node.parameters.map(param =>
-            startItem.children.push(new PlanTreeviewItem(param.name, `${startItem.value}.[${param.name}]`, [])));
+            startItem.children.push(new PlanTreeviewItem(param.name, `[${param.name}]`, [])));
         return startItem;
     }
 
