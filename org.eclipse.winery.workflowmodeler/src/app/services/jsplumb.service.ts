@@ -84,6 +84,10 @@ export class JsPlumbService {
 
         // add connection to model data while a new connection is build
         jsplumbInstance.bind('connection', info => {
+            // Skip the connection which connect itself.
+            if(info.connection.sourceId === info.connection.targetId){
+                return;
+            }
             this.modelService.addConnection(info.connection.sourceId, info.connection.targetId);
             
             this.subscribe4Connection(info.connection);
