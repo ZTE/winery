@@ -82,8 +82,8 @@ export class WmParameterTreeComponent implements OnChanges {
         //     node.parameter.valueSource = param.valueSource;
         // }
         if (node.label !== param.name) {
+            delete node.parent.parameter.value[node.label];
             node.label = param.name;
-            this.propertyKeyChanged(node, param.value);
         }
         if (node.parent) {
             if (node.parent.parameter.value[param.name]) {
@@ -95,6 +95,8 @@ export class WmParameterTreeComponent implements OnChanges {
                     valueSource: param.valueSource
                 };
             }
+        } else {
+            console.assert('Node.parent does not exists!' + node);
         }
     }
 
@@ -131,6 +133,7 @@ export class WmParameterTreeComponent implements OnChanges {
         node.parameter.value[key] = childrenNode.parameter.value;
 
         node.children.push(childrenNode);
+        this.initParam(node);
     }
 
     public propertyKeyChanged(node: any, newKey: string) {
@@ -156,12 +159,23 @@ export class WmParameterTreeComponent implements OnChanges {
     }
 
     public deleteTreeNode(node: any) {
-        // delete data
-        node.parent.parameter.value.splice(node.label, 1);
-        node.parent.children.splice(node.label, 1);
+        if ('array' === node.parent.type) {
+            // delete data
+            node.parent.parameter.value.splice(node.label, 1);
+            node.parent.children.splice(node.label, 1);
 
-        // update node index
-        node.parent.children.forEach((childNode, index) => childNode.label = index);
+            // update node index
+            node.parent.children.forEach((childNode, index) => childNode.label = index);
+        } else if ('map' === node.parent.type) {
+            delete node.parent.parameter.value[node.label];
+            for (let index = 0; index < node.parent.children.length; index++) {
+                const element = node.parent.children[index];
+                if(element.label === node.label){
+                    node.parent.children.splice(index, 1);
+                    break;
+                }
+            }
+        }
     }
 
     public canEditValue(node: any): boolean {
@@ -223,6 +237,12 @@ export class WmParameterTreeComponent implements OnChanges {
                 }
                 break;
             case 'array':
+                for (let index = 0; index < parameter.children.length; index++) {
+                    let param = parameter.children[index];
+                    this.initParam(param, parameter.parameter.value);
+                }
+                break;
+            case 'map':
                 for (let index = 0; index < parameter.children.length; index++) {
                     let param = parameter.children[index];
                     this.initParam(param, parameter.parameter.value);

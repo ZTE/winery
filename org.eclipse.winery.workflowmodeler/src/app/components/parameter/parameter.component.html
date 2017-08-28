@@ -14,18 +14,18 @@
 
 <div class="form-group row">
     <div *ngIf="showLabel" class="col-md-3 text-md-right">
-        <input *ngIf="canEditName" class="form-control" type="text" [(ngModel)]="param.name">
+        <input *ngIf="canEditName" class="form-control" type="text" [ngModel]="param.name" (ngModelChange)="keyChange($event)">
         <label *ngIf="!canEditName" class="form-control-label">{{param.name}}</label>
     </div>
     <div [ngClass]="valueGroupClass">
         <div [ngSwitch]="param.valueSource">
             <input *ngSwitchCase="sourceEnum[sourceEnum.String]" [ngClass]="valueClass" class="form-control"
-                type="text" [ngModel]="param.value" (ngModelChange)="modelChange($event)">
+                type="text" [ngModel]="param.value" (ngModelChange)="valueChange($event)">
             <tree-select *ngSwitchCase="sourceEnum[sourceEnum.Plan]" name="simpleSelect" [items]="planOptions"
                 childrenField="children" #simpleSelect="ngModel" [ngClass]="valueClass" class="tree-select-class"
-                [ngModel]="planValue" (ngModelChange)="modelChange($event)"></tree-select>
+                [ngModel]="planValue" (ngModelChange)="valueChange($event)"></tree-select>
             <select *ngSwitchCase="sourceEnum[sourceEnum.Topology]" [ngClass]="valueClass" class="form-control"
-                type="text" [ngModel]="param.value" (ngModelChange)="modelChange($event)">
+                type="text" [ngModel]="param.value" (ngModelChange)="valueChange($event)">
                 <option *ngFor="let topology of topologyOptions" value="{{topology.value}}">{{topology.name}}</option>
             </select>
         </div>

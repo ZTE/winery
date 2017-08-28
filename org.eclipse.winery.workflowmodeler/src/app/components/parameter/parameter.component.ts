@@ -68,10 +68,15 @@ export class WmParameterComponent implements OnInit {
     }
 
     public resetValue(): void {
-        this.modelChange('');
+        this.valueChange('');
     }
 
-    public modelChange(value: any) {
+    public keyChange(key: string){
+        this.param.name = key;
+        this.paramChange.emit(this.param);
+    }
+
+    public valueChange(value: any) {
         if (ValueSource[ValueSource.Plan] === this.param.valueSource) {
             if ('object' === typeof (value)) {
                 this.planValue = value;
