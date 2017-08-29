@@ -21,13 +21,14 @@ import { Swagger, SwaggerSchemaObject } from '../model/swagger';
 import { RestConfig } from '../model/rest-config';
 import { HttpService } from '../util/http.service';
 import { BroadcastService } from './broadcast.service';
+import { NoticeService } from './notice.service';
 
 @Injectable()
 export class RestService {
 
     private restConfigs: RestConfig[] = [];
 
-    constructor(private broadcastService: BroadcastService, private http: Http) {
+    constructor(private broadcastService: BroadcastService, private http: Http, private noticeService: NoticeService) {
         this.initSwaggerInfoByMSB();
     }
 
@@ -110,7 +111,7 @@ export class RestService {
             services.forEach(serviceInfo => {
                 if ('REST' === serviceInfo.protocol) {
                     // this service don't have sawgger file.
-                    if ('workflow-tomcat' !== serviceInfo.serviceName) {
+                    if ('workflow-tomcat' !== serviceInfo.serviceName && 'activiti-rest' !== serviceInfo.serviceName) {
                         restConfigs.push(new RestConfig(serviceInfo.serviceName + '.' + serviceInfo.version,
                             serviceInfo.serviceName, serviceInfo.version, serviceInfo.url));
                         let swaggerUrl: string = '';
@@ -135,18 +136,23 @@ export class RestService {
                         if (null === response) {
                             deleteArray.push(index);
                         } else {
-                            restConfigs[index].swagger = new Swagger(response.json());
+                            const swagger = response.json();
+                            if ('2.0' === swagger.swagger) {
+                                restConfigs[index].swagger = new Swagger(response.json());
+                            } else {
+                                deleteArray.push(index);
+                                console.log('Do not support this sawgger file format:' + swagger);
+                            }
                         }
                     });
+                    console.log('Get all swagger file finish.');
                     // delete failed request from all restConfigs array
                     deleteArray.reverse();
                     deleteArray.forEach(deleteIndex => {
                         restConfigs.splice(deleteIndex, 1);
                     })
                     this.broadcastService.broadcast(this.broadcastService.updateModelRestConfig, restConfigs);
-                },
-                error => {
-                    console.warn('Get swagger file failed!' + error);
+                    this.noticeService.info('Load all swagger finished.');
                 }
             );
         });

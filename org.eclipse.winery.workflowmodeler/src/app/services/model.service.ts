@@ -41,8 +41,9 @@ export class ModelService {
 
     constructor(private broadcastService: BroadcastService, private restService: RestService) {
         this.broadcastService.planModel$.subscribe(plan => this.planModel = plan);
-        this.broadcastService.updateModelRestConfig.subscribe(restConfigs => {
+        this.broadcastService.updateModelRestConfig$.subscribe(restConfigs => {
             this.updateRestConfig(restConfigs);
+            console.log(this.planModel);
         });
     }
 
@@ -133,7 +134,7 @@ export class ModelService {
     }
 
     public updateRestConfig(restConfigs: RestConfig[]): void {
-        this.planModel.configs.restConfigs = restConfigs;
+        this.planModel.configs = { restConfigs: restConfigs };
     }
 
     public getNodeMap(): Map<string, WorkflowNode> {

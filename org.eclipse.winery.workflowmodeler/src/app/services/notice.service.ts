@@ -31,15 +31,15 @@ export class NoticeService {
     }
 
     public info(content: string, timeout: number = 10000) {
-        this.addNotice(NoticeType.info, content);
+        this.addNotice(NoticeType.info, content, timeout);
     }
 
     public warn(content: string, timeout: number = 30000) {
-        this.addNotice(NoticeType.warning, content);
+        this.addNotice(NoticeType.warning, content, timeout);
     }
 
     public error(content: string, timeout: number = 0) {
-        this.addNotice(NoticeType.danger, content);
+        this.addNotice(NoticeType.danger, content, timeout);
     }
 
     /**
