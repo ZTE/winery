@@ -111,7 +111,7 @@ export class RestService {
             services.forEach(serviceInfo => {
                 if ('REST' === serviceInfo.protocol) {
                     // this service don't have sawgger file.
-                    if ('workflow-tomcat' !== serviceInfo.serviceName && 'activiti-rest' !== serviceInfo.serviceName) {
+                    if ('workflowtomcat' !== serviceInfo.serviceName) {
                         restConfigs.push(new RestConfig(serviceInfo.serviceName + '.' + serviceInfo.version,
                             serviceInfo.serviceName, serviceInfo.version, serviceInfo.url));
                         let swaggerUrl: string = '';
@@ -137,11 +137,11 @@ export class RestService {
                             deleteArray.push(index);
                         } else {
                             const swagger = response.json();
-                            if ('2.0' === swagger.swagger) {
-                                restConfigs[index].swagger = new Swagger(response.json());
-                            } else {
+                            try{
+                                restConfigs[index].swagger = new Swagger(swagger);
+                            } catch(e) {
                                 deleteArray.push(index);
-                                console.log('Do not support this sawgger file format:' + swagger);
+                                console.warn('Do not support this sawgger file format:' + JSON.stringify(swagger));
                             }
                         }
                     });
