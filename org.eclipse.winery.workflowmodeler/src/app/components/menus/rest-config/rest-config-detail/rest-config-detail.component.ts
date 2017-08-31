@@ -34,7 +34,7 @@ export class RestConfigDetailComponent implements OnChanges {
     }
 
     public ngOnChanges() {
-        if(this.restConfig == null) {
+        if (this.restConfig == null) {
             this.restConfig = new RestConfig('', '', '', '');
         }
         this.parseSwagger2String();
@@ -75,7 +75,7 @@ export class RestConfigDetailComponent implements OnChanges {
         //                 console.log('detail transfer error');
         //                 console.error(e);
         //             }   
-                    
+
         //         });
         // }
     }

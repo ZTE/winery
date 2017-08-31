@@ -26,13 +26,13 @@ import '../../util/rxjs-operators';
  */
 @Injectable()
 export class CatalogService extends BackendService {
-    private rootUrl: string = '/openoapi/catalog/v1';
+    private rootUrl = '/openoapi/catalog/v1';
     private serviceTemplateId: string;
     private planName: string;
 
     private serviceTemplateInfo: { csarId: string, processState: string };
 
-    public getBackendType(){
+    public getBackendType() {
         return 'Catalog';
     }
 

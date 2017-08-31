@@ -40,7 +40,7 @@ export class SwaggerTreeConverterService {
 
     private getTreeNodeBySwaggerDefinition(key: string | number, schema: any): TreeNode {
         const swagger = this.restService.getSwaggerInfo(this.restConfigId);
-        if(swagger === undefined) {
+        if (swagger === undefined) {
             console.log(`swagger definition not exist, restConfigId [${this.restConfigId}]`);
             return null;
         }

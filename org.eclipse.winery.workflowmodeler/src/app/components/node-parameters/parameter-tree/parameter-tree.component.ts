@@ -40,7 +40,7 @@ export class ParameterTreeComponent implements OnChanges {
     constructor(private swaggerTreeConverterService: SwaggerTreeConverterService) { }
 
     public ngOnChanges(changes: SimpleChanges) {
-        const changeParameters = changes["parameters"];
+        const changeParameters = changes['parameters'];
         if (changeParameters && 0 < changeParameters.currentValue.length) {
             this.formatParam(changeParameters.currentValue);
         }
@@ -170,7 +170,7 @@ export class ParameterTreeComponent implements OnChanges {
             delete node.parent.parameter.value[node.label];
             for (let index = 0; index < node.parent.children.length; index++) {
                 const element = node.parent.children[index];
-                if(element.label === node.label){
+                if (element.label === node.label) {
                     node.parent.children.splice(index, 1);
                     break;
                 }
@@ -232,19 +232,19 @@ export class ParameterTreeComponent implements OnChanges {
                 break;
             case 'object':
                 for (let index = 0; index < parameter.children.length; index++) {
-                    let param = parameter.children[index];
+                    const param = parameter.children[index];
                     this.initParam(param, parameter.parameter.value);
                 }
                 break;
             case 'array':
                 for (let index = 0; index < parameter.children.length; index++) {
-                    let param = parameter.children[index];
+                    const param = parameter.children[index];
                     this.initParam(param, parameter.parameter.value);
                 }
                 break;
             case 'map':
                 for (let index = 0; index < parameter.children.length; index++) {
-                    let param = parameter.children[index];
+                    const param = parameter.children[index];
                     this.initParam(param, parameter.parameter.value);
                 }
                 break;

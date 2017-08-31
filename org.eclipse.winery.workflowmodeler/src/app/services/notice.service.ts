@@ -48,7 +48,7 @@ export class NoticeService {
      * @param content
      */
     private addNotice(type: NoticeType, content: string, timeout: number = 0): void {
-        const notice = new Notice(type, content, timeout)
+        const notice = new Notice(type, content, timeout);
         this.showNotice.next(notice);
     }
 }

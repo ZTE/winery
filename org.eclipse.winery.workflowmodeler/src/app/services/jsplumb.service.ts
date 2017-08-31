@@ -85,13 +85,13 @@ export class JsPlumbService {
         // add connection to model data while a new connection is build
         jsplumbInstance.bind('connection', info => {
             // Skip the connection which connect itself.
-            if(info.connection.sourceId === info.connection.targetId){
+            if (info.connection.sourceId === info.connection.targetId) {
                 return;
             }
             this.modelService.addConnection(info.connection.sourceId, info.connection.targetId);
-            
+
             this.subscribe4Connection(info.connection);
-            
+
             info.connection.bind('click', connection => {
                 const sequenceFlow = this.modelService.getSequenceFlow(connection.sourceId, connection.targetId);
                 this.broadcastService.broadcast(this.broadcastService.currentSequenceFlow, sequenceFlow);
@@ -111,10 +111,10 @@ export class JsPlumbService {
     private subscribe4Connection(connection: any) {
         const pre = connection.sourceId + connection.targetId;
         let sequenceFlowSubscription = this.subscriptionMap.get(pre + 'sequenceFlowSubscription');
-        if(sequenceFlowSubscription && !sequenceFlowSubscription.closed) {
+        if (sequenceFlowSubscription && !sequenceFlowSubscription.closed) {
             sequenceFlowSubscription.unsubscribe();
         }
-        
+
         sequenceFlowSubscription = this.broadcastService.currentSequenceFlow$.subscribe(currentSequenceFlow => {
             if (currentSequenceFlow.sourceRef === connection.sourceId
                 && currentSequenceFlow.targetRef === connection.targetId) {
@@ -125,9 +125,9 @@ export class JsPlumbService {
         });
 
         this.subscriptionMap.set(pre + 'sequenceFlowSubscription', sequenceFlowSubscription);
-        
+
         let typeSubscription = this.subscriptionMap.get(pre + 'typeSubscription');
-        if(typeSubscription && !typeSubscription.closed) {
+        if (typeSubscription && !typeSubscription.closed) {
             typeSubscription.unsubscribe();
         }
         typeSubscription = this.broadcastService.currentType$.subscribe(type => {
@@ -320,7 +320,7 @@ export class JsPlumbService {
 
     public remove(node: WorkflowNode) {
         const jsplumbInstance = this.jsplumbInstanceMap.get(node.parentId);
-        
+
         // unsubscription4Connection
         const connectionsAsSource = jsplumbInstance.select({ source: node.id });
         this.unsubscription4Connection(connectionsAsSource);

@@ -16,7 +16,7 @@ import './rxjs-operators';
 
 @Injectable()
 export class HttpService {
-    constructor(private http: Http) {}
+    constructor(private http: Http) { }
 
     public get(uri: string, options?: RequestOptionsArgs): Observable<any> {
         return this.getHttp('get', uri, options);
@@ -38,11 +38,11 @@ export class HttpService {
         if (data) {
             return this.http[type](uri, data, options)
                 .map(response => {
-                    if(response.text() === "") {
+                    if (response.text() === '') {
                         return {};
                     }
 
-                   return response.json();
+                    return response.json();
                 })
                 .catch(this.handleError);
         } else {

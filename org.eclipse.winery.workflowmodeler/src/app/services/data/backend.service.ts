@@ -26,17 +26,17 @@ import { NoticeService } from '../notice.service';
  */
 @Injectable()
 export abstract class BackendService {
-    private allNodesProperties: {name: string, value: string}[] = [];
+    private allNodesProperties: { name: string, value: string }[] = [];
 
     constructor(protected broadcastService: BroadcastService,
-                protected noticeService: NoticeService,
-                protected httpService: HttpService) {
+        protected noticeService: NoticeService,
+        protected httpService: HttpService) {
         this.broadcastService.saveEvent$.subscribe(planModel => {
             this.save(planModel).subscribe(response => this.noticeService.success('save plan success'));
         });
     }
 
-    public abstract getBackendType():string;
+    public abstract getBackendType(): string;
 
     public abstract setParameters(params: any);
 
@@ -47,17 +47,17 @@ export abstract class BackendService {
     public abstract loadNodeTemplateInterfaces(nodeTemplate: NodeTemplate): Observable<string[]>;
 
     public abstract loadNodeTemplateOperations(nodeTemplate: NodeTemplate,
-                                               interfaceName: string): Observable<string[]>;
+        interfaceName: string): Observable<string[]>;
 
     public abstract loadNodeTemplateOperationParameter(nodeTemplate: NodeTemplate,
-                                                       interfaceName: string,
-                                                       operation: string): Observable<any>;
+        interfaceName: string,
+        operation: string): Observable<any>;
 
     public abstract save(planModel: PlanModel): Observable<any>;
 
     public abstract loadPlan(): Observable<PlanModel>;
 
-    public getAllNodesProperties(): {name: string, value:string}[] {
+    public getAllNodesProperties(): { name: string, value: string }[] {
         return this.allNodesProperties;
     }
 
@@ -74,7 +74,7 @@ export abstract class BackendService {
 
             const subscribes = nodes.map(node => this.loadTopologyProperties(node));
             Observable.forkJoin(subscribes).map(nodesProperties => {
-                const allProperties: {name:string, value:string}[] = [];
+                const allProperties: { name: string, value: string }[] = [];
                 nodesProperties.forEach((properties, index) => {
                     properties.forEach(property => {
                         // allProperties.push(nodes[index].name + '.' + property);

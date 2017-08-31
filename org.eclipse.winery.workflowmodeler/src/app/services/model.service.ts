@@ -14,7 +14,7 @@ import { isNullOrUndefined } from 'util';
 
 import { PlanModel } from '../model/plan-model';
 import { PlanTreeviewItem } from '../model/plan-treeview-item';
-import { RestConfig } from "../model/rest-config";
+import { RestConfig } from '../model/rest-config';
 import { Swagger, SwaggerModel, SwaggerModelSimple, SwaggerPrimitiveObject, SwaggerReferenceObject } from '../model/swagger';
 import { IntermediateCatchEvent } from '../model/workflow/intermediate-catch-event';
 import { NodeType } from '../model/workflow/node-type.enum';

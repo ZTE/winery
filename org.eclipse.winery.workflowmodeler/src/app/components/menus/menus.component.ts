@@ -15,7 +15,7 @@ export class MenusComponent implements OnInit {
   @ViewChild(RestConfigComponent) public restConfigComponent: RestConfigComponent;
 
   public canSave = true;
-  public showBack: boolean = false;
+  public showBack = false;
 
   constructor(private dataService: DataService, private modelService: ModelService,
     private broadcastService: BroadcastService) { }
@@ -37,9 +37,9 @@ export class MenusComponent implements OnInit {
   }
 
   public back(): void {
-    let addressUrl = location.search.slice(1);
-    let searchParams = new URLSearchParams(addressUrl);
-    let bpId = searchParams.get('serviceTemplateId');
+    const addressUrl = location.search.slice(1);
+    const searchParams = new URLSearchParams(addressUrl);
+    const bpId = searchParams.get('serviceTemplateId');
     location.href = '/blueprint/#/main/blueprint;operation=design;blueprintId=' + bpId;
   }
 

@@ -15,10 +15,10 @@ import { ActivatedRoute } from '@angular/router';
 
 import { NoticeService } from '../notice.service';
 import { BroadcastService } from './../broadcast.service';
-import {BackendService} from './backend.service';
-import {HttpService} from '../../util/http.service';
-import {WineryService} from './winery.service';
-import {CatalogService} from './catalog.service';
+import { BackendService } from './backend.service';
+import { HttpService } from '../../util/http.service';
+import { WineryService } from './winery.service';
+import { CatalogService } from './catalog.service';
 
 /**
  * DataService
@@ -30,12 +30,12 @@ export class DataService {
     public service: BackendService;
 
     constructor(private broadcastService: BroadcastService,
-                private noticeService: NoticeService,
-                protected httpService: HttpService) {
+        private noticeService: NoticeService,
+        protected httpService: HttpService) {
         this.createBackendService();
     }
 
-    public getBackendType():string{
+    public getBackendType(): string {
         return this.service.getBackendType();
     }
 

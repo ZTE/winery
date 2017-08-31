@@ -106,15 +106,15 @@ export class RestService {
             if (!Array.isArray(response.json())) {
                 return;
             }
-            let services = response.json();
-            let swaggerObservableArray: Observable<any>[] = [];
+            const services = response.json();
+            const swaggerObservableArray: Observable<any>[] = [];
             services.forEach(serviceInfo => {
                 if ('REST' === serviceInfo.protocol) {
                     // this service don't have sawgger file.
                     if ('workflow-tomcat' !== serviceInfo.serviceName && 'workflowtomcat' !== serviceInfo.serviceName) {
                         restConfigs.push(new RestConfig(serviceInfo.serviceName + '.' + serviceInfo.version,
                             serviceInfo.serviceName, serviceInfo.version, serviceInfo.url));
-                        let swaggerUrl: string = '';
+                        let swaggerUrl = '';
                         if (undefined !== serviceInfo.swagger_url && '' !== serviceInfo.swagger_url) {
                             swaggerUrl = serviceInfo.url + serviceInfo.swagger_url;
                         } else {
@@ -137,9 +137,9 @@ export class RestService {
                             deleteArray.push(index);
                         } else {
                             const swagger = response.json();
-                            try{
+                            try {
                                 restConfigs[index].swagger = new Swagger(swagger);
-                            } catch(e) {
+                            } catch (e) {
                                 deleteArray.push(index);
                                 console.warn('Do not support this sawgger file format:' + JSON.stringify(swagger));
                             }
@@ -156,6 +156,6 @@ export class RestService {
                 }
             );
         });
-    };
+    }
 }
 

@@ -34,7 +34,7 @@ export class ToolbarComponent implements AfterViewInit {
         this.jsPlumbService.buttonDraggable();
     }
 
-    public getNameByType(type:string):string{
+    public getNameByType(type: string): string {
         switch (type) {
             case 'startEvent':
                 return 'StartEvent';
@@ -57,10 +57,10 @@ export class ToolbarComponent implements AfterViewInit {
         }
     }
 
-    public isGetway(type: string):boolean{
-        if('exclusiveGateway' === type || 'parallelGateway' === type){
+    public isGetway(type: string): boolean {
+        if ('exclusiveGateway' === type || 'parallelGateway' === type) {
             return true;
-        }else{
+        } else {
             return false;
         }
     }

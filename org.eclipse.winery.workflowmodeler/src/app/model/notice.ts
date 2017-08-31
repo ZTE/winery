@@ -9,11 +9,11 @@
  * Contributors:
  *     ZTE - initial API and implementation and/or initial documentation
  */
-import { NoticeType } from "./notice-type.enum";
+import { NoticeType } from './notice-type.enum';
 
 export class Notice {
     constructor(public type: NoticeType,
-                public content: string,
-                public timeout: number = 0) {
+        public content: string,
+        public timeout: number = 0) {
     }
 }

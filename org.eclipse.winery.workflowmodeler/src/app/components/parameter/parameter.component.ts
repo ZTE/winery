@@ -41,7 +41,7 @@ export class ParameterComponent implements OnInit {
     public valueClass;
     public planOptions = [];
     public topologyOptions: { name: string, value: string }[] = [];
-    public showValueSource: boolean = true;
+    public showValueSource = true;
     public planValue: any = {};
 
     constructor(private dataService: DataService) { }
@@ -71,7 +71,7 @@ export class ParameterComponent implements OnInit {
         this.valueChange('');
     }
 
-    public keyChange(key: string){
+    public keyChange(key: string) {
         this.param.name = key;
         this.paramChange.emit(this.param);
     }
@@ -81,14 +81,14 @@ export class ParameterComponent implements OnInit {
             if ('object' === typeof (value)) {
                 this.planValue = value;
                 this.param.value = value.id;
-            }else{
-                this.planValue = {id:''};
+            } else {
+                this.planValue = { id: '' };
                 this.param.value = '';
             }
         } else {
             this.param.value = value;
         }
-        this.paramChange.emit(this.param)
+        this.paramChange.emit(this.param);
     }
 
     public deleteParam(): void {
@@ -110,11 +110,11 @@ export class ParameterComponent implements OnInit {
                 id: item.value,
                 name: item.name,
                 disabled: false,
-                //!item.canSelect,
+                // !item.canSelect,
                 children: this.getTreeviewChild(item.children)
             };
             treeviewItems.push(treeviewItem);
-        })
+        });
         return treeviewItems;
     }
 }
