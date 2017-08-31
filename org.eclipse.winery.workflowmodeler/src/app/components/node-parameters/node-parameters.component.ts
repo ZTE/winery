@@ -30,19 +30,19 @@ import { SwaggerTreeConverterService } from '../../services/swagger-tree-convert
     styleUrls: ['./node-parameters.component.css'],
     templateUrl: 'node-parameters.component.html',
 })
-export class WmNodeParametersComponent implements OnInit {
+export class NodeParametersComponent implements OnInit {
     @Input() public task: RestTask;
     @Input() public planItems: PlanTreeviewItem[];
 
     public inputSources: ValueSource[] = [ValueSource.String, ValueSource.Topology, ValueSource.Plan];
     public outputSources: ValueSource[] = [ValueSource.Topology, ValueSource.Plan];
+    public queryParams: any[] = [];
     public inputParams: TreeNode[] = [];
     public outputParams: TreeNode[] = [];
     public pathParams: any[] = [];
     public valueSource = ValueSource;
 
     private index = 1;
-    private queryParams: any[] = [];
 
     constructor(private broadcastService: BroadcastService,
                 private swaggerTreeConverterService: SwaggerTreeConverterService) {

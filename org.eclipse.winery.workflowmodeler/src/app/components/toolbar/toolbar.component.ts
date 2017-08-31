@@ -24,7 +24,7 @@ import { JsPlumbService } from '../../services/jsplumb.service';
     templateUrl: 'toolbar.component.html',
     styleUrls: ['./toolbar.component.css']
 })
-export class WmToolbarComponent implements AfterViewInit {
+export class ToolbarComponent implements AfterViewInit {
     public nodeTypes = WorkflowNodeType;
 
     constructor(private jsPlumbService: JsPlumbService) {

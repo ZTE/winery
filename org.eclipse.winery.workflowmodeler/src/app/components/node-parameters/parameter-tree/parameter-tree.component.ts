@@ -30,7 +30,7 @@ import { WorkflowUtil } from '../../../util/workflow-util';
     styleUrls: ['./parameter-tree.component.css'],
     templateUrl: 'parameter-tree.component.html',
 })
-export class WmParameterTreeComponent implements OnChanges {
+export class ParameterTreeComponent implements OnChanges {
     @Input() public parameters: TreeNode[];
     @Input() public task: RestTask;
     @Input() public defaultValueSource: string;
@@ -96,7 +96,7 @@ export class WmParameterTreeComponent implements OnChanges {
                 };
             }
         } else {
-            console.assert('Node.parent does not exists!' + node);
+            console.warn('Node.parent does not exists!' + JSON.stringify(node));
         }
     }
 

@@ -335,7 +335,7 @@ export class ModelService {
     }
 
     private createResponseTreeViewItem(nodeId: string): PlanTreeviewItem {
-        return new PlanTreeviewItem('response', `[${nodeId}].[response]`, []);
+        return new PlanTreeviewItem('response', `[${nodeId}].[responseBody]`, []);
     }
 
     public getPreNodes(nodeId: string, nodeMap: Map<string, WorkflowNode>, preNodes: WorkflowNode[]) {

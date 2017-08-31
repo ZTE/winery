@@ -28,7 +28,7 @@ import { ModelService } from '../../services/model.service';
     styleUrls: ['./sequence-flow.component.css'],
     templateUrl: 'sequence-flow.component.html',
 })
-export class WmSequenceFlowComponent implements AfterViewInit {
+export class SequenceFlowComponent implements AfterViewInit {
     public sequenceFlow: SequenceFlow;
     public show = false;
 

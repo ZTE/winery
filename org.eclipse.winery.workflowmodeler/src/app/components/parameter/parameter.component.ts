@@ -26,7 +26,7 @@ import { DataService } from '../../services/data/data.service';
     styleUrls: ['./parameter.component.css'],
     templateUrl: 'parameter.component.html',
 })
-export class WmParameterComponent implements OnInit {
+export class ParameterComponent implements OnInit {
     @Input() public param: Parameter;
     @Input() public valueSource: ValueSource[];
     @Input() public canEditName: boolean;

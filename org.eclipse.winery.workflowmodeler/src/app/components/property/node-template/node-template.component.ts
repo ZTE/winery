@@ -28,15 +28,15 @@ import { DataService } from '../../../services/data/data.service';
     selector: 'b4t-node-template',
     templateUrl: 'node-template.component.html',
 })
-export class WmNodeTemplateComponent implements AfterViewInit {
+export class NodeTemplateComponent implements AfterViewInit {
     @Input() public node: ToscaNodeTask;
     @Input() public planItems: PlanTreeviewItem[];
 
     public inputSources: ValueSource[] = [ValueSource.String, ValueSource.Topology, ValueSource.Plan];
     public outputSources: ValueSource[] = [ValueSource.Topology, ValueSource.Plan];
-    private nodeInterfaces: string[] = [];
-    private nodeOperations: any[] = [];
-    private nodeTemplates: NodeTemplate[] = [];
+    public nodeInterfaces: string[] = [];
+    public nodeOperations: any[] = [];
+    public nodeTemplates: NodeTemplate[] = [];
 
     constructor(private dataService: DataService) {
     }

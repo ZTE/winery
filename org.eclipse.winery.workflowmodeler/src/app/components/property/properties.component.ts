@@ -32,7 +32,7 @@ import { ModelService } from '../../services/model.service';
     styleUrls: ['./properties.component.css'],
     templateUrl: 'properties.component.html',
 })
-export class WmPropertiesComponent implements AfterViewInit {
+export class PropertiesComponent implements AfterViewInit {
     public node: WorkflowNode;
     public planTreeviewItems: PlanTreeviewItem[];
     public nodeTypes: string[] = WorkflowNodeType;

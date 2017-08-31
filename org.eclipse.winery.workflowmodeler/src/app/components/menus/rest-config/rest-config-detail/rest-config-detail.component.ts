@@ -25,7 +25,7 @@ import { RestService } from '../../../../services/rest.service';
     selector: 'b4t-rest-config-detail',
     templateUrl: 'rest-config-detail.component.html',
 })
-export class WmRestConfigDetailComponent implements OnChanges {
+export class RestConfigDetailComponent implements OnChanges {
     @Input() restConfig: RestConfig;
 
     public detail: string;

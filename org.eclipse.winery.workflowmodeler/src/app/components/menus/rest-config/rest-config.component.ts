@@ -14,7 +14,7 @@ import { AfterViewInit, Component, ViewChild } from '@angular/core';
 import { ModalDirective } from 'ngx-bootstrap/modal';
 
 import { RestService } from '../../../services/rest.service';
-import { WmRestConfigListComponent } from './rest-config-list/rest-config-list.component';
+import { RestConfigListComponent } from './rest-config-list/rest-config-list.component';
 
 /**
  * toolbar component contains some basic operations(save) and all of the supported workflow nodes.
@@ -24,7 +24,7 @@ import { WmRestConfigListComponent } from './rest-config-list/rest-config-list.c
     selector: 'b4t-rest-config',
     templateUrl: 'rest-config.component.html',
 })
-export class WmRestConfigComponent {
+export class RestConfigComponent {
     @ViewChild('restConfigModal') public restConfigModal: ModalDirective;
 
     public currentRestConfig: any = {};

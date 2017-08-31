@@ -29,7 +29,7 @@ import { ModelService } from '../../services/model.service';
     templateUrl: 'container.component.html',
     styleUrls: ['./container.component.css']
 })
-export class WmContainerComponent implements AfterViewInit, OnInit {
+export class ContainerComponent implements AfterViewInit, OnInit {
     public currentWorkflowNode: WorkflowNode;
     public currentSequenceFlow: SequenceFlow;
     public currentType: string;
@@ -38,7 +38,7 @@ export class WmContainerComponent implements AfterViewInit, OnInit {
                 private route: ActivatedRoute,
                 private jsPlumbService: JsPlumbService,
                 private dataService: DataService,
-                private modelService: ModelService) {
+                public modelService: ModelService) {
     }
 
     @HostListener('window:keyup.delete', ['$event']) ondelete(event: KeyboardEvent) {

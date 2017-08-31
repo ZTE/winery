@@ -26,7 +26,7 @@ import { Parameter} from '../../model/workflow/parameter';
     selector: 'b4t-editable-property',
     templateUrl: 'editable-property.component.html',
 })
-export class WmEditablePropertyComponent {
+export class EditablePropertyComponent {
     @Input() public parameter: Parameter;
     @Input() public showLabel: boolean;
     @Input() public valueSource: ValueSource[];

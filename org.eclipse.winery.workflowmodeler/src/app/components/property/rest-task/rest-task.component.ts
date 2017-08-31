@@ -27,7 +27,7 @@ import { WorkflowUtil } from '../../../util/workflow-util';
     selector: 'b4t-rest-task',
     templateUrl: 'rest-task.component.html',
 })
-export class WmRestTaskComponent implements AfterViewInit {
+export class RestTaskComponent implements AfterViewInit {
     @Input() public node: RestTask;
     @Input() public planItems: PlanTreeviewItem[];
     public swaggerJson: any = {};
@@ -35,7 +35,7 @@ export class WmRestTaskComponent implements AfterViewInit {
     public restOperations: any = [];
     private swagger: Swagger;
 
-    constructor(private broadcastService: BroadcastService, private restService: RestService,
+    constructor(private broadcastService: BroadcastService, public restService: RestService,
         private noticeService: NoticeService) { }
 
     public ngAfterViewInit() {

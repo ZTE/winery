@@ -27,7 +27,7 @@ import { ModelService } from '../../services/model.service';
     styleUrls: ['./node.component.css'],
     templateUrl: 'node.component.html',
 })
-export class WmNodeComponent implements AfterViewInit, OnDestroy {
+export class NodeComponent implements AfterViewInit, OnDestroy {
     @Input() public last: boolean;
     @Input() public node: WorkflowNode;
     @Input() public rank: number;

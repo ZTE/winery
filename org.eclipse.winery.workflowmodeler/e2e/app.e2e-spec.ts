@@ -1,14 +1,14 @@
-import { ModelerPage } from './app.po';
+import { AppPage } from './app.po';
 
-describe('workflow-model App', () => {
-  let page: ModelerPage;
+describe('workflowmodeler App', () => {
+  let page: AppPage;
 
   beforeEach(() => {
-    page = new ModelerPage();
+    page = new AppPage();
   });
 
-  it('should display message saying app works', () => {
+  it('should display welcome message', () => {
     page.navigateTo();
-    expect(true).toEqual(true);
+    expect(page.getParagraphText()).toEqual('Welcome to app!');
   });
 });

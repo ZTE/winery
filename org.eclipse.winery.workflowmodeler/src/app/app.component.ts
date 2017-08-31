@@ -16,7 +16,7 @@ import { Component } from '@angular/core';
  * main component
  */
 @Component({
-    selector: 'b4t-app',
+    selector: 'workflow',
     templateUrl: './app.component.html',
     styleUrls: ['./app.component.css']
 })

@@ -25,7 +25,7 @@ import { RestService } from '../../../../services/rest.service';
     selector: 'b4t-rest-config-list',
     templateUrl: 'rest-config-list.component.html',
 })
-export class WmRestConfigListComponent {
+export class RestConfigListComponent {
     @Output() configSelected = new EventEmitter<RestConfig>();
 
     constructor(public restService: RestService) {

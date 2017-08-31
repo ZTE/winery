@@ -4,7 +4,7 @@ import { DataService } from '../../services/data/data.service';
 import { BroadcastService } from '../../services/broadcast.service';
 import { ModelService } from '../../services/model.service';
 // import { SettingService } from '../../services/setting.service';
-import { WmRestConfigComponent } from './rest-config/rest-config.component';
+import { RestConfigComponent } from './rest-config/rest-config.component';
 
 @Component({
   selector: 'menus',
@@ -12,7 +12,7 @@ import { WmRestConfigComponent } from './rest-config/rest-config.component';
   styleUrls: ['./menus.component.css']
 })
 export class MenusComponent implements OnInit {
-  @ViewChild(WmRestConfigComponent) public restConfigComponent: WmRestConfigComponent;
+  @ViewChild(RestConfigComponent) public restConfigComponent: RestConfigComponent;
 
   public canSave = true;
   public showBack: boolean = false;

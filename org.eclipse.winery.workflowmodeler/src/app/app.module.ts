@@ -17,22 +17,22 @@ import { AlertModule, ModalModule } from 'ngx-bootstrap/index';
 import { NgxTreeSelectModule } from 'ngx-tree-select';
 
 import { AppComponent } from './app.component';
-import { WmContainerComponent } from './components/container/container.component';
-import { WmEditablePropertyComponent } from './components/editable-property/editable-property.component';
-import { WmNodeParametersComponent } from './components/node-parameters/node-parameters.component';
-import { WmParameterTreeComponent } from './components/node-parameters/parameter-tree/parameter-tree.component';
-import { WmNodeComponent } from './components/node/node.component';
-import { WmParameterComponent } from './components/parameter/parameter.component';
+import { ContainerComponent } from './components/container/container.component';
+import { EditablePropertyComponent } from './components/editable-property/editable-property.component';
+import { NodeParametersComponent } from './components/node-parameters/node-parameters.component';
+import { ParameterTreeComponent } from './components/node-parameters/parameter-tree/parameter-tree.component';
+import { NodeComponent } from './components/node/node.component';
+import { ParameterComponent } from './components/parameter/parameter.component';
 import { IntermediateCatchEventComponent } from './components/property/intermediate-catch-event/intermediate-catch-event.component';
-import { WmNodeTemplateComponent } from './components/property/node-template/node-template.component';
-import { WmPropertiesComponent } from './components/property/properties.component';
-import { WmRestTaskComponent } from './components/property/rest-task/rest-task.component';
+import { NodeTemplateComponent } from './components/property/node-template/node-template.component';
+import { PropertiesComponent } from './components/property/properties.component';
+import { RestTaskComponent } from './components/property/rest-task/rest-task.component';
 import { StartEventParametersComponent } from './components/property/start-event-parameters/start-event-parameters.component';
-import { WmSequenceFlowComponent } from './components/sequence-flow/sequence-flow.component';
-import { WmRestConfigDetailComponent } from './components/menus/rest-config/rest-config-detail/rest-config-detail.component';
-import { WmRestConfigListComponent } from './components/menus/rest-config/rest-config-list/rest-config-list.component';
-import { WmRestConfigComponent } from './components/menus/rest-config/rest-config.component';
-import { WmToolbarComponent } from './components/toolbar/toolbar.component';
+import { SequenceFlowComponent } from './components/sequence-flow/sequence-flow.component';
+import { RestConfigDetailComponent } from './components/menus/rest-config/rest-config-detail/rest-config-detail.component';
+import { RestConfigListComponent } from './components/menus/rest-config/rest-config-list/rest-config-list.component';
+import { RestConfigComponent } from './components/menus/rest-config/rest-config.component';
+import { ToolbarComponent } from './components/toolbar/toolbar.component';
 
 import { ResizableDirective } from './directive/resizable/resizable.directive';
 
@@ -52,22 +52,22 @@ import { MenusComponent } from './components/menus/menus.component';
 @NgModule({
     declarations: [
         AppComponent,
-        WmContainerComponent,
-        WmEditablePropertyComponent,
+        ContainerComponent,
+        EditablePropertyComponent,
         IntermediateCatchEventComponent,
-        WmNodeComponent,
-        WmNodeParametersComponent,
-        WmNodeTemplateComponent,
-        WmParameterComponent,
-        WmParameterTreeComponent,
-        WmPropertiesComponent,
-        WmRestConfigComponent,
-        WmRestTaskComponent,
-        WmSequenceFlowComponent,
+        NodeComponent,
+        NodeParametersComponent,
+        NodeTemplateComponent,
+        ParameterComponent,
+        ParameterTreeComponent,
+        PropertiesComponent,
+        RestConfigComponent,
+        RestTaskComponent,
+        SequenceFlowComponent,
         StartEventParametersComponent,
-        WmToolbarComponent,
-        WmRestConfigDetailComponent,
-        WmRestConfigListComponent,
+        ToolbarComponent,
+        RestConfigDetailComponent,
+        RestConfigListComponent,
         ResizableDirective,
         GlobalNoticeComponent,
         MenusComponent,
