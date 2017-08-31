@@ -14,7 +14,7 @@
   ],
   "scripts": {
     "ng": "ng",
-    "start": "ng serve --host 10.90.86.221 --disable-host-check true",
+    "start": "ng serve --host localhost --disable-host-check true",
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
