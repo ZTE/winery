@@ -34,24 +34,24 @@ export class ToolbarComponent implements AfterViewInit {
         this.jsPlumbService.buttonDraggable();
     }
 
-    public getNameByType(type: string): string {
+    public getName(type:string):string{
         switch (type) {
             case 'startEvent':
-                return 'StartEvent';
+                return 'WORKFLOW.START_EVENT';
             case 'endEvent':
-                return 'EndEvent';
+                return 'WORKFLOW.END_EVENT';
             case 'toscaNodeManagementTask':
-                return 'ToscaTask';
+                return 'WORKFLOW.TOSCA_TASK';
             case 'restTask':
-                return 'RestTask';
-            case 'exclusiveGateway':
-                return 'Exclusive';
-            case 'parallelGateway':
-                return 'Parallel';
-            case 'subProcess':
-                return 'SubProcess';
+                return 'WORKFLOW.REST_TASK';
             case 'intermediateCatchEvent':
-                return 'TimerEvent';
+                return 'WORKFLOW.TIMER_EVENT';
+            case 'exclusiveGateway':
+                return 'WORKFLOW.EXCLUSIVE_GATEWAY';
+            case 'parallelGateway':
+                return 'WORKFLOW.PARALLEL_GATEWAY';
+            case 'subProcess':
+                return 'WORKFLOW.SUB_PROCESS';
             default:
                 return 'unKnown';
         }

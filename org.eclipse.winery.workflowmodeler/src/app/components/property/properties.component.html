@@ -14,10 +14,7 @@
 
 <div class="wm-properties-wrapper" *ngIf="show">
     <div class="form-group row">
-        <!-- <div class="view col-md-10">
-            <b4t-editable-property [parameter]="nameParameter" (parameterChange)="nodeNameChange($event)" [showLabel]="false" [valueSource]="valueSource"></b4t-editable-property>
-        </div> -->
-        <label class="col-md-2 form-control-label text-md-right">Name</label>
+        <label class="col-md-2 form-control-label text-md-right">{{'WORKFLOW.NODE_NAME' | translate}}</label>
         <input class="col-md-8 form-control" type="text" [(ngModel)]="node.name">
         <div class="col-md-2">
             <button (click)="deleteNode()" type="button" class="btn white">
@@ -28,7 +25,7 @@
     <hr>
 
     <div class="form-group row">
-        <label class="col-md-3 form-control-label text-md-right" for="nodeType">Type</label>
+        <label class="col-md-3 form-control-label text-md-right" for="nodeType">{{'WORKFLOW.NODE_TYPE' | translate}}</label>
         <div class="col-md-9">
             <select class="form-control" id="nodeType" [(ngModel)]="node.type">
                 <option *ngFor="let t of nodeTypes" value="{{t}}">{{t}}</option>

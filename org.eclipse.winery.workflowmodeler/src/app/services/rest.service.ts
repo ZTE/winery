@@ -150,8 +150,9 @@ export class RestService {
                     deleteArray.reverse();
                     deleteArray.forEach(deleteIndex => {
                         restConfigs.splice(deleteIndex, 1);
-                    })
+                    });
                     this.broadcastService.broadcast(this.broadcastService.updateModelRestConfig, restConfigs);
+                    // todo: change load file to rest properties component select function.
                     this.noticeService.info('Load all swagger finished.');
                 }
             );

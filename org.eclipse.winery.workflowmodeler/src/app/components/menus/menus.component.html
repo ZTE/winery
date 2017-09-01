@@ -13,16 +13,16 @@
 -->
 
 <div class="btn-right">
-  <button type="button" class="btn white" (click)="save()" [disabled]="!canSave">
-    <i class="fa fa-save"></i>Save
-  </button>
   <!-- <button type="button" class="btn white" (click)="showRestConfigModal()">
-    <i class="fa fa-cog"></i>Setting
+    <i class="fa fa-cog"></i>{{ 'WORKFLOW.SETTING' | translate:param }}
   </button> -->
-  <button *ngIf="showBack" type="button" class="btn white" (click)="back()">
-    <i class="fa fa-arrow-left"></i>Back
+  <button type="button" class="btn white" (click)="save()" [disabled]="!canSave">
+    <i class="fa fa-save"></i>{{ 'WORKFLOW.SAVE' | translate:param }}
   </button>
-  <!-- <button type="button" class="btn white" (click)="test()">test</button> -->
+  <!-- <button type="button" class="btn white" (click)="test()">{{ 'WORKFLOW.TEST' | translate:param }}</button> -->
+  <button *ngIf="showBack" type="button" class="btn white" (click)="back()">
+    <i class="fa fa-arrow-left"></i>{{ 'WORKFLOW.BACK' | translate:param }}
+  </button>
 </div>
 
 <b4t-rest-config></b4t-rest-config>

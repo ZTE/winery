@@ -13,12 +13,11 @@
 -->
 <div class="toolbar">
     <div class="row">
-        <button *ngFor="let nodeType of nodeTypes" type="button" [attr.nodeType]="nodeType"
-            class="btn btn-secondary item ui-draggable">
+        <button *ngFor="let nodeType of nodeTypes" type="button" [attr.nodeType]="nodeType" class="btn white item ui-draggable">
             <div [class.getway]="isGetway(nodeType)">
                 <div class="{{nodeType}}"></div>
             </div>
-            <span>{{getNameByType(nodeType)}}</span>
+            <span>{{getName(nodeType) | translate}}</span>
         </button>
     </div>
 </div>

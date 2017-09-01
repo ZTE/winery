@@ -12,6 +12,7 @@
 
 import { Injectable } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
 
 import { NoticeService } from '../notice.service';
 import { BroadcastService } from './../broadcast.service';
@@ -29,9 +30,8 @@ export class DataService {
     private environment = 'Catalog'; // 'Winery', 'Catalog'
     public service: BackendService;
 
-    constructor(private broadcastService: BroadcastService,
-        private noticeService: NoticeService,
-        protected httpService: HttpService) {
+    constructor(private broadcastService: BroadcastService, private noticeService: NoticeService,
+        protected httpService: HttpService, private translate: TranslateService) {
         this.createBackendService();
     }
 
@@ -42,10 +42,10 @@ export class DataService {
     private createBackendService() {
         switch (this.environment) {
             case 'Catalog':
-                this.service = new CatalogService(this.broadcastService, this.noticeService, this.httpService);
+                this.service = new CatalogService(this.broadcastService, this.noticeService, this.httpService, this.translate);
                 break;
             default:
-                this.service = new WineryService(this.broadcastService, this.noticeService, this.httpService);
+                this.service = new WineryService(this.broadcastService, this.noticeService, this.httpService, this.translate);
                 break;
         }
     }

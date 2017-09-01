@@ -11,6 +11,7 @@
  *******************************************************************************/
 import { AfterViewInit, Component, Input } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
+import { TranslateService } from '@ngx-translate/core';
 
 import { PlanTreeviewItem } from '../../../model/plan-treeview-item';
 import { Swagger, SwaggerMethod, SwaggerParameter, SwaggerResponse } from '../../../model/swagger';
@@ -36,7 +37,7 @@ export class RestTaskComponent implements AfterViewInit {
     private swagger: Swagger;
 
     constructor(private broadcastService: BroadcastService, public restService: RestService,
-        private noticeService: NoticeService) { }
+        private noticeService: NoticeService, private translate: TranslateService) { }
 
     public ngAfterViewInit() {
         setTimeout(() => {
@@ -87,7 +88,9 @@ export class RestTaskComponent implements AfterViewInit {
                 }
                 this.loadOperations();
             } else {
-                this.noticeService.error('swagger info not specified, please set swagger info first');
+                this.translate.get('WORKFLOW.MSG.SWAGGER_NOT_EXISTS').subscribe((res: string) => {
+                    this.noticeService.error(res);
+                });
             }
         }
     }

@@ -11,6 +11,7 @@
  */
 
 import { Component } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
 
 /**
  * main component
@@ -21,4 +22,18 @@ import { Component } from '@angular/core';
     styleUrls: ['./app.component.css']
 })
 export class AppComponent {
+    constructor(translate: TranslateService) {
+        // Init the I18n function.
+        // this language will be used as a fallback when a translation isn't found in the current language
+        translate.setDefaultLang('en');
+        // the lang to use, if the lang isn't available, it will use the current loader to get them
+        const topWin: any = window.top;
+        let browserLang = '';
+        if (topWin.getLanguage && typeof topWin.getLanguage == 'function') {
+            browserLang = topWin.getLanguage() || '';
+        } else {
+            browserLang = translate.getBrowserCultureLang() || '';
+        }
+        translate.use(browserLang);
+    }
 }

@@ -15,6 +15,9 @@ import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
 import { AlertModule, ModalModule } from 'ngx-bootstrap/index';
 import { NgxTreeSelectModule } from 'ngx-tree-select';
+import { HttpClientModule, HttpClient } from '@angular/common/http';
+import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
+import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 
 import { AppComponent } from './app.component';
 import { ContainerComponent } from './components/container/container.component';
@@ -48,6 +51,11 @@ import { SharedModule } from './shared/shared.module';
 import { HttpService } from './util/http.service';
 import { GlobalNoticeComponent } from './components/global-notice/global-notice.component';
 import { MenusComponent } from './components/menus/menus.component';
+
+// AoT requires an exported function for factories
+export function HttpLoaderFactory(http: HttpClient) {
+    return new TranslateHttpLoader(http, './assets/i18n/', '.json');
+}
 
 @NgModule({
     declarations: [
@@ -96,6 +104,14 @@ import { MenusComponent } from './components/menus/menus.component';
             textField: 'name',
             childrenField: 'children',
             allowParentSelection: false
+        }),
+        HttpClientModule,
+        TranslateModule.forRoot({
+            loader: {
+                provide: TranslateLoader,
+                useFactory: HttpLoaderFactory,
+                deps: [HttpClient]
+            }
         })
     ],
     bootstrap: [

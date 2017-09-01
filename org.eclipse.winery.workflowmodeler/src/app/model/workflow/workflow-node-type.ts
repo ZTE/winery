@@ -15,8 +15,8 @@ export const WorkflowNodeType = [
     'endEvent',
     'toscaNodeManagementTask',
     'restTask',
+    'intermediateCatchEvent',
     'exclusiveGateway',
     'parallelGateway',
-    'subProcess',
-    'intermediateCatchEvent',
+    'subProcess'
 ];

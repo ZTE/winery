@@ -13,6 +13,7 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
+import { TranslateService } from '@ngx-translate/core';
 
 import { PlanModel } from '../../model/plan-model';
 import { NodeTemplate } from '../../model/topology/node-template';
@@ -28,11 +29,14 @@ import { NoticeService } from '../notice.service';
 export abstract class BackendService {
     private allNodesProperties: { name: string, value: string }[] = [];
 
-    constructor(protected broadcastService: BroadcastService,
-        protected noticeService: NoticeService,
-        protected httpService: HttpService) {
+    constructor(protected broadcastService: BroadcastService, protected noticeService: NoticeService,
+        protected httpService: HttpService, private translate: TranslateService) {
         this.broadcastService.saveEvent$.subscribe(planModel => {
-            this.save(planModel).subscribe(response => this.noticeService.success('save plan success'));
+            this.save(planModel).subscribe(response => {
+                this.translate.get('WORKFLOW.MSG.SAVE_SUCCESS').subscribe((res: string) => {
+                    this.noticeService.success(res);
+                });
+            });
         });
     }
 
