@@ -102,7 +102,7 @@ export class RestService {
             }
         };
         let restConfigs = this.restConfigs;
-        this.http.get('/api/msdiscover/v1/services').subscribe(response => {
+        this.http.get('/api/msdiscover/v1/publishservicelist').subscribe(response => {
             if (!Array.isArray(response.json())) {
                 return;
             }
@@ -111,15 +111,15 @@ export class RestService {
             services.forEach(serviceInfo => {
                 if ('REST' === serviceInfo.protocol) {
                     // this service don't have sawgger file.
-                    if ('workflow-tomcat' !== serviceInfo.serviceName && 'workflowtomcat' !== serviceInfo.serviceName) {
+                    if ('/activiti-rest/service' !== serviceInfo.publish_url) {
                         restConfigs.push(new RestConfig(serviceInfo.serviceName + '.' + serviceInfo.version,
                             serviceInfo.serviceName, serviceInfo.version, serviceInfo.url));
                         let swaggerUrl = '';
                         if (undefined !== serviceInfo.swagger_url && '' !== serviceInfo.swagger_url) {
-                            swaggerUrl = serviceInfo.url + serviceInfo.swagger_url;
+                            swaggerUrl = serviceInfo.publish_url + '/' + serviceInfo.swagger_url;
                         } else {
                             // default swagger url is: '/swagger.json'
-                            swaggerUrl = serviceInfo.url + '/swagger.json';
+                            swaggerUrl = serviceInfo.publish_url + '/swagger.json';
                         }
                         swaggerObservableArray.push(this.http.get(swaggerUrl, options).catch((error): Observable<any> => {
                             console.log('Request swagger from:"' + swaggerUrl + '" faild!');
