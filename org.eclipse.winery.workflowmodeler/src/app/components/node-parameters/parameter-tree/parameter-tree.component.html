@@ -7,35 +7,21 @@
     </ng-template>
 
     <ng-template let-node  pTemplate="array">
-        <span *ngIf="!node.keyEditable">[Array]({{node.children.length}}) {{node.label}}:</span>
-        <span *ngIf="node.keyEditable">[Array]({{node.children.length}})
-            <b4t-editable-property [parameter]="getKeyParameter(node)"  [showLabel]="false"
-                [planItems]="planItems" (parameterChange)="keyParameterChange(node, $event)"></b4t-editable-property>
-        </span>
+        <span>[Array]({{node.children.length}}) {{node.label}}:</span>
         <i class="fa fa-plus-square-o" (click)="addChildNode4ObjectArray(node)"></i>
     </ng-template>
+    
     <ng-template let-node pTemplate="object">
-        <span *ngIf="!node.keyEditable">[Object] {{node.label}}:</span>
-        <span *ngIf="node.keyEditable">[Object]
-            <b4t-editable-property [parameter]="getKeyParameter(node)"  [showLabel]="false"
-                [planItems]="planItems" (parameterChange)="keyParameterChange(node, $event)"></b4t-editable-property>:
-        </span>
-
+        <span>[Object] {{node.label}}:</span>
         <span *ngIf="canEditValue(node)" class="dynamic-object-value">
             <textarea [ngModel]="getObjectValue(node)" (ngModelChange)="updateObjectValue(node, $event)"></textarea>
         </span>
-
         <i *ngIf="canDelete(node)" class="fa fa-minus-square-o" (click)="deleteTreeNode(node)"></i>
         <i *ngIf="canAdd(node)" class="fa fa-plus-square-o" (click)="addChildNode4DynamicObject(node)"></i>
     </ng-template>
 
     <ng-template let-node pTemplate="map">
         <span *ngIf="!node.keyEditable">[Map] {{node.label}}:</span>
-        <span *ngIf="node.keyEditable">[Map]
-            <b4t-editable-property [parameter]="getKeyParameter(node)" [showLabel]="false"
-                [planItems]="planItems" (parameterChange)="keyParameterChange(node, $event)"></b4t-editable-property>:
-        </span>
-
         <i *ngIf="canDelete(node)" class="fa fa-minus-square-o" (click)="deleteTreeNode(node)"></i>
         <i *ngIf="canAdd(node)" class="fa fa-plus-square-o" (click)="addChildNode4DynamicObject(node)"></i>
     </ng-template>

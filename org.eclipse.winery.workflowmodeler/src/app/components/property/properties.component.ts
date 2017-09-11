@@ -40,8 +40,6 @@ export class PropertiesComponent implements AfterViewInit {
     public titleEditing = false;
     public valueSource = [ValueSource.String];
 
-    public nameParameter = new Parameter('nodeName', '', ValueSource[ValueSource.String], '');
-
     constructor(private broadcastService: BroadcastService,
         private modelService: ModelService,
         private jsPlumbService: JsPlumbService) {
@@ -53,18 +51,17 @@ export class PropertiesComponent implements AfterViewInit {
         this.broadcastService.nodeProperty$.subscribe(node => {
             this.node = node;
             this.planTreeviewItems = this.modelService.getPlanParameters(this.node.id);
-            this.nameParameter.value = this.node.name;
         });
     }
 
-    public nodeNameChange(nameParamter: Parameter) {
-        this.titleEditing = !this.titleEditing;
-        this.node.name = nameParamter.value;
+    // public nodeNameChange(nameParamter: Parameter) {
+    //     this.titleEditing = !this.titleEditing;
+    //     this.node.name = nameParamter.value;
 
-        setTimeout(() => {
-            this.jsPlumbService.jsplumbInstanceMap.get(this.node.parentId).repaintEverything();
-        }, 0);
-    }
+    //     setTimeout(() => {
+    //         this.jsPlumbService.jsplumbInstanceMap.get(this.node.parentId).repaintEverything();
+    //     }, 0);
+    // }
 
     public deleteNode() {
         this.show = false;

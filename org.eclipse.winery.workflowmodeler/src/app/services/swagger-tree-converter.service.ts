@@ -128,11 +128,11 @@ export class SwaggerTreeConverterService {
             const property = properties[key];
             this.setInitValue4Param(objectValue[key], property);
 
-            if (property.value !== objectValue[key]) {
+            const treeNode = this.schema2TreeNode(key, this.restConfigId, property);
+            treeNodes.push(treeNode);
+            if (objectValue[key] !== property.value) {
                 objectValue[key] = property.value;
             }
-
-            treeNodes.push(this.schema2TreeNode(key, this.restConfigId, property));
         }
         return treeNodes;
     }
