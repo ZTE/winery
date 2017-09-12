@@ -9,3 +9,8 @@
  * Contributors:
  *     ZTE - initial API and implementation and/or initial documentation
  */
+.form-control-required{
+    color: red;
+    height: 30px;
+    line-height: 30px;
+}

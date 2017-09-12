@@ -17,7 +17,6 @@ import { PlanTreeviewItem } from '../../../model/plan-treeview-item';
 import { ValueSource } from '../../../model/value-source.enum';
 import { ValueType } from '../../../model/value-type.enum';
 import { Parameter } from '../../../model/workflow/parameter';
-import { RestParameter } from '../../../model/workflow/rest-parameter';
 import { RestTask } from '../../../model/workflow/rest-task';
 import { SwaggerTreeConverterService } from '../../../services/swagger-tree-converter.service';
 import { WorkflowUtil } from '../../../util/workflow-util';

@@ -14,6 +14,7 @@
 
 <div class="form-group row">
     <div *ngIf="showLabel" class="col-md-3 text-md-right">
+        <label *ngIf="true === param.required" class="form-control-required">*</label>
         <input *ngIf="canEditName" class="form-control" type="text" [ngModel]="param.name" (ngModelChange)="keyChange($event)">
         <label *ngIf="!canEditName" class="form-control-label">{{param.name}}</label>
     </div>

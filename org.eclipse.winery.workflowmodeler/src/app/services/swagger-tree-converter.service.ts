@@ -75,6 +75,7 @@ export class SwaggerTreeConverterService {
         const node = {
             label: name,
             type: nodeType,
+            required: paramDefinition.required,
             children: [],
             parameter: paramDefinition,
         };
@@ -113,19 +114,30 @@ export class SwaggerTreeConverterService {
 
     private getPropertyFromObject(objectValue: any, param: any): TreeNode[] {
         if (param.properties) {
-            return this.getPropertyFromSimpleObject(objectValue, param.properties);
+            return this.getPropertyFromSimpleObject(objectValue, param.properties, param.required);
         } else if (param.additionalProperties) {
             return this.getPropertyFromMapOrDictionary(objectValue, param.additionalProperties);
         } else {
+            console.log('getPropertyFromObject() return [], param is:' + JSON.stringify(param));
             return [];
         }
 
     }
 
-    private getPropertyFromSimpleObject(objectValue: any, properties: any): TreeNode[] {
+    private getPropertyFromSimpleObject(objectValue: any, properties: any, required: string[]): TreeNode[] {
         const treeNodes: TreeNode[] = [];
         for (const key in properties) {
-            const property = properties[key];
+            let property = properties[key];
+            // init required property
+            property.required = false;
+            if (Array.isArray(required)) {
+                for (let index = 0; index < required.length; index++) {
+                    if (required[index] === key) {
+                        property.required = true;
+                        break;
+                    }
+                }
+            }
             this.setInitValue4Param(objectValue[key], property);
 
             const treeNode = this.schema2TreeNode(key, this.restConfigId, property);

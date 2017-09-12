@@ -11,7 +11,6 @@
  */
 import { NodeTemplate } from '../topology/node-template';
 import { Parameter } from './parameter';
-import { RestParameter } from './rest-parameter';
 import { WorkflowNode } from './workflow-node';
 
 export class ToscaNodeTask extends WorkflowNode {
