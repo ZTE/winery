@@ -107,11 +107,12 @@ export class RestService {
                 return;
             }
             const services = response.json();
+            const protocel = location.protocol.slice(0, location.protocol.length - 1);
             const swaggerObservableArray: Observable<any>[] = [];
             services.forEach(serviceInfo => {
-                if ('REST' === serviceInfo.protocol) {
+                if ('REST' === serviceInfo.protocol && protocel === serviceInfo.publish_protocol) {
                     // this service don't have sawgger file.
-                    if ('/activiti-rest/service' !== serviceInfo.publish_url) {
+                    if ('/activiti-rest' !== serviceInfo.publish_url) {
                         restConfigs.push(new RestConfig(serviceInfo.serviceName + '.' + serviceInfo.version,
                             serviceInfo.serviceName, serviceInfo.version, serviceInfo.publish_url));
                         let swaggerUrl = '';
