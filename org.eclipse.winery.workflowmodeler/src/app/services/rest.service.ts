@@ -113,7 +113,7 @@ export class RestService {
                     // this service don't have sawgger file.
                     if ('/activiti-rest/service' !== serviceInfo.publish_url) {
                         restConfigs.push(new RestConfig(serviceInfo.serviceName + '.' + serviceInfo.version,
-                            serviceInfo.serviceName, serviceInfo.version, serviceInfo.url));
+                            serviceInfo.serviceName, serviceInfo.version, serviceInfo.publish_url));
                         let swaggerUrl = '';
                         if (undefined !== serviceInfo.swagger_url && '' !== serviceInfo.swagger_url) {
                             swaggerUrl = serviceInfo.publish_url + '/' + serviceInfo.swagger_url;
