@@ -32,7 +32,7 @@ export class NodeTemplateComponent implements AfterViewInit {
     @Input() public node: ToscaNodeTask;
     @Input() public planItems: PlanTreeviewItem[];
 
-    public inputSources: ValueSource[] = [ValueSource.String, ValueSource.Topology, ValueSource.Plan];
+    public inputSources: ValueSource[] = [ValueSource.String, ValueSource.Variable, ValueSource.Topology, ValueSource.Plan];
     public outputSources: ValueSource[] = [ValueSource.Topology, ValueSource.Plan];
     public nodeInterfaces: string[] = [];
     public nodeOperations: any[] = [];
