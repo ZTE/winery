@@ -51,6 +51,7 @@ import { SharedModule } from './shared/shared.module';
 import { HttpService } from './util/http.service';
 import { GlobalNoticeComponent } from './components/global-notice/global-notice.component';
 import { MenusComponent } from './components/menus/menus.component';
+import { ScriptTaskComponent } from "./components/property/script-task/script-task.component";
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(http: HttpClient) {
@@ -72,6 +73,7 @@ export function HttpLoaderFactory(http: HttpClient) {
         RestConfigComponent,
         RestTaskComponent,
         SequenceFlowComponent,
+        ScriptTaskComponent,
         StartEventParametersComponent,
         ToolbarComponent,
         RestConfigDetailComponent,

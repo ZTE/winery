@@ -19,4 +19,5 @@ export enum NodeType {
     parallelGateway,
     subProcess,
     intermediateCatchEvent,
+    scriptTask,
 }
