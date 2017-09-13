@@ -28,6 +28,7 @@ import { WorkflowNode } from '../model/workflow/workflow-node';
 import { BroadcastService } from './broadcast.service';
 import { RestService } from './rest.service';
 import { SwaggerTreeConverterService } from './swagger-tree-converter.service';
+import { ScriptTask } from "../model/workflow/script-task";
 
 /**
  * ModelService
@@ -104,6 +105,8 @@ export class ModelService {
                 return new SubProcess();
             case NodeType[NodeType.intermediateCatchEvent]:
                 return new IntermediateCatchEvent();
+            case NodeType[NodeType.scriptTask]:
+                return new ScriptTask();
             default:
                 return new WorkflowNode();
         }
@@ -363,6 +366,7 @@ export class ModelService {
     public save() {
         console.log('****************** save data *********************');
         console.log(this.planModel);
+        console.log(JSON.stringify(this.planModel));
 
         this.broadcastService.broadcast(this.broadcastService.saveEvent, this.planModel);
     }

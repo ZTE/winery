@@ -8,6 +8,7 @@
         "END_EVENT": "End",
         "TOSCA_TASK": "TOSCA",
         "REST_TASK": "REST",
+        "SCRIPT_TASK": "SCRIPT",
         "TIMER_EVENT": "Timer",
         "EXCLUSIVE_GATEWAY": "Exclusive",
         "PARALLEL_GATEWAY": "Parallel",
@@ -28,6 +29,9 @@
         "CONNECTION_SOURCE": "Source",
         "CONNECTION_TARGET": "Target",
         "CONNECTION_CONDITION": "Condition",
+        "SCRIPT_FORMAT":"Script Format",
+        "SCRIPT":"Script",
+
         "MSG": {
             "SWAGGER_NOT_EXISTS": "Swagger did not exist, please check the 'swagger.json' or service status.",
             "SAVE_SUCCESS": "Save successful."

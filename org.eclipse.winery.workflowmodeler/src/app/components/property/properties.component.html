@@ -38,4 +38,5 @@
     <b4t-node-template *ngIf="node.type == 'toscaNodeManagementTask'" [node]="node" [planItems]="planTreeviewItems"></b4t-node-template>
     <b4t-rest-task *ngIf="node.type == 'restTask'" [node]="node" [planItems]="planTreeviewItems"></b4t-rest-task>
     <b4t-intermediate-catch-event *ngIf="'intermediateCatchEvent' == node.type" [node]="node"></b4t-intermediate-catch-event>
+    <b4t-script-task *ngIf="node.type == 'scriptTask'" [node]="node"></b4t-script-task>
 </div>

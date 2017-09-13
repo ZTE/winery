@@ -52,6 +52,8 @@ export class ToolbarComponent implements AfterViewInit {
                 return 'WORKFLOW.PARALLEL_GATEWAY';
             case 'subProcess':
                 return 'WORKFLOW.SUB_PROCESS';
+            case 'scriptTask':
+                return 'WORKFLOW.SCRIPT_TASK';
             default:
                 return 'unKnown';
         }

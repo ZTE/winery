@@ -8,6 +8,7 @@
         "END_EVENT": "结束",
         "TOSCA_TASK": "TOSCA",
         "REST_TASK": "REST",
+        "SCRIPT_TASK": "脚本",
         "TIMER_EVENT": "定时器",
         "EXCLUSIVE_GATEWAY": "唯一条件",
         "PARALLEL_GATEWAY": "并行条件",
@@ -28,6 +29,9 @@
         "CONNECTION_SOURCE": "源",
         "CONNECTION_TARGET": "目标",
         "CONNECTION_CONDITION": "条件",
+        "SCRIPT_FORMAT":"脚本类型",
+        "SCRIPT":"脚本",
+
         "MSG": {
             "SWAGGER_NOT_EXISTS": "Swagger信息不存在请检查'swagger.json'或服务状态。",
             "SAVE_SUCCESS": "保存成功"
