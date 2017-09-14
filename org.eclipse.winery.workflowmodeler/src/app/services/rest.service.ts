@@ -78,15 +78,16 @@ export class RestService {
     public getResponseParameters(swagger: Swagger, interfaceUrl: string, operation: string): any[] {
         const path = swagger.paths[interfaceUrl];
         const method: SwaggerMethod = path[operation];
-        let response: SwaggerResponse = null;
+        let responses: SwaggerResponse[] = [];
 
         for (const key of Object.keys(method.responses)) {
-            if (key.startsWith('20')) {
-                response = method.responses[key];
+            if (key.startsWith('20') && method.responses[key].schema && method.responses[key].schema.$ref) {
+                let response: SwaggerResponse = method.responses[key];
+                responses.push(response);
             }
         }
 
-        return [response];
+        return responses;
     }
 
     public getDefinition(swagger: Swagger, position: string): SwaggerSchemaObject {
