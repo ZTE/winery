@@ -306,6 +306,7 @@ export class ModelService {
         if (node.responses.length !== 0) { // load rest responses
             const responseItem = this.createResponseTreeViewItem(node.id);
             item.children.push(responseItem);
+            // todo: should list all available response or only the first one?
             if (node.responses[0]) {
                 const swagger = this.restService.getSwaggerInfo(node.restConfigId);
                 const swaggerDefinition = this.restService.getDefinition(swagger, node.responses[0].schema.$ref);
