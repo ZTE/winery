@@ -34,7 +34,7 @@ export class NodeParametersComponent implements OnInit {
     @Input() public task: RestTask;
     @Input() public planItems: PlanTreeviewItem[];
 
-    public inputSources: ValueSource[] = [ValueSource.String, ValueSource.Topology, ValueSource.Plan];
+    public inputSources: ValueSource[] = [ValueSource.String, ValueSource.Variable, ValueSource.Topology, ValueSource.Plan];
     public outputSources: ValueSource[] = [ValueSource.Topology, ValueSource.Plan];
     public queryParams: any[] = [];
     public inputParams: TreeNode[] = [];
