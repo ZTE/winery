@@ -42,7 +42,7 @@ export class NodeTemplateComponent implements AfterViewInit {
     }
 
     public ngAfterViewInit() {
-        this.dataService.service.loadNodeTemplates()
+        this.dataService.loadNodeTemplates()
             .subscribe(nodeTemplates => this.nodeTemplates = nodeTemplates);
 
         this.loadInterfaces();
@@ -86,8 +86,7 @@ export class NodeTemplateComponent implements AfterViewInit {
 
     private loadInterfaces() {
         if (this.node.template.id) {
-            this.dataService.service
-                .loadNodeTemplateInterfaces(this.node.template)
+            this.dataService.loadNodeTemplateInterfaces(this.node.template)
                 .subscribe(interfaces => {
                     this.nodeInterfaces = interfaces;
                 });
@@ -99,7 +98,7 @@ export class NodeTemplateComponent implements AfterViewInit {
     private loadOperations() {
         if (this.node.nodeInterface) {
             this.nodeOperations = [];
-            this.dataService.service.loadNodeTemplateOperations(
+            this.dataService.loadNodeTemplateOperations(
                 this.node.template,
                 this.node.nodeInterface)
                 .subscribe(operations => this.nodeOperations = operations);
@@ -110,8 +109,7 @@ export class NodeTemplateComponent implements AfterViewInit {
 
     private loadParameters() {
         if (this.node.operation) {
-            this.dataService.service
-                .loadNodeTemplateOperationParameter(
+            this.dataService.loadNodeTemplateOperationParameter(
                 this.node.template,
                 this.node.nodeInterface,
                 this.node.operation)

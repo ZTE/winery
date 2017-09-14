@@ -12,14 +12,18 @@
 
 import { Injectable } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { Observable } from 'rxjs/Observable';
 import { TranslateService } from '@ngx-translate/core';
 
-import { NoticeService } from '../notice.service';
-import { BroadcastService } from './../broadcast.service';
-import { BackendService } from './backend.service';
+import { PlanModel } from '../../model/plan-model';
+import { NodeTemplate } from '../../model/topology/node-template';
 import { HttpService } from '../../util/http.service';
-import { WineryService } from './winery.service';
+import { BroadcastService } from '../broadcast.service';
+import { SettingService } from "../setting.service";
+import { NoticeService } from '../notice.service';
+import { BackendService } from './backend.service';
 import { CatalogService } from './catalog.service';
+import { WineryService } from './winery.service';
 
 /**
  * DataService
@@ -27,12 +31,36 @@ import { CatalogService } from './catalog.service';
  */
 @Injectable()
 export class DataService {
-    private environment = 'Catalog'; // 'Winery', 'Catalog'
-    public service: BackendService;
+    private service: BackendService;
 
     constructor(private broadcastService: BroadcastService, private noticeService: NoticeService,
-        protected httpService: HttpService, private translate: TranslateService) {
+        protected httpService: HttpService, private translate: TranslateService, private settingService: SettingService) {
         this.createBackendService();
+    }
+
+    public initData(params: any):void{
+        this.service.setParameters(params);
+    }
+
+    public getTopologyProperties():{ name: string, value: string }[]{
+        return this.service.getTopologyProperties();
+    }
+
+    public loadNodeTemplates(): Observable<NodeTemplate[]>{
+        return this.service.loadNodeTemplates();
+    }
+
+    public loadNodeTemplateInterfaces(nodeTemplate: NodeTemplate): Observable<string[]>{
+        return this.service.loadNodeTemplateInterfaces(nodeTemplate);
+    }
+
+    public loadNodeTemplateOperations(nodeTemplate: NodeTemplate, interfaceName: string): Observable<string[]>{
+        return this.service.loadNodeTemplateOperations(nodeTemplate, interfaceName);
+    }
+
+    public loadNodeTemplateOperationParameter(nodeTemplate: NodeTemplate, interfaceName: string,
+        operation: string): Observable<any>{
+        return this.service.loadNodeTemplateOperationParameter(nodeTemplate, interfaceName, operation);
     }
 
     public getBackendType(): string {
@@ -40,13 +68,16 @@ export class DataService {
     }
 
     private createBackendService() {
-        switch (this.environment) {
-            case 'Catalog':
-                this.service = new CatalogService(this.broadcastService, this.noticeService, this.httpService, this.translate);
-                break;
-            default:
-                this.service = new WineryService(this.broadcastService, this.noticeService, this.httpService, this.translate);
-                break;
-        }
+        this.settingService.getSetting().subscribe(response => {
+            let serviceType = response.BackendType;
+            switch (serviceType) {
+                case 'Catalog':
+                    this.service = new CatalogService(this.broadcastService, this.noticeService, this.httpService, this.translate);
+                    break;
+                default:
+                    this.service = new WineryService(this.broadcastService, this.noticeService, this.httpService, this.translate);
+                    break;
+            }
+        })
     }
 }

@@ -42,7 +42,7 @@ export class WineryService extends BackendService {
         this.plan = queryParams.plan;
 
         if (this.repositoryURL) {
-            this.refreshAllNodesProperties();
+            this.refreshTopologyProperties();
             this.loadPlan().subscribe(planModel => {
                 if (!planModel.nodes) {
                     planModel.nodes = [];

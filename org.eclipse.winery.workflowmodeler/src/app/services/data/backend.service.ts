@@ -27,7 +27,7 @@ import { NoticeService } from '../notice.service';
  */
 @Injectable()
 export abstract class BackendService {
-    private allNodesProperties: { name: string, value: string }[] = [];
+    private topologyProperties: { name: string, value: string }[] = [];
 
     constructor(protected broadcastService: BroadcastService, protected noticeService: NoticeService,
         protected httpService: HttpService, private translate: TranslateService) {
@@ -61,15 +61,15 @@ export abstract class BackendService {
 
     public abstract loadPlan(): Observable<PlanModel>;
 
-    public getAllNodesProperties(): { name: string, value: string }[] {
-        return this.allNodesProperties;
+    public getTopologyProperties(): { name: string, value: string }[] {
+        return this.topologyProperties;
     }
 
     public canEdit(): boolean {
         return true;
     }
 
-    protected refreshAllNodesProperties(): void {
+    protected refreshTopologyProperties(): void {
         this.loadNodeTemplates().subscribe(nodes => {
             if (0 === nodes.length) {
                 console.warn('Nodes length is 0!');
@@ -91,7 +91,7 @@ export abstract class BackendService {
                 });
                 return allProperties;
             }).subscribe(allProperties => {
-                this.allNodesProperties = allProperties;
+                this.topologyProperties = allProperties;
             });
         });
     }

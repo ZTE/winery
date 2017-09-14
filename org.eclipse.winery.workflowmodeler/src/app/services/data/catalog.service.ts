@@ -43,7 +43,7 @@ export class CatalogService extends BackendService {
         if (this.planName) {
             console.log('load plan');
             this.loadServiceTemplateInfo();
-            this.refreshAllNodesProperties();
+            this.refreshTopologyProperties();
             this.loadPlan().subscribe(planModel => {
                 console.log('load plan success');
                 if (planModel instanceof Array) {

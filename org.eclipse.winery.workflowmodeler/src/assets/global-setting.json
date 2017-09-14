@@ -1,0 +1,3 @@
+{
+    "BackendType":"Winery"                 // Support types are: "Winery" "Catalog".
+}

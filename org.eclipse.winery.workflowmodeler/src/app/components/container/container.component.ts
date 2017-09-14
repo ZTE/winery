@@ -53,6 +53,9 @@ export class ContainerComponent implements AfterViewInit, OnInit {
     }
 
     public ngOnInit() {
+        this.route.queryParams.subscribe(queryParams => {
+            this.dataService.initData(queryParams);
+        });
         this.jsPlumbService.initJsPlumbInstance(this.modelService.rootNodeId);
     }
 
@@ -62,10 +65,6 @@ export class ContainerComponent implements AfterViewInit, OnInit {
         this.broadcastService.currentSequenceFlow$.subscribe(sequenceFlow => this.currentSequenceFlow = sequenceFlow);
         this.broadcastService.currentWorkflowNode$.subscribe(workflowNode => this.currentWorkflowNode = workflowNode);
         this.broadcastService.currentType$.subscribe(type => this.currentType = type);
-
-        this.route.queryParams.subscribe(queryParams => {
-            this.dataService.service.setParameters(queryParams);
-        });
     }
 
     public canvasClick() {

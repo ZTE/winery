@@ -50,7 +50,7 @@ export class ParameterComponent implements OnInit {
         if (1 === this.valueSource.length) {
             this.showValueSource = false;
         }
-        this.topologyOptions = this.dataService.service.getAllNodesProperties();
+        this.topologyOptions = this.dataService.getTopologyProperties();
         this.valueClass = {
             'col-md-9': this.showValueSource,
             'col-md-12': !this.showValueSource
