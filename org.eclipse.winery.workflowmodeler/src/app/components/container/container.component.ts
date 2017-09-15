@@ -11,7 +11,6 @@
  */
 
 import { AfterViewInit, Component, HostListener, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
 
 import { SequenceFlow } from '../../model/workflow/sequence-flow';
 import { WorkflowNode } from '../../model/workflow/workflow-node';
@@ -34,11 +33,8 @@ export class ContainerComponent implements AfterViewInit, OnInit {
     public currentSequenceFlow: SequenceFlow;
     public currentType: string;
 
-    constructor(private broadcastService: BroadcastService,
-                private route: ActivatedRoute,
-                private jsPlumbService: JsPlumbService,
-                private dataService: DataService,
-                public modelService: ModelService) {
+    constructor(private broadcastService: BroadcastService, private jsPlumbService: JsPlumbService,
+                private dataService: DataService, public modelService: ModelService) {
     }
 
     @HostListener('window:keyup.delete', ['$event']) ondelete(event: KeyboardEvent) {
@@ -53,8 +49,8 @@ export class ContainerComponent implements AfterViewInit, OnInit {
     }
 
     public ngOnInit() {
-        this.route.queryParams.subscribe(queryParams => {
-            this.dataService.initData(queryParams);
+        this.broadcastService.backendServiceReady$.subscribe(()=>{
+            this.dataService.initData();
         });
         this.jsPlumbService.initJsPlumbInstance(this.modelService.rootNodeId);
     }

@@ -9,7 +9,12 @@ export class SettingService {
   constructor(private http: HttpService) { }
 
   public getSetting(): Observable<any> {
-    return this.http.get('assets/global-setting.json');
+    const options: any = {
+      headers: {
+        Accept: 'application/json',
+      }
+    };
+    return this.http.get('assets/global-setting.json', options);
   }
 
 }

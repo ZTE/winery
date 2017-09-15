@@ -3,7 +3,6 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { DataService } from '../../services/data/data.service';
 import { BroadcastService } from '../../services/broadcast.service';
 import { ModelService } from '../../services/model.service';
-// import { SettingService } from '../../services/setting.service';
 import { RestConfigComponent } from './rest-config/rest-config.component';
 
 @Component({
@@ -22,10 +21,9 @@ export class MenusComponent implements OnInit {
 
   ngOnInit() {
     this.broadcastService.planEditable$.subscribe(planEditable => this.canSave = planEditable);
-    this.showBack = 'Catalog' === this.dataService.getBackendType();
-    // this.settingService.getSetting().subscribe(setting => {
-    //   this.showBack = 'Catalog' === setting.BackendType;
-    // })
+    this.broadcastService.backendServiceReady$.subscribe(() => {
+      this.showBack = 'Catalog' === this.dataService.getBackendType();
+    });
   }
 
   public save(): void {

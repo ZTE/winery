@@ -58,6 +58,9 @@ textarea.form-control {
   height: auto;
 }
 
+.ui-tree .ui-tree-container{
+    overflow: visible;
+}
 
 .ui-widget-content{
     background: none;
@@ -66,7 +69,6 @@ textarea.form-control {
 .ui-treenode-label{
     width: calc(100% - 32px);
 }
-
 
 .subProcess {
     border-radius: 8px;

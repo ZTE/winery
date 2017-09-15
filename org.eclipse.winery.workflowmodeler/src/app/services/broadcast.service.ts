@@ -60,8 +60,8 @@ export class BroadcastService {
      * this should be used while the source of rest interfaces changed.
      * @type {Subject<>}
      */
-    public serviceSource = new Subject<any>();
-    public serviceSource$ = this.serviceSource.asObservable();
+    public backendServiceReady = new Subject<any>();
+    public backendServiceReady$ = this.backendServiceReady.asObservable();
 
     public swagger = new Subject<any>();
     public swagger$ = this.swagger.asObservable();

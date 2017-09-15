@@ -46,6 +46,7 @@ import { ModelService } from './services/model.service';
 import { NoticeService } from './services/notice.service';
 import { RestService } from './services/rest.service';
 import { SwaggerTreeConverterService } from './services/swagger-tree-converter.service';
+import { SettingService } from './services/setting.service';
 
 import { SharedModule } from './shared/shared.module';
 import { HttpService } from './util/http.service';
@@ -91,6 +92,7 @@ export function HttpLoaderFactory(http: HttpClient) {
         RestService,
         SwaggerTreeConverterService,
         DataService,
+        SettingService
     ],
     imports: [
         AlertModule.forRoot(),

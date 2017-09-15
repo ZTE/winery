@@ -34,32 +34,35 @@ export class DataService {
     private service: BackendService;
 
     constructor(private broadcastService: BroadcastService, private noticeService: NoticeService,
-        protected httpService: HttpService, private translate: TranslateService, private settingService: SettingService) {
+        protected httpService: HttpService, private translate: TranslateService,
+        private settingService: SettingService, private activatedRoute: ActivatedRoute) {
         this.createBackendService();
     }
 
-    public initData(params: any):void{
-        this.service.setParameters(params);
+    public initData(): void {
+        this.activatedRoute.queryParams.subscribe(queryParams => {
+            this.service.setParameters(queryParams);
+        });
     }
 
-    public getTopologyProperties():{ name: string, value: string }[]{
+    public getTopologyProperties(): { name: string, value: string }[] {
         return this.service.getTopologyProperties();
     }
 
-    public loadNodeTemplates(): Observable<NodeTemplate[]>{
+    public loadNodeTemplates(): Observable<NodeTemplate[]> {
         return this.service.loadNodeTemplates();
     }
 
-    public loadNodeTemplateInterfaces(nodeTemplate: NodeTemplate): Observable<string[]>{
+    public loadNodeTemplateInterfaces(nodeTemplate: NodeTemplate): Observable<string[]> {
         return this.service.loadNodeTemplateInterfaces(nodeTemplate);
     }
 
-    public loadNodeTemplateOperations(nodeTemplate: NodeTemplate, interfaceName: string): Observable<string[]>{
+    public loadNodeTemplateOperations(nodeTemplate: NodeTemplate, interfaceName: string): Observable<string[]> {
         return this.service.loadNodeTemplateOperations(nodeTemplate, interfaceName);
     }
 
     public loadNodeTemplateOperationParameter(nodeTemplate: NodeTemplate, interfaceName: string,
-        operation: string): Observable<any>{
+        operation: string): Observable<any> {
         return this.service.loadNodeTemplateOperationParameter(nodeTemplate, interfaceName, operation);
     }
 
@@ -75,9 +78,11 @@ export class DataService {
                     this.service = new CatalogService(this.broadcastService, this.noticeService, this.httpService, this.translate);
                     break;
                 default:
+                    // Winery
                     this.service = new WineryService(this.broadcastService, this.noticeService, this.httpService, this.translate);
                     break;
             }
+            this.broadcastService.broadcast(this.broadcastService.backendServiceReady, null);
         })
     }
 }
