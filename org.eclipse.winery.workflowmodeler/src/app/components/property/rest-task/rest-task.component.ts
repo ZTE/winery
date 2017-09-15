@@ -117,7 +117,7 @@ export class RestTaskComponent implements AfterViewInit {
             method.parameters.forEach(param => {
                 const nodeParam = new RestParameter(param.name, '', ValueSource[ValueSource.String],
                     ValueType[ValueType.String], param.position, param.schema, param.required);
-                this.node.parameters.push(nodeParam);
+                this.node.parameters.push(WorkflowUtil.deepClone(nodeParam));
             });
 
             const responseParams = this.restService.getResponseParameters(
