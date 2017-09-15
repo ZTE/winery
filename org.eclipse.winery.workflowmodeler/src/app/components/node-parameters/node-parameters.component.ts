@@ -45,7 +45,7 @@ export class NodeParametersComponent implements OnInit {
     private index = 1;
 
     constructor(private broadcastService: BroadcastService,
-                private swaggerTreeConverterService: SwaggerTreeConverterService) {
+        private swaggerTreeConverterService: SwaggerTreeConverterService) {
     }
 
     public ngOnInit() {
@@ -68,10 +68,11 @@ export class NodeParametersComponent implements OnInit {
             } else if (param.position === 'body') {
                 const requestTreeNode = this.swaggerTreeConverterService
                     .schema2TreeNode('Request Param', this.task.restConfigId, param.schema);
-                    param.value = param.schema.value;
+                param.value = param.schema.value;
                 this.inputParams.push(requestTreeNode);
             } else {
                 // TODO others param types not supported
+                console.log('Unsupport parameter position(in): ${param.position}');
             }
         });
     }
