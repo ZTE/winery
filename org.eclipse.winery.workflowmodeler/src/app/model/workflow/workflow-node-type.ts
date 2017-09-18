@@ -18,6 +18,6 @@ export const WorkflowNodeType = [
     'intermediateCatchEvent',
     'exclusiveGateway',
     'parallelGateway',
-    'subProcess',
+    //'subProcess',
     'scriptTask'
 ];
