@@ -14,5 +14,6 @@ export enum ValueSource {
     String,
     Plan,
     Topology,
-    Variable
+    Variable,
+    Definition,
 }
