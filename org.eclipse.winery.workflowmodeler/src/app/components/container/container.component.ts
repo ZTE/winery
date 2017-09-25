@@ -32,12 +32,17 @@ export class ContainerComponent implements AfterViewInit, OnInit {
     public currentWorkflowNode: WorkflowNode;
     public currentSequenceFlow: SequenceFlow;
     public currentType: string;
+    public showNode: boolean = false;
+    public showSequence: boolean = false;
 
     constructor(private broadcastService: BroadcastService, private jsPlumbService: JsPlumbService,
                 private dataService: DataService, public modelService: ModelService) {
     }
 
     @HostListener('window:keyup.delete', ['$event']) ondelete(event: KeyboardEvent) {
+        if(this.showNode || this.showSequence){
+            return;
+        }
         if (this.currentType === 'WorkflowNode') {
             const parentId = this.jsPlumbService.getParentNodeId(this.currentWorkflowNode.id);
             this.jsPlumbService.remove(this.currentWorkflowNode);
@@ -53,13 +58,19 @@ export class ContainerComponent implements AfterViewInit, OnInit {
             this.dataService.initData();
         });
         this.jsPlumbService.initJsPlumbInstance(this.modelService.rootNodeId);
+        this.broadcastService.showProperty$.subscribe(show => this.showNode = show);
+        this.broadcastService.showSequenceFlow$.subscribe(show => this.showSequence = show);
     }
 
     public ngAfterViewInit() {
         this.jsPlumbService.buttonDroppable();
         this.jsPlumbService.canvasDroppable();
-        this.broadcastService.currentSequenceFlow$.subscribe(sequenceFlow => this.currentSequenceFlow = sequenceFlow);
-        this.broadcastService.currentWorkflowNode$.subscribe(workflowNode => this.currentWorkflowNode = workflowNode);
+        this.broadcastService.currentSequenceFlow$.subscribe(sequenceFlow => {
+            this.currentSequenceFlow = sequenceFlow;
+        });
+        this.broadcastService.currentWorkflowNode$.subscribe(workflowNode => {
+            this.currentWorkflowNode = workflowNode;
+        });
         this.broadcastService.currentType$.subscribe(type => this.currentType = type);
     }
 

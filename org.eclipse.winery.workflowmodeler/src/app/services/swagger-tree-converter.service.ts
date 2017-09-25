@@ -16,74 +16,125 @@ import { TreeNode } from 'primeng/primeng';
 import { ValueSource } from '../model/value-source.enum';
 import { WorkflowUtil } from '../util/workflow-util';
 import { RestService } from './rest.service';
+import { Swagger } from "../model/swagger";
 
 @Injectable()
 export class SwaggerTreeConverterService {
 
-    private restConfigId: string;
+    private swagger: Swagger;
 
     constructor(private restService: RestService) {
 
     }
 
-    public schema2TreeNode(key: string | number, restConfigId: string, schema: any): any {
-        this.restConfigId = restConfigId;
-
+    public schema2TreeNode(swagger: Swagger, key: string | number, schema: any, value?: any): any {
+      this.swagger = swagger;
         if (schema.$ref) {
-            const treeNode = this.getTreeNodeBySwaggerDefinition(key, schema);
+            const treeNode = this.getTreeNodeBySwaggerDefinition(key, schema, value);
             return treeNode;
         } else {
-            this.setInitValue4Param(schema.value, schema);
-            return this.parameter2TreeNode(key, schema);
+            value = this.getInitValue4Param(schema, value);
+            return this.parameter2TreeNode(key, schema, value);
         }
     }
 
-    private getTreeNodeBySwaggerDefinition(key: string | number, schema: any): TreeNode {
-        const swagger = this.restService.getSwaggerInfo(this.restConfigId);
-        if (swagger === undefined) {
-            console.log(`swagger definition not exist, restConfigId [${this.restConfigId}]`);
-            return null;
-        }
-        const swaggerDefinition = this.restService.getDefinition(swagger, schema.$ref);
+    private getTreeNodeBySwaggerDefinition(key: string | number, schema: any, value: any): TreeNode {
+        const swaggerDefinition = this.restService.getDefinition(this.swagger, schema.$ref);
 
         const definitionCopy = WorkflowUtil.deepClone(swaggerDefinition);
 
-        this.setInitValue4Param(schema.value, definitionCopy);
-        if (schema.value !== definitionCopy.value) {
-            schema.value = definitionCopy.value;
-        }
+        value = this.getInitValue4Param(definitionCopy, value);
 
-        return this.schema2TreeNode(key, this.restConfigId, definitionCopy);
+        return this.schema2TreeNode(this.swagger, key, definitionCopy, value);
     }
 
-    private setInitValue4Param(value: any | any[], param: any) {
-        param.value = value;
-        if (value == null) {
-            if (param.type === 'object') {
-                param.value = {};
-            } else if (param.type === 'array') {
-                param.value = [];
-            } else { // primary type
-                param.valueSource = ValueSource[ValueSource.String];
-            }
-        }
+    private getInitValue4Param(definition: any, value: any) {
+      if (definition.$ref) {
+        definition = this.restService.getDefinition(this.swagger, definition.$ref);
+      }
+      if (definition.type === 'object') {
+        return this.getInitValue4Object(value);
+      } else if (definition.type === 'array') {
+        return this.getInitValue4Array(value);
+      } else { // primary type
+        return this.getInitValue4Primate(value);
+      }
     }
 
-    private parameter2TreeNode(name: string | number, paramDefinition: any): any {
-        const nodeType = this.getTreeNodeType(paramDefinition);
+    private getInitValue4Object(value: any) {
+      const newValue = {
+        value: {},
+        valueSource: ValueSource[ValueSource.Definition]
+      };
+
+      if(!value) {
+        return newValue;
+      } else {
+        if(value.valueSource !== ValueSource[ValueSource.Definition]) {
+          return value;
+        } else {
+          if(typeof value.value !== 'object') {
+            value.value = {};
+          }
+          return value;
+        }
+      }
+    }
+
+    private getInitValue4Array(value: any) {
+      const newValue = {
+        value: [],
+        valueSource: ValueSource[ValueSource.Definition]
+      };
+
+      if(!value) {
+        return newValue;
+      } else {
+        if(value.valueSource !== ValueSource[ValueSource.Definition]) {
+          return value;
+        } else {
+          if(!(value.value instanceof Array)) {
+            value.value = [];
+          }
+          return value;
+        }
+      }
+    }
+
+    private getInitValue4Primate(value: any) {
+      const newValue = {
+        value: '',
+        valueSource: ValueSource[ValueSource.String]
+      };
+
+      if(!value) {
+        return newValue;
+      } else {
+        if(typeof value.value === 'object') {
+          value.value = '';
+        }
+        return value;
+      }
+    }
+
+    private parameter2TreeNode(name: string | number, definition: any, value: any): any {
+        const nodeType = this.getTreeNodeType(definition);
 
         const node = {
             label: name,
             type: nodeType,
-            required: paramDefinition.required,
+            required: definition.required,
             children: [],
-            parameter: paramDefinition,
+            definition: definition,
+            value: value,
         };
 
-        if (paramDefinition.type === 'object') {
-            node.children = this.getPropertyFromObject(paramDefinition.value, paramDefinition);
-        } else if (paramDefinition.type === 'array') {
-            this.setChildrenForArray(node, paramDefinition);
+        if(value.valueSource === ValueSource[ValueSource.Definition]) {
+          if (definition.type === 'object') {
+              node.children = this.getPropertyFromObject(definition, value.value);
+          } else if (definition.type === 'array') {
+              this.setChildrenForArray(definition, value.value);
+          }
         }
 
         return node;
@@ -104,30 +155,32 @@ export class SwaggerTreeConverterService {
         }
     }
 
-    private setChildrenForArray(node: any, param: any) {
-        param.value.forEach((itemValue, index) => {
-            const itemCopy = WorkflowUtil.deepClone(param.items);
-            itemCopy.value = itemValue;
-            node.children.push(this.schema2TreeNode(index, this.restConfigId, itemCopy));
+    private setChildrenForArray(definition: any, value: any[]): any[] {
+      const children = [];
+      value.forEach((itemValue, index) => {
+            const itemCopy = WorkflowUtil.deepClone(definition.items);
+            children.push(this.schema2TreeNode(this.swagger, index, itemCopy, itemValue));
         });
+
+        return children;
     }
 
-    private getPropertyFromObject(objectValue: any, param: any): TreeNode[] {
-        if (param.properties) {
-            return this.getPropertyFromSimpleObject(objectValue, param.properties, param.required);
-        } else if (param.additionalProperties) {
-            return this.getPropertyFromMapOrDictionary(objectValue, param.additionalProperties);
+    private getPropertyFromObject(definition: any, value: any): TreeNode[] {
+        if (definition.properties) {
+            return this.getPropertyFromSimpleObject(definition.properties, value, definition.required);
+        } else if (definition.additionalProperties) {
+            return this.getPropertyFromMapOrDictionary(definition.additionalProperties, value);
         } else {
-            console.log('getPropertyFromObject() return [], param is:' + JSON.stringify(param));
+            console.log('getPropertyFromObject() return [], param is:' + JSON.stringify(definition));
             return [];
         }
 
     }
 
-    private getPropertyFromSimpleObject(objectValue: any, properties: any, required: string[]): TreeNode[] {
+    private getPropertyFromSimpleObject(properties: any, objectValue: any, required: string[]): TreeNode[] {
         const treeNodes: TreeNode[] = [];
         for (const key in properties) {
-            let property = properties[key];
+          let property = properties[key];
             // init required property
             property.required = false;
             if (Array.isArray(required)) {
@@ -138,24 +191,22 @@ export class SwaggerTreeConverterService {
                     }
                 }
             }
-            this.setInitValue4Param(objectValue[key], property);
 
-            const treeNode = this.schema2TreeNode(key, this.restConfigId, property);
+            objectValue[key] = this.getInitValue4Param(property, objectValue[key]);
+
+            const treeNode = this.schema2TreeNode(this.swagger, key, property, objectValue[key]);
             treeNodes.push(treeNode);
-            if (objectValue[key] !== property.value) {
-                objectValue[key] = property.value;
-            }
         }
         return treeNodes;
     }
 
-    private getPropertyFromMapOrDictionary(mapOrDictionary: any, additionalProperties: any): TreeNode[] {
+    private getPropertyFromMapOrDictionary(additionalProperties: any, mapOrDictionary: any): TreeNode[] {
         const treeNodes: TreeNode[] = [];
         for (const key in mapOrDictionary) {
             const propertyCopy = WorkflowUtil.deepClone(additionalProperties);
             propertyCopy.value = mapOrDictionary[key];
 
-            const treeNode = this.schema2TreeNode(key, this.restConfigId, propertyCopy);
+            const treeNode = this.schema2TreeNode(this.swagger, key, propertyCopy, propertyCopy.value);
             treeNode.keyEditable = true;
             treeNodes.push(treeNode);
 

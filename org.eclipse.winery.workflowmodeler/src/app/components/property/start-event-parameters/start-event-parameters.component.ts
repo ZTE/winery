@@ -9,7 +9,7 @@
  * Contributors:
  *     ZTE - initial API and implementation and/or initial documentation
  *******************************************************************************/
-import { Component, Input, ViewChild } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 
 import { ValueSource } from '../../../model/value-source.enum';

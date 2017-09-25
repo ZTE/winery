@@ -19,6 +19,7 @@ import { ValueSource } from '../../model/value-source.enum';
 import { RestTask } from '../../model/workflow/rest-task';
 import { BroadcastService } from '../../services/broadcast.service';
 import { SwaggerTreeConverterService } from '../../services/swagger-tree-converter.service';
+import { RestService } from "../../services/rest.service";
 
 /**
  * property component presents information of a workflow node.
@@ -45,6 +46,7 @@ export class NodeParametersComponent implements OnInit {
     private index = 1;
 
     constructor(private broadcastService: BroadcastService,
+        private restService: RestService,
         private swaggerTreeConverterService: SwaggerTreeConverterService) {
     }
 
@@ -67,8 +69,8 @@ export class NodeParametersComponent implements OnInit {
                 this.queryParams.push(param);
             } else if (param.position === 'body') {
                 const requestTreeNode = this.swaggerTreeConverterService
-                    .schema2TreeNode('Request Param', this.task.restConfigId, param.schema);
-                param.value = param.schema.value;
+                    .schema2TreeNode(this.restService.getSwaggerInfo(this.task.restConfigId), 'Request Param', param.schema, param.value);
+                param.value = requestTreeNode.value;
                 this.inputParams.push(requestTreeNode);
             } else {
                 // TODO others param types not supported
@@ -81,7 +83,7 @@ export class NodeParametersComponent implements OnInit {
         this.outputParams = [];
         if (this.task.method && this.task.responses[0] && this.task.responses[0].schema) {
             const treeNode = this.swaggerTreeConverterService
-                .schema2TreeNode('Response Params', this.task.restConfigId, this.task.responses[0].schema);
+                .schema2TreeNode(this.restService.getSwaggerInfo(this.task.restConfigId), 'Response Params', this.task.responses[0].schema, {});
             this.outputParams.push(treeNode);
         }
     }

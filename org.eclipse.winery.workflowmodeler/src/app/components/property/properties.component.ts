@@ -54,15 +54,6 @@ export class PropertiesComponent implements AfterViewInit {
         });
     }
 
-    // public nodeNameChange(nameParamter: Parameter) {
-    //     this.titleEditing = !this.titleEditing;
-    //     this.node.name = nameParamter.value;
-
-    //     setTimeout(() => {
-    //         this.jsPlumbService.jsplumbInstanceMap.get(this.node.parentId).repaintEverything();
-    //     }, 0);
-    // }
-
     public deleteNode() {
         this.show = false;
 

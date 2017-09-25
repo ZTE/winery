@@ -10,7 +10,7 @@
  *     ZTE - initial API and implementation and/or initial documentation
  */
 
-import { Component, Input, OnChanges, ViewChild } from '@angular/core';
+import { Component, Input, OnChanges } from '@angular/core';
 import { ModalDirective } from 'ngx-bootstrap/modal';
 
 import { Swagger } from '../../../../model/swagger';

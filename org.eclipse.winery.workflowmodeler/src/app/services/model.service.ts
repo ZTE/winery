@@ -328,6 +328,8 @@ export class ModelService {
                 const propertyDefinition = this.restService.getDefinition(swagger, property.$ref);
                 this.loadParamsBySwaggerDefinition(propertyItem, swagger,
                     <SwaggerModelSimple>propertyDefinition);
+            }else if(false){
+                //todo: add nesting object parameter value.
             }
 
             return propertyItem;
