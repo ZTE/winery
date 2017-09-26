@@ -10,7 +10,7 @@
  *     ZTE - initial API and implementation and/or initial documentation
  */
 
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 
 import { PlanTreeviewItem } from '../../model/plan-treeview-item';
 import { ValueSource } from '../../model/value-source.enum';
@@ -26,25 +26,38 @@ import { DataService } from '../../services/data/data.service';
     styleUrls: ['./parameter.component.css'],
     templateUrl: 'parameter.component.html',
 })
-export class ParameterComponent implements OnInit {
+export class ParameterComponent implements OnChanges, OnInit {
     @Input() public param: Parameter;
     @Input() public valueSource: ValueSource[];
     @Input() public canEditName: boolean;
     @Input() public showLabel = true;
+    @Input() public showValue = true;
+    @Input() public canInsert: boolean;
     @Input() public canDelete: boolean;
     @Input() public planItems: PlanTreeviewItem[];
     @Output() public paramChange = new EventEmitter<Parameter>();
+    @Output() insert: EventEmitter<Parameter> = new EventEmitter<Parameter>();
     @Output() delete: EventEmitter<Parameter> = new EventEmitter<Parameter>();
 
     public sourceEnum = ValueSource;
     public valueGroupClass;
     public valueClass;
+    public valueSourceClass;
     public planOptions = [];
     public topologyOptions: { name: string, value: string }[] = [];
     public showValueSource = true;
     public planValue: any = {};
 
     constructor(private dataService: DataService) { }
+
+    public ngOnChanges(changes: SimpleChanges): void {
+        if (changes.canInsert && !changes.canInsert.isFirstChange()) {
+            this.resetValueGroupClass(changes.canInsert.currentValue, this.canDelete);
+        }
+        if (changes.canDelete && !changes.canDelete.isFirstChange()) {
+            this.resetValueGroupClass(this.canInsert, changes.canDelete.currentValue);
+        }
+    }
 
     public ngOnInit(): void {
         if (1 === this.valueSource.length) {
@@ -55,20 +68,13 @@ export class ParameterComponent implements OnInit {
             'col-md-9': this.showValueSource,
             'col-md-12': !this.showValueSource
         };
-
-        this.valueGroupClass = {
-            'col-md-7': this.canDelete,
-            'col-md-9': !this.canDelete
-        };
+        this.resetValueGroupClass(this.canInsert, this.canDelete);
+        this.resetValueSourceClass(this.showValue);
         // trans plan options to tree view items.
         this.initPlanTreeviewItems(this.planItems);
         if (ValueSource[ValueSource.Plan] === this.param.valueSource) {
             this.planValue = { id: this.param.value };
         }
-    }
-
-    public resetValue(): void {
-        this.valueChange('');
     }
 
     public keyChange(key: string) {
@@ -91,8 +97,32 @@ export class ParameterComponent implements OnInit {
         this.paramChange.emit(this.param);
     }
 
+    public valueSourceChange(valueSource: string) {
+        this.param.valueSource = valueSource;
+        this.valueChange('');
+    }
+
+    public insertParam(): void {
+        this.insert.emit();
+    }
+
     public deleteParam(): void {
         this.delete.emit();
+    }
+
+    private resetValueGroupClass(canInsert: boolean, canDelete: boolean): void {
+        this.valueGroupClass = {
+            'col-md-5': canInsert && canDelete,
+            'col-md-7': (canInsert && !canDelete) || (!canInsert && canDelete),
+            'col-md-9': !canInsert && !canDelete
+        };
+    }
+
+    private resetValueSourceClass(showValue: boolean) {
+        this.valueSourceClass = {
+            'col-md-3': this.showValue,
+            'col-md-6': !this.showValue,
+        };
     }
 
     private initPlanTreeviewItems(planTreeviewItems: PlanTreeviewItem[]): void {

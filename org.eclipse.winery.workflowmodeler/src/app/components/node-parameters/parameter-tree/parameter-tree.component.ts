@@ -126,6 +126,14 @@ export class ParameterTreeComponent implements OnChanges {
         }
     }
 
+    public canInsert(node: any) {
+        if (node.value.valueSource !== ValueSource[ValueSource.Definition]) {
+            return false;
+        } else {
+            return this.isArrayObject(node) || this.isDynamicObject(node);
+        }
+    }
+
     public canDelete(node: any) {
         const parent = node.parent;
         if (parent &&
@@ -138,13 +146,13 @@ export class ParameterTreeComponent implements OnChanges {
 
     public getObjectValueSource(): ValueSource[] {
         const result = [];
+        this.valueSource.forEach(source => {
+            if (ValueSource.String != source) {
+                result.push(source);
+            }
+        });
         result.push(ValueSource.Definition);
-        this.valueSource.forEach(source => result.push(source));
         return result;
-    }
-
-    public canAdd(node: any) {
-        return this.isArrayObject(node) || this.isDynamicObject(node);
     }
 
     private isArrayObject(node: any): boolean {
