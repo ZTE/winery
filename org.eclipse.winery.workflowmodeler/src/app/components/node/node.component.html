@@ -27,7 +27,7 @@
         {{node.name}}
     </div>
 
-    <b4t-node *ngFor="let child of node.children; let lastChild = last;" [last]="lastChild" [node]="child" [rank]="rank + 10"></b4t-node>
+    <b4t-node *ngFor="let child of node.children" [node]="child" [rank]="rank + 10"></b4t-node>
 
     <div class="anchor anchors anchor-left">
         <span class="left"><i class="left-arrow1"></i><i class="left-arrow2"></i></span>

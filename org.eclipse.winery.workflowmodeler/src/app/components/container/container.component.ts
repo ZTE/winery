@@ -29,18 +29,19 @@ import { ModelService } from '../../services/model.service';
     styleUrls: ['./container.component.css']
 })
 export class ContainerComponent implements AfterViewInit, OnInit {
-    public currentWorkflowNode: WorkflowNode;
-    public currentSequenceFlow: SequenceFlow;
-    public currentType: string;
-    public showNode: boolean = false;
-    public showSequence: boolean = false;
+    public allNotes: WorkflowNode[];
+    private currentWorkflowNode: WorkflowNode;
+    private currentSequenceFlow: SequenceFlow;
+    private currentType: string;
+    private showNode: boolean = false;
+    private showSequence: boolean = false;
 
     constructor(private broadcastService: BroadcastService, private jsPlumbService: JsPlumbService,
-                private dataService: DataService, public modelService: ModelService) {
+        private dataService: DataService, public modelService: ModelService) {
     }
 
     @HostListener('window:keyup.delete', ['$event']) ondelete(event: KeyboardEvent) {
-        if(this.showNode || this.showSequence){
+        if (this.showNode || this.showSequence) {
             return;
         }
         if (this.currentType === 'WorkflowNode') {
@@ -54,15 +55,19 @@ export class ContainerComponent implements AfterViewInit, OnInit {
     }
 
     public ngOnInit() {
-        this.broadcastService.backendServiceReady$.subscribe(()=>{
+        this.jsPlumbService.initJsPlumbInstance(this.modelService.rootNodeId);
+        this.broadcastService.backendServiceReady$.subscribe(() => {
             this.dataService.initData();
         });
-        this.jsPlumbService.initJsPlumbInstance(this.modelService.rootNodeId);
         this.broadcastService.showProperty$.subscribe(show => this.showNode = show);
         this.broadcastService.showSequenceFlow$.subscribe(show => this.showSequence = show);
     }
 
     public ngAfterViewInit() {
+        // Add the connection
+        this.broadcastService.planModel$.subscribe(() => {
+            this.jsPlumbService.connectChildrenNodes(this.modelService.rootNodeId);
+        })
         this.jsPlumbService.buttonDroppable();
         this.jsPlumbService.canvasDroppable();
         this.broadcastService.currentSequenceFlow$.subscribe(sequenceFlow => {

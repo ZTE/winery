@@ -59,27 +59,42 @@ export class JsPlumbService {
         const jsplumbInstance = jsp.jsPlumb.getInstance();
 
         jsplumbInstance.importDefaults({
-            Anchor: ['Top', 'RightMiddle', 'LeftMiddle', 'Bottom'],
-            Connector: [
-                'Flowchart',
-                { cornerRadius: 0, stub: 0, gap: 3 },
-            ],
-            ConnectionOverlays: [
-                [
-                    'Arrow',
-                    { direction: 1, foldback: 1, location: 1, width: 10, length: 10 },
-                ],
-                ['Label', { label: '', id: 'label', cssClass: 'aLabel' }],
-            ],
+            Anchor: "Continuous",
             Endpoint: 'Blank',
+            Container: 'pallete',
+            Connector: ['Flowchart', {
+                cornerRadius: 5,
+                alwaysRespectStubs: true
+            }],
             PaintStyle: {
-                strokeWidth: 4,
-                stroke: 'black',
+                stroke: "black",
+                strokeWidth: 1,
+                radius: 1,
+                outlineStroke: "transform",
+                outlineWidth: 4
             },
-            HoverPaintStyle: {
-                strokeWidth: 4,
-                stroke: 'blue',
+            ConnectorStyle: {
+                stroke: "black",
+                strokeWidth: 1,
+                outlineStroke: "transform",
+                outlineWidth: 4
             },
+            ConnectorHoverStyle: {
+                stroke: "#5bc0de",
+                strokeWidth: 2,
+                outlineStroke: "transform",
+                outlineWidth: 4
+            },
+            ConnectionOverlays: [
+                ['Arrow', {
+                    location: 1,
+                    id: 'arrow',
+                    cssClass: 'icon-port',
+                    width: 11,
+                    length: 12
+                }],
+                ['Label', {label: '', id: 'label'}]
+            ]
         });
 
         // add connection to model data while a new connection is build
@@ -118,9 +133,21 @@ export class JsPlumbService {
         sequenceFlowSubscription = this.broadcastService.currentSequenceFlow$.subscribe(currentSequenceFlow => {
             if (currentSequenceFlow.sourceRef === connection.sourceId
                 && currentSequenceFlow.targetRef === connection.targetId) {
-                connection.setPaintStyle({ stroke: 'red' });
+                connection.setPaintStyle({
+                    stroke: '#5bc0de',
+                    strokeWidth: 1,
+                    radius: 1,
+                    outlineStroke: "transform",
+                    outlineWidth: 4
+                });
             } else {
-                connection.setPaintStyle({ stroke: 'black' });
+                connection.setPaintStyle({
+                    stroke: 'black',
+                    strokeWidth: 1,
+                    radius: 1,
+                    outlineStroke: "transform",
+                    outlineWidth: 4
+                });
             }
         });
 
@@ -132,7 +159,13 @@ export class JsPlumbService {
         }
         typeSubscription = this.broadcastService.currentType$.subscribe(type => {
             if (type === 'WorkflowNode') {
-                connection.setPaintStyle({ stroke: 'black' });
+                connection.setPaintStyle({
+                    stroke: 'black',
+                    strokeWidth: 1,
+                    radius: 1,
+                    outlineStroke: "transform",
+                    outlineWidth: 4
+                });
             }
         });
         this.subscriptionMap.set(pre + 'typeSubscription', typeSubscription);
@@ -312,7 +345,6 @@ export class JsPlumbService {
                 // Mouse position minus drop canvas start position and minus icon half size
                 const left = event.e.clientX - 220 - (event.e.offsetX / 2);
                 const top = event.e.clientY - 70 - (event.e.offsetY / 2);
-
                 this.modelService.addNode(type, type, left, top);
             },
         });

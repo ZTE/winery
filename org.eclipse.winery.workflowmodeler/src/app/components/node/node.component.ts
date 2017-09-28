@@ -28,7 +28,6 @@ import { ModelService } from '../../services/model.service';
     templateUrl: 'node.component.html',
 })
 export class NodeComponent implements AfterViewInit, OnDestroy {
-    @Input() public last: boolean;
     @Input() public node: WorkflowNode;
     @Input() public rank: number;
     public active = false;
@@ -47,9 +46,6 @@ export class NodeComponent implements AfterViewInit, OnDestroy {
         if (this.canHaveChildren()) {
             this.jsPlumbService.nodeDroppable(this.node, this.rank);
             this.jsPlumbService.connectChildrenNodes(this.node.id);
-        }
-        if (this.last && this.node.parentId === this.modelService.rootNodeId) {
-            this.jsPlumbService.connectChildrenNodes(this.modelService.rootNodeId);
         }
 
         this.currentTypeSubscription = this.broadcastService.currentType$.subscribe(type => {
