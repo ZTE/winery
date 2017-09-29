@@ -39,6 +39,7 @@
 }
 
 .selected-container-text{
+    background-color: #fff;
     padding-left: 14px !important;
     line-height: 20px;
 }
@@ -58,6 +59,11 @@ textarea.form-control {
   height: auto;
 }
 
+.ui-tree-toggler{
+    margin-right: 15px;
+    margin-bottom: calc(1rem + 8px);
+}
+
 .ui-tree .ui-tree-container{
     overflow: visible;
 }
@@ -67,7 +73,7 @@ textarea.form-control {
 }
 
 .ui-treenode-label{
-    width: calc(100% - 32px);
+    width: calc(100% - 47px);
 }
 
 .subProcess {
